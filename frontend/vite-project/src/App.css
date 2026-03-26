@@ -1,0 +1,48 @@
+.home-container {
+    padding: 40px 56px;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #f8fafc;
+    letter-spacing: 0.5px;
+}
+
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 32px;
+}
+
+.watch-container {
+    padding: 100px;
+    text-align: center;
+    font-size: 32px;
+    color: #fff;
+}
+
+@media (max-width: 860px) {
+    .home-container {
+        padding: 24px;
+    }
+    
+    .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 20px;
+    }
+}
+
+.hero-loading {
+    height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #334155;
+    font-size: 15px;
+}
