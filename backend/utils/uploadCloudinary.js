@@ -9,21 +9,39 @@ cloudinary.config({
 
 const uploadFromBuffer = (buffer, folder = 'videos', resource_type = 'auto') => {
     return new Promise((resolve, reject) => {
-        const cld_upload_stream = cloudinary.uploader.upload_stream(
+        const uploadStream = cloudinary.uploader.upload_stream(
             { folder, resource_type, chunk_size: 6000000 },
             (error, result) => {
-                if (result) {
-                    resolve(result);
-                } else {
-                    reject(error);
-                }
+                if (result) resolve(result);
+                else reject(error);
             }
         );
-        streamifier.createReadStream(buffer).pipe(cld_upload_stream);
+        streamifier.createReadStream(buffer).pipe(uploadStream);
     });
 };
 
-module.exports = {
-    cloudinary,
-    uploadFromBuffer
+const getPublicId = (url) => {
+    try {
+        const parts = url.split('/upload/');
+        if (parts.length < 2) return null;
+        const afterUpload = parts[1].replace(/^v\d+\//, '');
+        return afterUpload.replace(/\.[^/.]+$/, '');
+    } catch {
+        return null;
+    }
 };
+
+const deleteFromCloudinary = async (url, resource_type = 'image') => {
+    if (!url) return;
+
+    const publicId = getPublicId(url);
+    if (!publicId) return;
+
+    try {
+        await cloudinary.uploader.destroy(publicId, { resource_type });
+    } catch (err) {
+        console.error(`Cloudinary delete failed for ${publicId}:`, err.message);
+    }
+};
+
+module.exports = { cloudinary, uploadFromBuffer, deleteFromCloudinary };

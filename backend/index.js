@@ -11,8 +11,8 @@ const app = express();
 app.use(express.json({ limit: '500mb' }));
 app.use(express.urlencoded({ limit: '500mb', extended: true }));
 app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true,
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    credentials: true
 }));
 
 app.use('/api/v1/auth', require('./routes/authRoutes'));
@@ -21,8 +21,10 @@ app.use('/api/v1/videos', require('./routes/videoRoutes'));
 app.use('/api/v1/ai', require('./routes/aiRoutes'));
 
 app.use((err, req, res, next) => {
-    res.status(500).json({ success: false, error: err.message || 'Server Error' });
+    const status = err.statusCode || (err.name === 'CastError' ? 400 : 500);
+    res.status(status).json({ success: false, error: err.message || 'Server Error' });
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+

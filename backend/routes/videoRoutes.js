@@ -7,9 +7,14 @@ const {
     updateVideo,
     deleteVideo,
     searchVideos,
-    getVideosByUser
+    getVideosByUser,
+    updateThumbnail,
+    likeVideo,
+    addComment,
+    deleteComment,
+    subscribeToCreator
 } = require('../controllers/videoController');
-const { protect, authorize } = require('../middlewares/authMiddleware');
+const { protect } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
@@ -21,6 +26,7 @@ const upload = multer({
 
 router.get('/search', searchVideos);
 router.get('/user/:email', getVideosByUser);
+router.post('/subscribe/:creatorId', protect, subscribeToCreator);
 
 router
     .route('/')
@@ -30,7 +36,12 @@ router
 router
     .route('/:id')
     .get(getVideo)
-    .put(protect, authorize('admin'), updateVideo)
-    .delete(protect, authorize('admin'), deleteVideo);
+    .put(protect, updateVideo)
+    .delete(protect, deleteVideo);
+
+router.patch('/:id/thumbnail', protect, upload.single('thumbnail'), updateThumbnail);
+router.post('/:id/like', protect, likeVideo);
+router.post('/:id/comments', protect, addComment);
+router.delete('/:id/comments/:commentId', protect, deleteComment);
 
 module.exports = router;

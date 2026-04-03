@@ -1,72 +1,125 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/herobanner.css';
+
+const SLIDE_INTERVAL = 6000;
 
 export default function HeroBanner({ movies }) {
     const navigate = useNavigate();
     const [index, setIndex] = useState(0);
-    const [fading, setFading] = useState(false);
+    const [paused, setPaused] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const timerRef = useRef(null);
 
     useEffect(() => {
-        if (!movies || movies.length === 0) return;
+        setProgress(0);
+        if (paused || movies.length <= 1) return;
 
-        const interval = setInterval(() => {
-            setFading(true);
-            setTimeout(() => {
-                setIndex((prev) => (prev + 1) % movies.length);
-                setFading(false);
-            }, 500);
-        }, 5000);
+        const start = Date.now();
 
-        return () => clearInterval(interval);
-    }, [movies]);
+        const tick = setInterval(() => {
+            const elapsed = Date.now() - start;
+            setProgress(Math.min((elapsed / SLIDE_INTERVAL) * 100, 100));
+        }, 50);
 
-    const movie = movies?.[index];
+        timerRef.current = setTimeout(() => {
+            setIndex(i => (i + 1) % movies.length);
+        }, SLIDE_INTERVAL);
 
-    return !movies || movies.length === 0 ? (
-        <div className="hero-banner-loading">No movies to display</div>
-    ) : (
-        <div className="hero-banner">
+        return () => {
+            clearTimeout(timerRef.current);
+            clearInterval(tick);
+        };
+    }, [index, paused, movies.length]);
+
+    if (!movies?.length) return (
+        <div className="hero-empty">
+            <div className="hero-empty__icon">🎬</div>
+            <p>No movies to display</p>
+        </div>
+    );
+
+    const movie = movies[index];
+
+    return (
+        <section
+            className="hero"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+        >
             <video
-                key={movie.videoUrl}
-                className="hero-video"
-                autoPlay
-                muted
-                loop
-                playsInline
+                key={movie._id}
+                className="hero-bg-video hero-bg-video--kenburns"
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
+                autoPlay muted loop playsInline
                 poster={movie.thumbnailUrl}
             >
                 <source src={movie.videoUrl} type="video/mp4" />
             </video>
 
-            <div className="hero-overlay"></div>
+            <div className="hero-overlay hero-overlay--vignette" />
+            <div className="hero-overlay hero-overlay--bottom" />
+            <div className="hero-overlay hero-overlay--left" />
+            <div className="hero-grain" aria-hidden="true" />
 
-            <div className={`hero-content${fading ? ' fading' : ''}`}>
-                <span className="hero-badge">Featured</span>
-                <h1 className="hero-title">{movie?.title}</h1>
-                <p className="hero-description">{movie?.description}</p>
+            <div className="hero-content">
+                <div className="hero-badge">
+                    <span className="hero-badge__dot" />
+                    Now Streaming
+                </div>
+
+                <h1 className="hero-title">{movie.title}</h1>
+
+                <div className="hero-meta">
+                    {movie.releaseYear && <span className="hero-meta__item">{movie.releaseYear}</span>}
+                    {movie.genres?.[0] && <span className="hero-meta__item hero-meta__item--genre">{movie.genres[0]}</span>}
+                    {movie.duration && <span className="hero-meta__item">{movie.duration} min</span>}
+                </div>
+
+                <p className="hero-description">{movie.description}</p>
+
                 <div className="hero-actions">
-                    <button
-                        className="hero-button"
-                        onClick={() => navigate(`/watch/${movie?._id}`)}
-                    >
-                        ▶ Watch Now
+                    <button className="hero-btn hero-btn--primary" onClick={() => navigate(`/watch/${movie._id}`)}>
+                        <svg className="hero-btn__icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                        Watch Now
+                    </button>
+                    <button className="hero-btn hero-btn--secondary" onClick={() => navigate('/movies')}>
+                        <svg className="hero-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
+                            <rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+                        </svg>
+                        Browse All
                     </button>
                 </div>
             </div>
 
             {movies.length > 1 && (
-                <div className="hero-dots">
-                    {movies.map((_, i) => (
+                <div className="hero-controls">
+                    {movies.map((m, i) => (
                         <button
-                            key={i}
-                            className={`hero-dot${i === index ? ' active' : ''}`}
-                            onClick={() => { setFading(true); setTimeout(() => { setIndex(i); setFading(false); }, 500); }}
-                            aria-label={`Go to slide ${i + 1}`}
-                        />
+                            key={m._id}
+                            className={`hero-slide-btn${i === index ? ' active' : ''}`}
+                            onClick={() => setIndex(i)}
+                            aria-label={`Go to ${m.title}`}
+                        >
+                            <span className="hero-slide-btn__label">{m.title}</span>
+                            <span className="hero-slide-btn__track">
+                                <span
+                                    className="hero-slide-btn__fill"
+                                    style={{ width: i === index ? `${progress}%` : i < index ? '100%' : '0%' }}
+                                />
+                            </span>
+                        </button>
                     ))}
                 </div>
             )}
-        </div>
+
+            <div className="hero-scroll-hint" aria-hidden="true">
+                <span className="hero-scroll-hint__line" />
+                <span className="hero-scroll-hint__text">Scroll</span>
+            </div>
+        </section>
     );
 }

@@ -7,10 +7,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add an email'],
         unique: true,
-        match: [
-            /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-            'Please add a valid email'
-        ]
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please add a valid email']
     },
     password: {
         type: String,
@@ -23,41 +20,18 @@ const UserSchema = new mongoose.Schema({
         enum: ['user', 'admin'],
         default: 'user'
     },
-    otp: {
-        type: String
-    },
-    otpExpire: {
-        type: Date
-    },
-    username: {
-        type: String,
-        trim: true,
-        default: ''
-    },
-    avatar: {
-        type: String,
-        default: ''
-    },
-    bio: {
-        type: String,
-        default: '',
-        maxlength: 300
-    },
-    followers: {
-        type: Number,
-        default: 0
-    },
-    profiles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Profile' }],
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
+    otp: { type: String },
+    otpExpire: { type: Date },
+    username: { type: String, trim: true, default: '' },
+    avatar: { type: String, default: '' },
+    bio: { type: String, default: '', maxlength: 300 },
+    followers: { type: Number, default: 0 },
+    subscribedTo: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+    createdAt: { type: Date, default: Date.now }
 });
 
 UserSchema.pre('save', async function () {
-    if (!this.isModified('password')) {
-        return;
-    }
+    if (!this.isModified('password')) return;
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });

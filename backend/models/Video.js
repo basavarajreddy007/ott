@@ -9,7 +9,7 @@ const VideoSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: [true, 'Please add a description'],
+        default: '',
         maxlength: [1000, 'Description cannot be more than 1000 characters']
     },
     videoUrl: {
@@ -18,15 +18,15 @@ const VideoSchema = new mongoose.Schema({
     },
     thumbnailUrl: {
         type: String,
-        required: [true, 'Please provide the thumbnail URL']
+        default: ''
     },
     duration: {
         type: Number,
-        required: true
+        default: 0
     },
     genres: {
         type: [String],
-        required: true
+        default: []
     },
     cast: {
         type: [String]
@@ -39,8 +39,8 @@ const VideoSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['Movie', 'TV Show'],
-        required: true
+        enum: ['Movie', 'Series', 'Short', 'Documentary', 'TV Show'],
+        default: 'Movie'
     },
     createdBy: {
         type: mongoose.Schema.ObjectId,
@@ -54,7 +54,18 @@ const VideoSchema = new mongoose.Schema({
     likes: {
         type: Number,
         default: 0
-    }
+    },
+    likedBy: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+    }],
+    comments: [{
+        user: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
+        username: { type: String, required: true },
+        avatar: { type: String, default: '' },
+        text: { type: String, required: true, maxlength: 500 },
+        createdAt: { type: Date, default: Date.now }
+    }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Video', VideoSchema);
