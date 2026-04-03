@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import api from './services/api';
 
