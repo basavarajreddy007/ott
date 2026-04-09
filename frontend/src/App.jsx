@@ -12,6 +12,7 @@ import AIScript from './components/AIScript';
 import AIAnalyze from './components/AIAnalyze';
 import Upload from './components/Upload';
 import Dashboard from './components/Dashboard';
+import Register from './components/Register';
 
 import './App.css';
 
@@ -21,6 +22,11 @@ function Guard({ children }) {
 }
 
 function LoginGuard({ children }) {
+    const token = useSelector(s => s.auth.token);
+    return token ? <Navigate to="/dashboard" replace /> : children;
+}
+
+function RegisterGuard({ children }) {
     const token = useSelector(s => s.auth.token);
     return token ? <Navigate to="/dashboard" replace /> : children;
 }
@@ -103,6 +109,7 @@ export default function App() {
             <Navbar />
             <Routes>
                 <Route path="/login"          element={<LoginGuard><Login /></LoginGuard>} />
+                <Route path="/register"       element={<RegisterGuard><Register /></RegisterGuard>} />
                 <Route path="/"               element={<Guard><Home /></Guard>} />
                 <Route path="/movies"         element={<Guard><MoviesFeed /></Guard>} />
                 <Route path="/search"         element={<Guard><MoviesFeed /></Guard>} />

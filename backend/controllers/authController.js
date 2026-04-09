@@ -19,7 +19,13 @@ function sendTokenResponse(user, statusCode, res) {
 
 exports.register = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    const user = await User.create({ email, password });
+    // Check if user already exists to avoid duplicate key error
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        return res.status(400).json({ success: false, error: 'User already exists' });
+    }
+    const username = email.split('@')[0] + '_' + Math.floor(Math.random() * 10000);
+    const user = await User.create({ email, password, username });
     sendTokenResponse(user, 201, res);
 });
 
@@ -34,7 +40,8 @@ exports.sendOtp = asyncHandler(async (req, res) => {
 
     if (!user) {
         const tempPassword = Math.random().toString(36).slice(-10);
-        user = await User.create({ email, password: tempPassword });
+        const tempUsername = email.split('@')[0] + '_' + Math.floor(Math.random() * 10000);
+        user = await User.create({ email, password: tempPassword, username: tempUsername });
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();

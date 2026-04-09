@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { setUser } from '../store/index.js';
 import api from '../services/api';
 import '../css/login.css';
@@ -96,6 +97,7 @@ export default function Login() {
                             <button className="login-btn" type="submit" disabled={loading}>
                                 {loading ? <span className="login-spinner" /> : 'Send Login Code'}
                             </button>
+                            <p className="login-register-prompt">Don't have an account? <Link to="/register">Register here</Link></p>
                         </form>
                     ) : (
                         <form className="login-step" onSubmit={verifyOtp}>
