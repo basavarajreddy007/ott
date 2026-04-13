@@ -3,7 +3,7 @@ import api from '../services/api';
 import '../css/upload.css';
 
 export default function Upload() {
-    const [form, setForm] = useState({ title: '', description: '', genres: '', releaseYear: '', type: 'Movie' });
+    const [form, setForm] = useState({ title: '', description: '', genres: '', releaseYear: '', type: 'Movie', requiredPlan: 'Basic' });
     const [videoOption, setVideoOption] = useState('file');
     const [videoFile, setVideoFile] = useState(null);
     const [videoUrl, setVideoUrl] = useState('');
@@ -26,6 +26,7 @@ export default function Upload() {
         fd.append('type', form.type);
         if (form.genres) fd.append('genres', form.genres);
         if (form.releaseYear) fd.append('releaseYear', form.releaseYear);
+        fd.append('requiredPlan', form.requiredPlan);
         if (videoOption === 'file') fd.append('video', videoFile);
         else fd.append('videoUrl', videoUrl);
         if (thumbUrl) fd.append('thumbnailUrl', thumbUrl);
@@ -33,7 +34,7 @@ export default function Upload() {
         setLoading(true);
         setError('');
         try {
-            const res = await api.post('/api/v1/videos', fd);
+            const res = await api.post('/videos', fd);
             if (!res.data.success) throw new Error(res.data.error || 'Upload failed');
             setSuccess(true);
         } catch (err) {
@@ -107,6 +108,14 @@ export default function Upload() {
                                 <option>Series</option>
                                 <option>Short</option>
                                 <option>Documentary</option>
+                            </select>
+                        </div>
+                        <div className="upload-field">
+                            <label className="upload-label">Required Plan</label>
+                            <select className="upload-select" value={form.requiredPlan} onChange={set('requiredPlan')}>
+                                <option>Basic</option>
+                                <option>Standard</option>
+                                <option>Premium</option>
                             </select>
                         </div>
                     </div>

@@ -36,6 +36,7 @@ export default function Navbar() {
                 <NavLink to="/ai-script">Script Writer</NavLink>
                 <NavLink to="/ai-analyze">Script Analyser</NavLink>
                 {token && <NavLink to="/dashboard">Dashboard</NavLink>}
+                {token && <NavLink to="/payment" className="navbar-subscribe-link">Subscribe</NavLink>}
             </div>
 
             <div className="navbar-search">

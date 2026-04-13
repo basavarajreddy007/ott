@@ -252,3 +252,44 @@
     .video-player-container { padding: 20px 18px 60px; }
     .video-title-row { flex-direction: column; gap: 12px; }
 }
+
+.vp-locked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 80px 24px;
+    text-align: center;
+}
+
+.vp-locked__icon { font-size: 3rem; }
+
+.vp-locked h2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-1);
+    margin: 0;
+}
+
+.vp-locked p {
+    font-size: 0.9rem;
+    color: var(--text-3);
+    margin: 0;
+    max-width: 340px;
+}
+
+.vp-upgrade-btn {
+    margin-top: 8px;
+    padding: 12px 28px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--r-md);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background var(--t-base) ease;
+}
+
+.vp-upgrade-btn:hover { background: var(--accent-2); }

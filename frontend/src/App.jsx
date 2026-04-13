@@ -13,6 +13,8 @@ import AIAnalyze from './components/AIAnalyze';
 import Upload from './components/Upload';
 import Dashboard from './components/Dashboard';
 import Register from './components/Register';
+import PaymentPage from './components/payment/PaymentPage';
+import PaymentSuccess from './pages/PaymentSuccess';
 
 import './App.css';
 
@@ -21,12 +23,7 @@ function Guard({ children }) {
     return token ? children : <Navigate to="/login" replace />;
 }
 
-function LoginGuard({ children }) {
-    const token = useSelector(s => s.auth.token);
-    return token ? <Navigate to="/dashboard" replace /> : children;
-}
-
-function RegisterGuard({ children }) {
+function PublicRoute({ children }) {
     const token = useSelector(s => s.auth.token);
     return token ? <Navigate to="/dashboard" replace /> : children;
 }
@@ -36,11 +33,11 @@ function Home() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        api.get('/api/v1/videos')
+        api.get('/videos')
             .then(res => {
                 if (res.data.success) setMovies(res.data.data);
             })
-            .catch(() => {})
+            .catch(() => { })
             .finally(() => setLoading(false));
     }, []);
 
@@ -70,15 +67,15 @@ function MoviesFeed() {
 
     useEffect(() => {
         const url = query
-            ? `/api/v1/videos/search?q=${encodeURIComponent(query)}`
-            : '/api/v1/videos';
+            ? `/videos/search?q=${encodeURIComponent(query)}`
+            : '/videos';
 
         setLoading(true);
         api.get(url)
             .then(res => {
                 if (res.data.success) setMovies(res.data.data);
             })
-            .catch(() => {})
+            .catch(() => { })
             .finally(() => setLoading(false));
     }, [query]);
 
@@ -108,18 +105,20 @@ export default function App() {
         <Router>
             <Navbar />
             <Routes>
-                <Route path="/login"          element={<LoginGuard><Login /></LoginGuard>} />
-                <Route path="/register"       element={<RegisterGuard><Register /></RegisterGuard>} />
-                <Route path="/"               element={<Guard><Home /></Guard>} />
-                <Route path="/movies"         element={<Guard><MoviesFeed /></Guard>} />
-                <Route path="/search"         element={<Guard><MoviesFeed /></Guard>} />
-                <Route path="/watch/:id"      element={<Guard><VideoPlayer /></Guard>} />
-                <Route path="/upload"         element={<Guard><Upload /></Guard>} />
-                <Route path="/ai-script"      element={<Guard><AIScript /></Guard>} />
-                <Route path="/ai-analyze"     element={<Guard><AIAnalyze /></Guard>} />
-                <Route path="/dashboard"      element={<Guard><Dashboard /></Guard>} />
+                <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+                <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+                <Route path="/" element={<Guard><Home /></Guard>} />
+                <Route path="/movies" element={<Guard><MoviesFeed /></Guard>} />
+                <Route path="/search" element={<Guard><MoviesFeed /></Guard>} />
+                <Route path="/watch/:id" element={<Guard><VideoPlayer /></Guard>} />
+                <Route path="/upload" element={<Guard><Upload /></Guard>} />
+                <Route path="/ai-script" element={<Guard><AIScript /></Guard>} />
+                <Route path="/ai-analyze" element={<Guard><AIAnalyze /></Guard>} />
+                <Route path="/dashboard" element={<Guard><Dashboard /></Guard>} />
+                <Route path="/payment" element={<Guard><PaymentPage /></Guard>} />
+                <Route path="/payment-success" element={<Guard><PaymentSuccess /></Guard>} />
                 <Route path="/profile/:email" element={<Navigate to="/dashboard" replace />} />
-                <Route path="*"               element={<Navigate to="/" replace />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </Router>
     );

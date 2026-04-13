@@ -28,7 +28,7 @@ export default function Login() {
         setError('');
         setLoading(true);
         try {
-            await api.post('/api/v1/auth/send-otp', { email });
+            await api.post('/auth/send-otp', { email });
             setStep(2);
             setOtp('');
             setTimer(30);
@@ -44,7 +44,7 @@ export default function Login() {
         setError('');
         setLoading(true);
         try {
-            const res = await api.post('/api/v1/auth/verify-otp', { email, otp });
+            const res = await api.post('/auth/verify-otp', { email, otp });
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('email', email);
             if (res.data.user) localStorage.setItem('user', JSON.stringify(res.data.user));

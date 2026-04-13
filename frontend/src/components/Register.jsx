@@ -35,10 +35,10 @@ export default function Register() {
 
         try {
             // Register user
-            await api.post('/api/v1/auth/register', { email: email.toLowerCase(), password });
+            await api.post('/auth/register', { email: email.toLowerCase(), password });
 
             // Auto-login after successful registration
-            const res = await api.post('/api/v1/auth/login', { email: email.toLowerCase(), password });
+            const res = await api.post('/auth/login', { email: email.toLowerCase(), password });
             const { token, user } = res.data;
 
             // Save auth info

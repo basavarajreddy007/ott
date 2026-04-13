@@ -18,7 +18,7 @@ export default function VideoPlayer() {
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
-        api.get(`/api/v1/videos/${id}`)
+        api.get(`/videos/${id}`)
             .then(res => {
                 const v = res.data.data;
                 setVideo(v);
@@ -29,12 +29,19 @@ export default function VideoPlayer() {
                 }
                 setStatus('ok');
             })
-            .catch(() => setStatus('error'));
+            .catch(err => {
+                if (err.response?.status === 403) {
+                    setStatus('locked');
+                    setVideo({ upgradeMessage: err.response.data.message });
+                } else {
+                    setStatus('error');
+                }
+            });
     }, [id]);
 
     async function handleLike() {
         if (!currentUser) return alert('Please log in to like videos');
-        const res = await api.post(`/api/v1/videos/${id}/like`);
+        const res = await api.post(`/videos/${id}/like`);
         setLiked(res.data.liked);
         setLikes(res.data.likes);
     }
@@ -45,7 +52,7 @@ export default function VideoPlayer() {
         if (!commentText.trim()) return;
         setSubmitting(true);
         try {
-            const res = await api.post(`/api/v1/videos/${id}/comments`, { text: commentText });
+            const res = await api.post(`/videos/${id}/comments`, { text: commentText });
             setComments(prev => [...prev, res.data.data]);
             setCommentText('');
         } finally {
@@ -54,7 +61,7 @@ export default function VideoPlayer() {
     }
 
     async function handleDeleteComment(commentId) {
-        await api.delete(`/api/v1/videos/${id}/comments/${commentId}`);
+        await api.delete(`/videos/${id}/comments/${commentId}`);
         setComments(prev => prev.filter(c => c._id !== commentId));
     }
 
@@ -65,6 +72,17 @@ export default function VideoPlayer() {
     );
 
     if (status === 'loading') return <div className="video-player-container"><p>Loading…</p></div>;
+    if (status === 'locked') return (
+        <div className="video-player-container">
+            <button className="back-button" onClick={() => navigate('/')}>← Back</button>
+            <div className="vp-locked">
+                <span className="vp-locked__icon">🔒</span>
+                <h2>Plan Required</h2>
+                <p>{video.upgradeMessage}</p>
+                <button className="vp-upgrade-btn" onClick={() => navigate('/payment')}>Upgrade Plan</button>
+            </div>
+        </div>
+    );
     if (status === 'error') return (
         <div className="video-player-container">
             <p>Failed to load video.</p>

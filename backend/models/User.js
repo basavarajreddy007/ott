@@ -26,6 +26,7 @@ const UserSchema = new mongoose.Schema({
     avatar: { type: String, default: '' },
     bio: { type: String, default: '', maxlength: 300 },
     followers: { type: Number, default: 0 },
+    plan: { type: String, enum: ['none', 'Basic', 'Standard', 'Premium'], default: 'none' },
     subscribedTo: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
     createdAt: { type: Date, default: Date.now }
 });

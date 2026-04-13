@@ -55,6 +55,7 @@ const VideoSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    requiredPlan: { type: String, enum: ['Basic', 'Standard', 'Premium'], default: 'Basic' },
     likedBy: [{
         type: mongoose.Schema.ObjectId,
         ref: 'User'

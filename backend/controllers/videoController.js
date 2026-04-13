@@ -19,7 +19,7 @@ function parseGenres(genres) {
     return genres ?? [];
 }
 
-const VIDEO_UPDATE_FIELDS = ['title', 'description', 'thumbnailUrl', 'duration', 'genres', 'cast', 'director', 'releaseYear', 'type'];
+const VIDEO_UPDATE_FIELDS = ['title', 'description', 'thumbnailUrl', 'duration', 'genres', 'cast', 'director', 'releaseYear', 'type', 'requiredPlan'];
 
 exports.searchVideos = asyncHandler(async (req, res) => {
     const { q } = req.query;
@@ -53,14 +53,25 @@ exports.getVideos = asyncHandler(async (req, res) => {
     res.json({ success: true, count: videos.length, pagination, data: videos });
 });
 
+const PLAN_RANK = { Basic: 1, Standard: 2, Premium: 3 };
+
 exports.getVideo = asyncHandler(async (req, res) => {
     const video = await Video.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } }, { new: true }).lean();
     if (!video) return notFound(res, 'Video not found');
+
+    const user = await User.findById(req.user.id).select('plan').lean();
+    const userRank  = PLAN_RANK[user?.plan] || 0;
+    const videoRank = PLAN_RANK[video.requiredPlan] || 1;
+
+    if (userRank < videoRank) {
+        return res.status(403).json({ success: false, message: `Upgrade to ${video.requiredPlan} plan to watch this video` });
+    }
+
     res.json({ success: true, data: video });
 });
 
 exports.createVideo = asyncHandler(async (req, res) => {
-    const { title, description, videoUrl: bodyVideoUrl, thumbnailUrl: bodyThumbUrl, duration, genres, releaseYear, type } = req.body;
+    const { title, description, videoUrl: bodyVideoUrl, thumbnailUrl: bodyThumbUrl, duration, genres, releaseYear, type, requiredPlan } = req.body;
 
     const [videoUrl, thumbnailUrl] = await Promise.all([
         uploadFile(req.files, 'video', 'videos', 'video'),
@@ -76,6 +87,7 @@ exports.createVideo = asyncHandler(async (req, res) => {
         releaseYear: releaseYear ? Number(releaseYear) : undefined,
         type: type || 'Movie',
         genres: parseGenres(genres),
+        requiredPlan: requiredPlan || 'Basic',
         createdBy: req.user.id
     });
 

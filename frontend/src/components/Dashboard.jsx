@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateUser as updateUserStore } from '../store/index.js';
+import { updateUser as updateUserStore } from '../store';
 import { getVideosByUser, updateVideo, deleteVideo } from '../services/videoService';
 import { getUser, updateUser } from '../services/userService';
 import '../css/dashboard.css';
 
-const avatarFallback = email =>
+const avatar = email =>
     `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(email)}&backgroundColor=0f172a&textColor=38bdf8`;
 
 export default function Dashboard() {
@@ -16,92 +16,98 @@ export default function Dashboard() {
 
     const [user, setUser] = useState(null);
     const [videos, setVideos] = useState([]);
-    const [status, setStatus] = useState('loading'); // loading | error | ok
     const [tab, setTab] = useState('videos');
     const [search, setSearch] = useState('');
-    const [modal, setModal] = useState(null); // null | { type, video? }
+    const [modal, setModal] = useState(null);
     const [form, setForm] = useState({});
-    const [saving, setSaving] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        if (!email) { setStatus('ok'); return; }
+        if (!email) return setLoading(false);
         Promise.all([getUser(email), getVideosByUser(email)])
-            .then(([u, v]) => { setUser(u); setVideos(v); setStatus('ok'); })
-            .catch(() => setStatus('error'));
+            .then(([u, v]) => { setUser(u); setVideos(v); })
+            .catch(() => setError('Failed to load'))
+            .finally(() => setLoading(false));
     }, [email]);
 
-    function openEdit(video) {
-        setForm({ title: video.title || '', description: video.description || '', genres: (video.genres || []).join(', '), releaseYear: video.releaseYear || '', type: video.type || 'Movie' });
+    const totalViews = videos.reduce((a, v) => a + (v.views || 0), 0);
+    const filtered = videos.filter(v =>
+        v.title.toLowerCase().includes(search.toLowerCase())
+    );
+
+    const open = (type, data = {}) => {
+        setForm(type === 'edit' ? { title: data.title || '', description: data.description || '', genres: (data.genres || []).join(', '), releaseYear: data.releaseYear || '', type: data.type || 'Movie' } : data);
+        setModal({ type, data });
         setError('');
-        setModal({ type: 'edit', video });
-    }
-
-    function openProfile() {
-        setForm({ username: user.username || '', bio: user.bio || '', avatar: user.avatar || '' });
-        setError('');
-        setModal({ type: 'profile' });
-    }
-
-    function closeModal() { setModal(null); setError(''); }
-
-    async function saveEdit(e) {
-        e.preventDefault();
-        setSaving(true); setError('');
-        try {
-            const updated = await updateVideo(modal.video._id, {
-                ...form,
-                genres: form.genres.split(',').map(g => g.trim()).filter(Boolean),
-                releaseYear: form.releaseYear ? Number(form.releaseYear) : undefined
-            });
-            setVideos(vs => vs.map(v => v._id === updated._id ? updated : v));
-            closeModal();
-        } catch (err) {
-            setError(err.response?.data?.error || 'Update failed');
-        } finally { setSaving(false); }
-    }
-
-    async function confirmDelete() {
-        setSaving(true); setError('');
-        try {
-            await deleteVideo(modal.video._id);
-            setVideos(vs => vs.filter(v => v._id !== modal.video._id));
-            closeModal();
-        } catch (err) {
-            setError(err.response?.data?.error || 'Delete failed');
-        } finally { setSaving(false); }
-    }
-
-    async function saveProfile(e) {
-        e.preventDefault();
-        setSaving(true); setError('');
-        try {
-            const updated = await updateUser(email, form);
-            setUser(prev => ({ ...prev, ...updated }));
-            dispatch(updateUserStore(updated));
-            localStorage.setItem('user', JSON.stringify(updated));
-            closeModal();
-        } catch (err) {
-            setError(err.response?.data?.error || 'Update failed');
-        } finally { setSaving(false); }
-    }
-
-    const totalViews = videos.reduce((sum, v) => sum + (v.views || 0), 0);
-    const filtered = videos.filter(v => !search.trim() || v.title.toLowerCase().includes(search.toLowerCase()));
-    const field = (key, type = 'input', opts = {}) => {
-        const Tag = type;
-        return <Tag className={`db-${type}`} value={form[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} {...opts} />;
     };
 
-    if (status === 'loading') return <div className="db-page"><div className="db-loading"><div className="db-loading__spinner" /><span>Loading…</span></div></div>;
-    if (status === 'error') return <div className="db-page"><div className="db-loading"><p style={{ color: '#fca5a5' }}>Failed to load dashboard.</p><button className="db-btn db-btn--ghost" onClick={() => navigate('/login')}>Back to Login</button></div></div>;
-    if (!user) return <div className="db-page"><div className="db-loading"><p>User not found.</p><button className="db-btn db-btn--ghost" onClick={() => navigate('/')}>Go Home</button></div></div>;
+    const close = () => setModal(null);
+
+    const saveVideo = async e => {
+        e.preventDefault();
+        setSaving(true);
+        setError('');
+        try {
+            const updated = await updateVideo(modal.data._id, {
+                ...form,
+                genres: form.genres ? form.genres.split(',').map(g => g.trim()).filter(Boolean) : [],
+                releaseYear: +form.releaseYear || undefined
+            });
+            setVideos(vs => vs.map(v => v._id === updated._id ? updated : v));
+            close();
+        } catch (err) {
+            setError(err.response?.data?.error || 'Update failed');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const removeVideo = async () => {
+        setSaving(true);
+        setError('');
+        try {
+            await deleteVideo(modal.data._id);
+            setVideos(vs => vs.filter(v => v._id !== modal.data._id));
+            close();
+        } catch (err) {
+            setError(err.response?.data?.error || 'Delete failed');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const saveProfile = async e => {
+        e.preventDefault();
+        setSaving(true);
+        setError('');
+        try {
+            const updated = await updateUser(email, form);
+            setUser(u => ({ ...u, ...updated }));
+            dispatch(updateUserStore(updated));
+            localStorage.setItem('user', JSON.stringify(updated));
+            close();
+        } catch (err) {
+            setError(err.response?.data?.error || 'Update failed');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const field = (key, type = 'input', opts = {}) => {
+        const Tag = type;
+        return <Tag className={`db-${type}`} value={form[key] !== undefined ? form[key] : ''} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} {...opts} />;
+    };
+
+    if (loading) return <div className="db-page"><div className="db-loading"><div className="db-loading__spinner" /><span>Loading…</span></div></div>;
+    if (!user) return <div className="db-page"><div className="db-loading"><p style={{ color: '#fca5a5' }}>User not found.</p><button className="db-btn db-btn--ghost" onClick={() => navigate('/')}>Go Home</button></div></div>;
 
     return (
         <div className="db-page">
             <aside className="db-sidebar">
                 <div className="db-sidebar__profile">
-                    <img className="db-sidebar__avatar" src={user.avatar || avatarFallback(user.email)} alt={user.username} onError={e => { e.currentTarget.src = avatarFallback(user.email); }} />
+                    <img className="db-sidebar__avatar" src={user.avatar || avatar(user.email)} alt={user.username} onError={e => { e.currentTarget.src = avatar(user.email); }} />
                     <div className="db-sidebar__info">
                         <p className="db-sidebar__name">{user.username || 'User'}</p>
                         <p className="db-sidebar__email">{user.email}</p>
@@ -158,8 +164,8 @@ export default function Dashboard() {
                                         </div>
                                     </div>
                                     <div className="db-video-actions">
-                                        <button className="db-action-btn db-action-btn--edit" onClick={() => openEdit(v)}>Edit</button>
-                                        <button className="db-action-btn db-action-btn--delete" onClick={() => { setError(''); setModal({ type: 'delete', video: v }); }}>Delete</button>
+                                        <button className="db-action-btn db-action-btn--edit" onClick={() => open('edit', v)}>Edit</button>
+                                        <button className="db-action-btn db-action-btn--delete" onClick={() => open('delete', v)}>Delete</button>
                                     </div>
                                 </div>
                             ))}</div>
@@ -174,10 +180,10 @@ export default function Dashboard() {
                                 <h1 className="db-section__title">Profile</h1>
                                 <p className="db-section__sub">Manage your public profile</p>
                             </div>
-                            <button className="db-btn db-btn--primary" onClick={openProfile}>Edit Profile</button>
+                            <button className="db-btn db-btn--primary" onClick={() => open('profile', user)}>Edit Profile</button>
                         </div>
                         <div className="db-profile-card">
-                            <img className="db-profile-card__avatar" src={user.avatar || avatarFallback(user.email)} alt={user.username} onError={e => { e.currentTarget.src = avatarFallback(user.email); }} />
+                            <img className="db-profile-card__avatar" src={user.avatar || avatar(user.email)} alt={user.username} onError={e => { e.currentTarget.src = avatar(user.email); }} />
                             <div className="db-profile-card__info">
                                 <h2 className="db-profile-card__name">{user.username || 'Unnamed User'}</h2>
                                 <p className="db-profile-card__email">{user.email}</p>
@@ -197,18 +203,18 @@ export default function Dashboard() {
             </main>
 
             {modal?.type === 'edit' && (
-                <div className="db-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
+                <div className="db-overlay" onClick={e => e.target === e.currentTarget && close()}>
                     <div className="db-modal" role="dialog" aria-modal="true">
-                        <button className="db-modal__close" onClick={closeModal}>✕</button>
-                        <h2 className="db-modal__title" style={{ marginBottom: 20 }}>Edit — {modal.video.title}</h2>
+                        <button className="db-modal__close" onClick={close}>✕</button>
+                        <h2 className="db-modal__title" style={{ marginBottom: 20 }}>Edit — {modal.data.title}</h2>
                         {error && <div className="db-alert db-alert--error">{error}</div>}
-                        <form onSubmit={saveEdit}>
+                        <form onSubmit={saveVideo}>
                             <div className="db-field"><label className="db-label">Title</label>{field('title', 'input', { required: true })}</div>
                             <div className="db-field"><label className="db-label">Description</label>{field('description', 'textarea', { rows: 3 })}</div>
                             <div className="db-row2">
                                 <div className="db-field">
                                     <label className="db-label">Type</label>
-                                    <select className="db-select" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
+                                    <select className="db-select" value={form.type || 'Movie'} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
                                         {['Movie', 'Series', 'Short', 'Documentary'].map(t => <option key={t}>{t}</option>)}
                                     </select>
                                 </div>
@@ -216,7 +222,7 @@ export default function Dashboard() {
                             </div>
                             <div className="db-field"><label className="db-label">Genres</label>{field('genres', 'input', { placeholder: 'Action, Drama' })}</div>
                             <div className="db-modal__actions">
-                                <button type="button" className="db-btn db-btn--ghost" onClick={closeModal}>Cancel</button>
+                                <button type="button" className="db-btn db-btn--ghost" onClick={close}>Cancel</button>
                                 <button type="submit" className="db-btn db-btn--primary" disabled={saving}>{saving ? 'Saving…' : 'Save Changes'}</button>
                             </div>
                         </form>
@@ -225,25 +231,25 @@ export default function Dashboard() {
             )}
 
             {modal?.type === 'delete' && (
-                <div className="db-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
+                <div className="db-overlay" onClick={e => e.target === e.currentTarget && close()}>
                     <div className="db-modal" role="dialog" aria-modal="true" style={{ textAlign: 'center' }}>
-                        <button className="db-modal__close" onClick={closeModal}>✕</button>
+                        <button className="db-modal__close" onClick={close}>✕</button>
                         <div className="db-delete-icon">🗑</div>
                         <h2 className="db-modal__title">Delete Video?</h2>
-                        <p className="db-delete-desc">"{modal.video.title}" will be permanently removed.</p>
+                        <p className="db-delete-desc">"{modal.data.title}" will be permanently removed.</p>
                         {error && <div className="db-alert db-alert--error">{error}</div>}
                         <div className="db-modal__actions">
-                            <button className="db-btn db-btn--ghost" onClick={closeModal}>Cancel</button>
-                            <button className="db-btn db-btn--danger" onClick={confirmDelete} disabled={saving}>{saving ? 'Deleting…' : 'Yes, Delete'}</button>
+                            <button className="db-btn db-btn--ghost" onClick={close}>Cancel</button>
+                            <button className="db-btn db-btn--danger" onClick={removeVideo} disabled={saving}>{saving ? 'Deleting…' : 'Yes, Delete'}</button>
                         </div>
                     </div>
                 </div>
             )}
 
             {modal?.type === 'profile' && (
-                <div className="db-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
+                <div className="db-overlay" onClick={e => e.target === e.currentTarget && close()}>
                     <div className="db-modal" role="dialog" aria-modal="true">
-                        <button className="db-modal__close" onClick={closeModal}>✕</button>
+                        <button className="db-modal__close" onClick={close}>✕</button>
                         <h2 className="db-modal__title" style={{ marginBottom: 20 }}>Edit Profile</h2>
                         {error && <div className="db-alert db-alert--error">{error}</div>}
                         <form onSubmit={saveProfile}>
@@ -251,7 +257,7 @@ export default function Dashboard() {
                             <div className="db-field"><label className="db-label">Username</label>{field('username', 'input', { maxLength: 40 })}</div>
                             <div className="db-field"><label className="db-label">Bio</label>{field('bio', 'textarea', { maxLength: 300, rows: 3 })}</div>
                             <div className="db-modal__actions">
-                                <button type="button" className="db-btn db-btn--ghost" onClick={closeModal}>Cancel</button>
+                                <button type="button" className="db-btn db-btn--ghost" onClick={close}>Cancel</button>
                                 <button type="submit" className="db-btn db-btn--primary" disabled={saving}>{saving ? 'Saving…' : 'Save Changes'}</button>
                             </div>
                         </form>

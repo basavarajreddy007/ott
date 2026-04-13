@@ -28,6 +28,7 @@ const authSlice = createSlice({
         },
         updateUser: (state, action) => {
             state.user = { ...state.user, ...action.payload };
+            if (action.payload.plan) state.plan = action.payload.plan;
         }
     }
 });
