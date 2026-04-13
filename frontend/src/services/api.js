@@ -13,4 +13,20 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+api.interceptors.response.use(
+    res => res,
+    err => {
+        if (err.response?.status === 401) {
+            const currentPath = window.location.hash;
+            if (!currentPath.includes('/login') && !currentPath.includes('/register')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('email');
+                localStorage.removeItem('user');
+                window.location.href = '/#/login';
+            }
+        }
+        return Promise.reject(err);
+    }
+);
+
 export default api;

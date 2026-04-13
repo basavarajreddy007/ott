@@ -64,7 +64,12 @@ export default function PaymentPage() {
             const result = await processPayment({ planId, amount: total });
             navigate('/payment-success', { state: { ...result, email } });
         } catch (err) {
-            setError(err.message || 'Payment failed. Please try again.');
+            if (err.response?.status === 401) {
+                setError('Session expired. Please log in again.');
+                setTimeout(() => navigate('/login'), 1500);
+            } else {
+                setError(err.response?.data?.message || err.message || 'Payment failed. Please try again.');
+            }
         } finally {
             setLoading(false);
         }

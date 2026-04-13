@@ -12,6 +12,7 @@ function sendTokenResponse(user, statusCode, res) {
             username: user.username,
             avatar: user.avatar,
             role: user.role,
+            plan: user.plan || 'none',
             subscribedTo: user.subscribedTo ?? []
         }
     });

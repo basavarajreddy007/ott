@@ -8,11 +8,29 @@ function getSavedUser() {
     }
 }
 
+function getValidToken() {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.exp * 1000 < Date.now()) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('email');
+            localStorage.removeItem('user');
+            return null;
+        }
+        return token;
+    } catch {
+        localStorage.removeItem('token');
+        return null;
+    }
+}
+
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
         email: localStorage.getItem('email') || null,
-        token: localStorage.getItem('token') || null,
+        token: getValidToken(),
         user: getSavedUser()
     },
     reducers: {

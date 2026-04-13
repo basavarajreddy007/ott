@@ -21,7 +21,7 @@ exports.protect = async (req, res, next) => {
         req.user = user;
         next();
     } catch (err) {
-        return res.status(401).json({ success: false, error: 'Not authorized to access this route' });
+        return res.status(401).json({ success: false, error: 'Session expired, please log in again' });
     }
 };
 
