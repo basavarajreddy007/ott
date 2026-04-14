@@ -6,11 +6,6 @@ export const PLANS = {
     premium:  { id: 'premium',  name: 'Premium',  price: 999, description: '4K · 4 screens' }
 };
 
-export const PROMO_CODES = {
-    STREAM20: 20,
-    FIRST50:  50,
-    SAVE10:   10
-};
 
 export async function processPayment({ planId, amount }) {
     const { data } = await api.post('/payment', { planId, amount });

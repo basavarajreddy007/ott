@@ -24,7 +24,6 @@ export default function PaymentPage() {
 
     const initPlan = location.state?.plan || new URLSearchParams(location.search).get('plan') || 'standard';
     const [planId, setPlanId]         = useState(PLAN_IDS.includes(initPlan) ? initPlan : 'standard');
-    const [discount, setDiscount]     = useState(0);
     const [method, setMethod]         = useState('card');
     const [card, setCard]             = useState({ name: user?.username || '', number: '', expiry: '', cvv: '' });
     const [cardErrors, setCardErrors] = useState({});
@@ -36,12 +35,8 @@ export default function PaymentPage() {
     const [error, setError]           = useState('');
 
     const planPrice = (PLANS[planId] || PLANS.standard).price;
-    const total     = planPrice - discount;
 
-    const handlePlanChange = (id) => {
-        setPlanId(id);
-        setDiscount(0);
-    };
+    const handlePlanChange = (id) => setPlanId(id);
 
     const validate = () => {
         setCardErrors({}); setUpiError(''); setWalletError('');
@@ -61,7 +56,7 @@ export default function PaymentPage() {
         setError('');
         setLoading(true);
         try {
-            const result = await processPayment({ planId, amount: total });
+            const result = await processPayment({ planId, amount: planPrice });
             navigate('/payment-success', { state: { ...result, email } });
         } catch (err) {
             if (err.response?.status === 401) {
@@ -115,12 +110,12 @@ export default function PaymentPage() {
 
                         <button type="button" className="pay-btn pay-btn--primary pay-btn--full"
                             onClick={handlePay} disabled={loading}>
-                            {loading ? 'Processing…' : `Pay ₹${total}`}
+                            {loading ? 'Processing…' : `Pay ₹${planPrice}`}
                         </button>
                     </div>
 
                     <div className="pay-right">
-                        <OrderSummary planId={planId} onDiscountChange={setDiscount} />
+                        <OrderSummary planId={planId} />
                     </div>
                 </div>
             </div>

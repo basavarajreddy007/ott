@@ -95,7 +95,15 @@ export default function VideoPlayer() {
             <button className="back-button" onClick={() => navigate('/')}>← Back</button>
 
             <div className="video-wrapper">
-                <video controls autoPlay preload="metadata" className="styled-video" poster={video.thumbnailUrl}>
+                <video
+                    key={video.videoUrl}
+                    controls
+                    autoPlay
+                    preload="none"
+                    playsInline
+                    className="styled-video"
+                    poster={video.thumbnailUrl}
+                >
                     <source src={video.videoUrl} type="video/mp4" />
                 </video>
             </div>

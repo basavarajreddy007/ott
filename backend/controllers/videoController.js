@@ -53,7 +53,7 @@ exports.getVideos = asyncHandler(async (req, res) => {
     res.json({ success: true, count: videos.length, pagination, data: videos });
 });
 
-const PLAN_RANK = { Basic: 1, Standard: 2, Premium: 3 };
+const PLAN_RANK = { none: 1, Basic: 1, Standard: 2, Premium: 3 };
 
 exports.getVideo = asyncHandler(async (req, res) => {
     const video = await Video.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } }, { new: true }).lean();

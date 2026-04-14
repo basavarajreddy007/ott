@@ -34,19 +34,15 @@ export default function Register() {
         setLoading(true);
 
         try {
-            // Register user
             await api.post('/auth/register', { email: email.toLowerCase(), password });
 
-            // Auto-login after successful registration
             const res = await api.post('/auth/login', { email: email.toLowerCase(), password });
             const { token, user } = res.data;
 
-            // Save auth info
             localStorage.setItem('token', token);
             localStorage.setItem('email', email);
             if (user) localStorage.setItem('user', JSON.stringify(user));
 
-            // Update app state and go home
             dispatch(setUser({ email, token, user: user || null }));
             navigate('/');
         } catch (err) {

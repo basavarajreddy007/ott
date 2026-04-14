@@ -3,7 +3,6 @@ const axios = require('axios');
 async function callGemini(messages) {
     if (!process.env.GEMINI_KEY) throw new Error('No Gemini key');
 
-    // Convert messages array to Gemini format
     const contents = messages.map(m => ({
         role: m.role === 'assistant' ? 'model' : 'user',
         parts: [{ text: m.content }]

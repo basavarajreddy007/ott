@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route, Navigate, useSearchParams } from '
 import { useSelector } from 'react-redux';
 import api from './services/api';
 
+import SplashScreen from './components/SplashScreen';
 import Navbar from './components/Navbar';
 import HeroBanner from './components/HeroBanner';
 import MovieCard from './components/MovieCard';
@@ -101,25 +102,37 @@ function MoviesFeed() {
 }
 
 export default function App() {
+    const [showSplash, setShowSplash] = useState(() => {
+        return !sessionStorage.getItem('splashShown');
+    });
+
+    const handleSplashComplete = () => {
+        sessionStorage.setItem('splashShown', 'true');
+        setShowSplash(false);
+    };
+
     return (
-        <Router>
-            <Navbar />
-            <Routes>
-                <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-                <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
-                <Route path="/" element={<Guard><Home /></Guard>} />
-                <Route path="/movies" element={<Guard><MoviesFeed /></Guard>} />
-                <Route path="/search" element={<Guard><MoviesFeed /></Guard>} />
-                <Route path="/watch/:id" element={<Guard><VideoPlayer /></Guard>} />
-                <Route path="/upload" element={<Guard><Upload /></Guard>} />
-                <Route path="/ai-script" element={<Guard><AIScript /></Guard>} />
-                <Route path="/ai-analyze" element={<Guard><AIAnalyze /></Guard>} />
-                <Route path="/dashboard" element={<Guard><Dashboard /></Guard>} />
-                <Route path="/payment" element={<Guard><PaymentPage /></Guard>} />
-                <Route path="/payment-success" element={<Guard><PaymentSuccess /></Guard>} />
-                <Route path="/profile/:email" element={<Navigate to="/dashboard" replace />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-        </Router>
+        <>
+            {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
+            <Router>
+                <Navbar />
+                <Routes>
+                    <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+                    <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+                    <Route path="/" element={<Guard><Home /></Guard>} />
+                    <Route path="/movies" element={<Guard><MoviesFeed /></Guard>} />
+                    <Route path="/search" element={<Guard><MoviesFeed /></Guard>} />
+                    <Route path="/watch/:id" element={<Guard><VideoPlayer /></Guard>} />
+                    <Route path="/upload" element={<Guard><Upload /></Guard>} />
+                    <Route path="/ai-script" element={<Guard><AIScript /></Guard>} />
+                    <Route path="/ai-analyze" element={<Guard><AIAnalyze /></Guard>} />
+                    <Route path="/dashboard" element={<Guard><Dashboard /></Guard>} />
+                    <Route path="/payment" element={<Guard><PaymentPage /></Guard>} />
+                    <Route path="/payment-success" element={<Guard><PaymentSuccess /></Guard>} />
+                    <Route path="/profile/:email" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+            </Router>
+        </>
     );
 }
