@@ -45,8 +45,9 @@ const authSlice = createSlice({
             state.user = null;
         },
         updateUser: (state, action) => {
+            if (!action?.payload) return;
             state.user = { ...state.user, ...action.payload };
-            if (action.payload.plan) state.plan = action.payload.plan;
+            if (action.payload.plan) state.user.plan = action.payload.plan;
         }
     }
 });

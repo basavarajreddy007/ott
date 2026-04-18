@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
@@ -10,6 +11,7 @@ const app = express();
 
 app.use(express.json({ limit: '500mb' }));
 app.use(express.urlencoded({ limit: '500mb', extended: true }));
+
 const ALLOWED_ORIGINS = (process.env.CLIENT_URL || '')
   .split(',')
   .map(o => o.trim())
@@ -31,7 +33,13 @@ app.use('/videos', require('./routes/videoRoutes'));
 app.use('/ai', require('./routes/aiRoutes'));
 app.use('/payment', require('./routes/paymentRoutes'));
 
-app.use((err, req, res, next) => {
+app.use(express.static(path.join(__dirname, 'dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+app.use((err, req, res) => {
   const status = err.statusCode || (err.name === 'CastError' ? 400 : 500);
   res.status(status).json({ success: false, error: err.message || 'Server Error' });
 });
