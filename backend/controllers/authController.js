@@ -2,6 +2,8 @@ const User = require('../models/User');
 const asyncHandler = require('../utils/asyncHandler');
 const { sendOtpEmail } = require('../services/emailService');
 
+const genUsername = email => email.split('@')[0] + '_' + Math.floor(Math.random() * 10000);
+
 function sendTokenResponse(user, statusCode, res) {
     res.status(statusCode).json({
         success: true,
@@ -20,39 +22,29 @@ function sendTokenResponse(user, statusCode, res) {
 
 exports.register = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    if (await User.findOne({ email })) {
         return res.status(400).json({ success: false, error: 'User already exists' });
     }
-    const username = email.split('@')[0] + '_' + Math.floor(Math.random() * 10000);
-    const user = await User.create({ email, password, username });
+    const user = await User.create({ email, password, username: genUsername(email) });
     sendTokenResponse(user, 201, res);
 });
 
 exports.sendOtp = asyncHandler(async (req, res) => {
     const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).json({ success: false, error: 'Please provide an email' });
-    }
+    if (!email) return res.status(400).json({ success: false, error: 'Please provide an email' });
 
     let user = await User.findOne({ email });
-
     if (!user) {
-        const tempPassword = Math.random().toString(36).slice(-10);
-        const tempUsername = email.split('@')[0] + '_' + Math.floor(Math.random() * 10000);
-        user = await User.create({ email, password: tempPassword, username: tempUsername });
+        user = await User.create({ email, password: Math.random().toString(36).slice(-10), username: genUsername(email) });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    user.otp = otp;
+    user.otp = Math.floor(100000 + Math.random() * 900000).toString();
     user.otpExpire = Date.now() + 10 * 60 * 1000;
     await user.save({ validateBeforeSave: false });
 
     try {
-        await sendOtpEmail(user.email, otp);
+        await sendOtpEmail(user.email, user.otp);
     } catch (err) {
-        console.error('Email send failed:', err.message);
         return res.status(500).json({ success: false, error: `Email error: ${err.message}` });
     }
 
@@ -61,20 +53,10 @@ exports.sendOtp = asyncHandler(async (req, res) => {
 
 exports.verifyOtp = asyncHandler(async (req, res) => {
     const { email, otp } = req.body;
+    if (!email || !otp) return res.status(400).json({ success: false, error: 'Email and OTP required' });
 
-    if (!email || !otp) {
-        return res.status(400).json({ success: false, error: 'Email and OTP required' });
-    }
-
-    const user = await User.findOne({
-        email,
-        otp,
-        otpExpire: { $gt: Date.now() }
-    });
-
-    if (!user) {
-        return res.status(401).json({ success: false, error: 'Invalid or expired OTP' });
-    }
+    const user = await User.findOne({ email, otp, otpExpire: { $gt: Date.now() } });
+    if (!user) return res.status(401).json({ success: false, error: 'Invalid or expired OTP' });
 
     user.otp = undefined;
     user.otpExpire = undefined;
@@ -85,13 +67,9 @@ exports.verifyOtp = asyncHandler(async (req, res) => {
 
 exports.login = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-        return res.status(400).json({ success: false, error: 'Please provide an email and password' });
-    }
+    if (!email || !password) return res.status(400).json({ success: false, error: 'Please provide an email and password' });
 
     const user = await User.findOne({ email }).select('+password');
-
     if (!user || !(await user.matchPassword(password))) {
         return res.status(401).json({ success: false, error: 'Invalid credentials' });
     }

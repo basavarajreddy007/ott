@@ -3,10 +3,8 @@ import { generateScript, analyzeScript } from '../services/aiService';
 import AnalysisReport from './AnalysisReport';
 import '../css/aiscript.css';
 
-const isAnalyze = mode => mode === 'analyze';
-
 export default function AITool({ mode = 'script' }) {
-    const analyze = isAnalyze(mode);
+    const analyze = mode === 'analyze';
 
     const [input, setInput] = useState('');
     const [result, setResult] = useState(null);

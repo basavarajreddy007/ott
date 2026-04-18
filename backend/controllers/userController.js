@@ -1,20 +1,16 @@
 const User = require('../models/User');
 const asyncHandler = require('../utils/asyncHandler');
 
+const SAFE_FIELDS = '-password -otp -otpExpire';
+
 exports.getUsers = asyncHandler(async (req, res) => {
     const users = await User.find().lean();
     res.json({ success: true, count: users.length, data: users });
 });
 
 exports.getUserByEmail = asyncHandler(async (req, res) => {
-    const user = await User.findOne({ email: req.params.email })
-        .select('-password -otp -otpExpire')
-        .lean();
-
-    if (!user) {
-        return res.status(404).json({ success: false, error: 'User not found' });
-    }
-
+    const user = await User.findOne({ email: req.params.email }).select(SAFE_FIELDS).lean();
+    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
     res.json({ success: true, data: user });
 });
 
@@ -24,21 +20,13 @@ exports.updateUserByEmail = asyncHandler(async (req, res) => {
     }
 
     const { username, bio, avatar } = req.body;
+    const fields = {};
+    if (username !== undefined) fields.username = username;
+    if (bio !== undefined) fields.bio = bio;
+    if (avatar !== undefined) fields.avatar = avatar;
 
-    const fieldsToUpdate = {};
-    if (username !== undefined) fieldsToUpdate.username = username;
-    if (bio !== undefined) fieldsToUpdate.bio = bio;
-    if (avatar !== undefined) fieldsToUpdate.avatar = avatar;
-
-    const user = await User.findOneAndUpdate(
-        { email: req.params.email },
-        fieldsToUpdate,
-        { new: true, runValidators: true }
-    ).select('-password -otp -otpExpire');
-
-    if (!user) {
-        return res.status(404).json({ success: false, error: 'User not found' });
-    }
+    const user = await User.findOneAndUpdate({ email: req.params.email }, fields, { new: true, runValidators: true }).select(SAFE_FIELDS);
+    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
 
     res.json({ success: true, data: user });
 });
