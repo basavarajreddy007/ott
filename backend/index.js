@@ -26,7 +26,7 @@ app.use('/ai',      require('./routes/aiRoutes'));
 app.use('/payment', require('./routes/paymentRoutes'));
 
 app.use(express.static(path.join(__dirname, 'dist')));
-app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'dist', 'index.html')));
+app.get('*splat', (_req, res) => res.sendFile(path.join(__dirname, 'dist', 'index.html')));
 
 app.use((err, _req, res, _next) => {
     const status = err.statusCode || (err.name === 'CastError' ? 400 : 500);

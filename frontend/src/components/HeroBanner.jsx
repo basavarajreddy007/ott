@@ -80,17 +80,18 @@ export default function HeroBanner({ movies }) {
 
                 <div className="hero-actions">
                     <button className="hero-btn hero-btn--primary" onClick={() => navigate(`/watch/${movie._id}`)}>
-                        <svg className="hero-btn__icon" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M8 5v14l11-7z" />
-                        </svg>
-                        Watch Now
+                        <span className="hero-btn__inner">
+                            <svg className="hero-btn__icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                            Play Now
+                        </span>
                     </button>
                     <button className="hero-btn hero-btn--secondary" onClick={() => navigate('/movies')}>
                         <svg className="hero-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
-                            <rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+                            <circle cx="12" cy="12" r="10" /><path d="M12 8v4m0 4h.01" />
                         </svg>
-                        Browse All
+                        More Info
                     </button>
                 </div>
             </div>

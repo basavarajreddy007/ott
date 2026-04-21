@@ -35,8 +35,8 @@
     background: linear-gradient(
         180deg,
         var(--red),
-        var(--cyan),
-        var(--magenta),
+        var(--red),
+        var(--gold),
         transparent
     );
     opacity: 0.5;
@@ -70,8 +70,8 @@
     background: conic-gradient(
         from 0deg,
         var(--red),
-        var(--cyan),
-        var(--magenta),
+        var(--red),
+        var(--gold),
         var(--red)
     );
     opacity: 0;
@@ -84,8 +84,8 @@
     border-color: transparent;
     transform: scale(1.1) rotate(5deg);
     box-shadow: 
-        0 0 20px rgba(0,240,255,0.5),
-        0 0 40px rgba(0,240,255,0.3);
+        0 0 20px rgba(239,35,60,0.5),
+        0 0 40px rgba(239,35,60,0.3);
 }
 
 .db-sidebar__avatar:hover::before { opacity: 1; }
@@ -101,7 +101,7 @@
 }
 
 .db-sidebar__profile:hover .db-sidebar__name {
-    color: var(--cyan);
+    color: var(--red);
 }
 
 .db-sidebar__email { 
@@ -143,7 +143,7 @@
     height: 100%;
     background: radial-gradient(
         circle at left center,
-        rgba(0,240,255,0.1),
+        rgba(239,35,60,0.1),
         transparent
     );
     opacity: 0;
@@ -165,7 +165,7 @@
     font-weight: 600;
     box-shadow: 
         var(--sh-inner),
-        0 0 0 1px rgba(0,240,255,0.1);
+        0 0 0 1px rgba(239,35,60,0.1);
 }
 
 .db-nav-item.active::before {
@@ -176,11 +176,11 @@
     transform: translateY(-50%);
     width: 4px; 
     height: 65%;
-    background: linear-gradient(180deg, var(--cyan), var(--blue));
+    background: linear-gradient(180deg, var(--red), var(--gold));
     border-radius: 0 4px 4px 0;
     box-shadow: 
-        0 0 15px var(--cyan-glow),
-        0 0 30px rgba(0,240,255,0.3);
+        0 0 15px var(--red-glow),
+        0 0 30px rgba(239,35,60,0.3);
     animation: neonPulse 2s ease-in-out infinite;
 }
 
@@ -232,7 +232,7 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, var(--cyan), var(--blue));
+    background: linear-gradient(90deg, var(--red), var(--gold));
     opacity: 0;
     transition: opacity var(--t-base) ease;
 }
@@ -259,7 +259,7 @@
 }
 
 .db-stat-card:hover .db-stat-card__val {
-    color: var(--cyan);
+    color: var(--red);
 }
 
 .db-stat-card__label { 
@@ -291,7 +291,7 @@
     font-weight: 900; 
     color: var(--text-1); 
     letter-spacing: -0.8px;
-    background: linear-gradient(135deg, var(--text-1), var(--cyan));
+    background: linear-gradient(135deg, var(--text-1), var(--red));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -318,10 +318,10 @@
 }
 
 .db-search-bar:focus-within {
-    border-color: var(--cyan);
+    border-color: var(--red);
     box-shadow: 
-        0 0 0 4px rgba(0,240,255,0.12),
-        0 0 20px rgba(0,240,255,0.2);
+        0 0 0 4px rgba(239,35,60,0.12),
+        0 0 20px rgba(239,35,60,0.2);
     background: var(--glass-2);
     transform: translateY(-2px);
 }
@@ -401,7 +401,7 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, var(--red), var(--cyan), var(--magenta));
+    background: linear-gradient(90deg, var(--red), var(--red), var(--gold));
     opacity: 0;
     transition: opacity var(--t-base) ease;
 }
@@ -411,7 +411,7 @@
     background: var(--glass-2); 
     box-shadow: 
         var(--sh-md),
-        0 0 30px rgba(0,240,255,0.08);
+        0 0 30px rgba(239,35,60,0.08);
     transform: translateX(6px);
 }
 
@@ -479,7 +479,7 @@
 }
 
 .db-video-row:hover .db-video-title {
-    color: var(--cyan);
+    color: var(--red);
 }
 
 .db-video-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
@@ -533,7 +533,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at center, rgba(0,240,255,0.08), transparent);
+    background: radial-gradient(circle at center, rgba(239,35,60,0.08), transparent);
     opacity: 0;
     transition: opacity var(--t-base) ease;
 }
@@ -554,7 +554,7 @@
 .db-action-btn--edit:hover { 
     background: var(--glass-3); 
     border-color: var(--border-hover);
-    color: var(--cyan);
+    color: var(--red);
 }
 
 .db-action-btn--delete { 
@@ -592,7 +592,7 @@
     inset: 0;
     background: radial-gradient(
         circle at center,
-        rgba(0,240,255,0.05),
+        rgba(239,35,60,0.05),
         transparent
     );
 }
@@ -636,8 +636,8 @@
     background: linear-gradient(
         90deg,
         var(--red),
-        var(--cyan),
-        var(--magenta),
+        var(--red),
+        var(--gold),
         transparent
     );
     animation: shimmer 4s linear infinite;
@@ -648,7 +648,7 @@
     border-color: var(--border-2);
     box-shadow: 
         var(--sh-md),
-        0 0 40px rgba(0,240,255,0.08);
+        0 0 40px rgba(239,35,60,0.08);
     transform: translateY(-3px);
 }
 
@@ -663,8 +663,8 @@
 }
 
 .db-profile-card:hover .db-profile-card__avatar {
-    border-color: var(--cyan);
-    box-shadow: 0 0 20px rgba(0,240,255,0.4);
+    border-color: var(--red);
+    box-shadow: 0 0 20px rgba(239,35,60,0.4);
 }
 
 .db-profile-card__name { 
@@ -711,7 +711,7 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, var(--cyan), var(--blue));
+    background: linear-gradient(90deg, var(--red), var(--gold));
     opacity: 0;
     transition: opacity var(--t-base) ease;
 }
@@ -734,8 +734,8 @@
 }
 
 .db-profile-stat:hover .db-profile-stat__val {
-    color: var(--cyan);
-    text-shadow: 0 0 20px var(--cyan-glow);
+    color: var(--red);
+    text-shadow: 0 0 20px var(--red-glow);
 }
 
 .db-profile-stat__label { 
@@ -764,13 +764,13 @@
     width: 44px; 
     height: 44px;
     border: 3px solid rgba(255,255,255,0.05);
-    border-top-color: var(--cyan);
+    border-top-color: var(--red);
     border-right-color: var(--red);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     box-shadow: 
-        0 0 20px rgba(0,240,255,0.3),
-        0 0 40px rgba(0,240,255,0.1);
+        0 0 20px rgba(239,35,60,0.3),
+        0 0 40px rgba(239,35,60,0.1);
 }
 
 
@@ -813,8 +813,8 @@
     background: linear-gradient(
         90deg,
         var(--red),
-        var(--cyan),
-        var(--magenta),
+        var(--red),
+        var(--gold),
         transparent
     );
     animation: shimmer 3s linear infinite;
@@ -853,7 +853,7 @@
     color: var(--text-1); 
     margin-bottom: 24px;
     letter-spacing: -0.5px;
-    background: linear-gradient(135deg, var(--text-1), var(--cyan));
+    background: linear-gradient(135deg, var(--text-1), var(--red));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

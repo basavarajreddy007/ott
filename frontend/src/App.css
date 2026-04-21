@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500&display=swap");
+
 ﻿.home-container {
     padding: 48px 56px 120px;
     max-width: 1800px;
@@ -20,13 +22,12 @@
 
 .section-title::before {
     content: '';
-    width: 4px; 
-    height: 18px;
-    background: linear-gradient(180deg, var(--red), var(--magenta));
+    width: 3px;
+    height: 16px;
+    background: linear-gradient(180deg, var(--red), var(--gold));
     border-radius: 4px;
-    box-shadow: 0 0 15px var(--red-glow);
+    box-shadow: 0 0 10px var(--red-glow);
     flex-shrink: 0;
-    animation: neonPulse 2s ease-in-out infinite;
 }
 
 .section-title::after {
@@ -87,3 +88,30 @@
     .movie-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
     .section-title { font-size: 0.72rem; }
 }
+
+/* Content rows — horizontal scroll */
+.content-section {
+    margin-bottom: 48px;
+}
+
+.content-row {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.content-row::-webkit-scrollbar { display: none; }
+
+.content-row .movie-card {
+    flex: 0 0 160px;
+    width: 160px;
+}
+
+/* Section accent variants */
+.section-title--red::before  { background: linear-gradient(180deg, var(--red), #ff6b7a); }
+.section-title--gold::before { background: linear-gradient(180deg, var(--gold), var(--gold-2)); box-shadow: 0 0 10px var(--gold-glow); }
+.section-title--saffron::before { background: linear-gradient(180deg, var(--saffron), #fbbf24); box-shadow: 0 0 10px var(--saffron-glow); }
+.section-title--emerald::before { background: linear-gradient(180deg, var(--emerald), #34d399); box-shadow: 0 0 10px var(--emerald-glow); }
