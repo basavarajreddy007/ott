@@ -36,6 +36,7 @@ function MoviesFeed({ showHero = false }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // eslint-disable-next-line
         setLoading(true);
         const url = query ? `/videos/search?q=${encodeURIComponent(query)}` : '/videos';
         api.get(url)
@@ -50,7 +51,6 @@ function MoviesFeed({ showHero = false }) {
         ? (query ? `Searching "${query}"...` : 'Loading...')
         : (query ? `Results for "${query}" (${movies.length})` : 'All Movies');
 
-    // Split movies into sections for the home view
     const trending = movies.slice(0, 8);
     const topPicks = movies.slice(8, 16);
     const recentlyAdded = [...movies].reverse().slice(0, 8);
@@ -119,24 +119,28 @@ export default function App() {
 
     return (
         <>
-            {showSplash && <SplashScreen onComplete={() => { sessionStorage.setItem('splashShown', 'true'); setShowSplash(false); }} />}
+            {showSplash && (
+                <SplashScreen onComplete={() => {
+                    sessionStorage.setItem('splashShown', 'true');
+                    setShowSplash(false);
+                }} />
+            )}
             <Router>
                 <Navbar />
                 <Routes>
-                    <Route path="/login"           element={<PublicRoute><Login /></PublicRoute>} />
-                    <Route path="/register"         element={<PublicRoute><Register /></PublicRoute>} />
-                    <Route path="/"                 element={<Guard><MoviesFeed showHero /></Guard>} />
-                    <Route path="/movies"           element={<Guard><MoviesFeed /></Guard>} />
-                    <Route path="/search"           element={<Guard><MoviesFeed /></Guard>} />
-                    <Route path="/watch/:id"        element={<Guard><VideoPlayer /></Guard>} />
-                    <Route path="/upload"           element={<Guard><Upload /></Guard>} />
-                    <Route path="/ai-script"        element={<Guard><AIScript /></Guard>} />
-                    <Route path="/ai-analyze"       element={<Guard><AIAnalyze /></Guard>} />
-                    <Route path="/dashboard"        element={<Guard><Dashboard /></Guard>} />
-                    <Route path="/payment"          element={<Guard><PaymentPage /></Guard>} />
-                    <Route path="/payment-success"  element={<Guard><PaymentSuccess /></Guard>} />
-                    <Route path="/profile/:email"   element={<Navigate to="/dashboard" replace />} />
-                    <Route path="*"                 element={<Navigate to="/" replace />} />
+                    <Route path="/login"          element={<PublicRoute><Login /></PublicRoute>} />
+                    <Route path="/register"        element={<PublicRoute><Register /></PublicRoute>} />
+                    <Route path="/"                element={<Guard><MoviesFeed showHero /></Guard>} />
+                    <Route path="/movies"          element={<Guard><MoviesFeed /></Guard>} />
+                    <Route path="/search"          element={<Guard><MoviesFeed /></Guard>} />
+                    <Route path="/watch/:id"       element={<Guard><VideoPlayer /></Guard>} />
+                    <Route path="/upload"          element={<Guard><Upload /></Guard>} />
+                    <Route path="/ai-script"       element={<Guard><AIScript /></Guard>} />
+                    <Route path="/ai-analyze"      element={<Guard><AIAnalyze /></Guard>} />
+                    <Route path="/dashboard"       element={<Guard><Dashboard /></Guard>} />
+                    <Route path="/payment"         element={<Guard><PaymentPage /></Guard>} />
+                    <Route path="/payment-success" element={<Guard><PaymentSuccess /></Guard>} />
+                    <Route path="*"                element={<Navigate to="/" replace />} />
                 </Routes>
             </Router>
         </>

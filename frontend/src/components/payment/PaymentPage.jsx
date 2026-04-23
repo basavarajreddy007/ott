@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PaymentMethods from './PaymentMethods';
@@ -20,7 +20,7 @@ const PLAN_IDS = ['basic', 'standard', 'premium'];
 export default function PaymentPage() {
     const navigate        = useNavigate();
     const location        = useLocation();
-    const { email, user } = useSelector(s => s.auth);
+    const { email, user, token } = useSelector(s => s.auth);
 
     const initPlan = location.state?.plan || new URLSearchParams(location.search).get('plan') || 'standard';
     const [planId, setPlanId]         = useState(PLAN_IDS.includes(initPlan) ? initPlan : 'standard');
@@ -34,6 +34,13 @@ export default function PaymentPage() {
     const [loading, setLoading]       = useState(false);
     const [error, setError]           = useState('');
 
+    // Redirect to login if not authenticated
+    useEffect(() => {
+        if (!token) {
+            navigate('/login', { replace: true, state: { from: '/payment', plan: planId } });
+        }
+    }, [token, navigate, planId]);
+
     const planPrice = (PLANS[planId] || PLANS.standard).price;
 
     const handlePlanChange = (id) => setPlanId(id);
@@ -44,7 +51,7 @@ export default function PaymentPage() {
             const e = validateCard(card);
             if (Object.keys(e).length) { setCardErrors(e); return false; }
         }
-        if (method === 'upi' && !/^[\w.\-]+@[\w]+$/.test(upi.trim())) {
+        if (method === 'upi' && !/^[\w.-]+@[\w]+$/.test(upi.trim())) {
             setUpiError('Enter a valid UPI ID'); return false;
         }
         if (method === 'wallet' && !wallet) { setWalletError('Select a wallet'); return false; }

@@ -7,8 +7,8 @@ const transporter = nodemailer.createTransport({
 
 exports.sendOtpEmail = (to, otp) =>
     transporter.sendMail({
-        from: `"Neostream" <${process.env.EMAIL_USER}>`,
+        from: `"Streamer" <${process.env.EMAIL_USER}>`,
         to,
-        subject: 'Neostream Login Code',
-        html: `<h3>Welcome to Neostream</h3><p>Your one-time login code is: <strong>${otp}</strong></p><p>It will expire in 10 minutes.</p>`
+        subject: 'Your Login Code',
+        html: `<p>Your one-time login code is: <strong>${otp}</strong></p><p>Expires in 10 minutes.</p>`
     });

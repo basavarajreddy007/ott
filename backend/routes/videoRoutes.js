@@ -14,7 +14,7 @@ const {
   deleteComment,
   subscribeToCreator
 } = require('../controllers/videoController');
-const { protect } = require('../middlewares/authMiddleware');
+const { protect, optionalProtect } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 const upload = multer({
@@ -29,7 +29,7 @@ router.post('/subscribe/:creatorId', protect, subscribeToCreator);
 router.get('/', getVideos);
 router.post('/', protect, upload.fields([{ name: 'video', maxCount: 1 }, { name: 'thumbnail', maxCount: 1 }]), createVideo);
 
-router.get('/:id', protect, getVideo);
+router.get('/:id', optionalProtect, getVideo);
 router.put('/:id', protect, updateVideo);
 router.delete('/:id', protect, deleteVideo);
 

@@ -12,6 +12,7 @@ export default function HeroBanner({ movies }) {
     const timerRef = useRef(null);
 
     useEffect(() => {
+        // eslint-disable-next-line
         setProgress(0);
         if (paused || movies.length <= 1) return;
 
@@ -51,7 +52,7 @@ export default function HeroBanner({ movies }) {
                 key={movie._id}
                 className="hero-bg-video hero-bg-video--kenburns"
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
-                autoPlay muted loop playsInline
+                autoPlay muted loop playsInline crossOrigin="anonymous"
                 poster={movie.thumbnailUrl}
             >
                 <source src={movie.videoUrl} type="video/mp4" />

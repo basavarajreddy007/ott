@@ -5,23 +5,14 @@ const jwt = require('jsonwebtoken');
 const UserSchema = new mongoose.Schema({
     email: {
         type: String,
-        required: [true, 'Please add an email'],
+        required: true,
         unique: true,
-        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please add a valid email']
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Invalid email']
     },
-    password: {
-        type: String,
-        required: [true, 'Please add a password'],
-        minlength: 6,
-        select: false
-    },
-    role: {
-        type: String,
-        enum: ['user', 'admin'],
-        default: 'user'
-    },
-    otp: { type: String },
-    otpExpire: { type: Date },
+    password: { type: String, required: true, minlength: 6, select: false },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    otp: String,
+    otpExpire: Date,
     username: { type: String, trim: true, default: '' },
     avatar: { type: String, default: '' },
     bio: { type: String, default: '', maxlength: 300 },
@@ -43,8 +34,8 @@ UserSchema.methods.getSignedJwtToken = function () {
     });
 };
 
-UserSchema.methods.matchPassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password);
+UserSchema.methods.matchPassword = function (entered) {
+    return bcrypt.compare(entered, this.password);
 };
 
 module.exports = mongoose.model('User', UserSchema);

@@ -6,38 +6,25 @@ const CY = SIZE / 2;
 const R = 80;
 const LEVELS = 4;
 
-const SCORE_LABELS = {
+// eslint-disable-next-line react-refresh/only-export-components
+export const SCORE_LABELS = {
     tone: 'Tone & Genre',
     characters: 'Characters',
     dialogue: 'Dialogue',
     pacing: 'Pacing',
-    structure: 'Plot Structure',
+    structure: 'Plot Structure'
 };
 
 const KEYS = Object.keys(SCORE_LABELS);
-const ANGLE_STEP = (2 * Math.PI) / KEYS.length;
+const STEP = (2 * Math.PI) / KEYS.length;
 
-function angle(i) {
-    return -Math.PI / 2 + i * ANGLE_STEP;
-}
-
-function point(i, radius) {
-    return {
-        x: CX + radius * Math.cos(angle(i)),
-        y: CY + radius * Math.sin(angle(i)),
-    };
-}
-
-function toPoints(pts) {
-    return pts.map(p => `${p.x},${p.y}`).join(' ');
-}
+const angle = i => -Math.PI / 2 + i * STEP;
+const point = (i, r) => ({ x: CX + r * Math.cos(angle(i)), y: CY + r * Math.sin(angle(i)) });
+const toPoints = pts => pts.map(p => `${p.x},${p.y}`).join(' ');
 
 const RadarChart = memo(function RadarChart({ scores }) {
     const gridPolygons = useMemo(() =>
-        Array.from({ length: LEVELS }, (_, l) => {
-            const frac = (l + 1) / LEVELS;
-            return toPoints(KEYS.map((_, i) => point(i, R * frac)));
-        }),
+        Array.from({ length: LEVELS }, (_, l) => toPoints(KEYS.map((_, i) => point(i, R * (l + 1) / LEVELS)))),
     []);
 
     const { dataPoints, dataPolygon } = useMemo(() => {
@@ -71,5 +58,4 @@ const RadarChart = memo(function RadarChart({ scores }) {
     );
 });
 
-export { SCORE_LABELS };
 export default RadarChart;

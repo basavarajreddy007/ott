@@ -6,9 +6,6 @@ import api from '../services/api';
 import '../css/login.css';
 
 function saveSession(dispatch, email, token, user) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('email', email);
-    if (user) localStorage.setItem('user', JSON.stringify(user));
     dispatch(setUser({ email, token, user: user || null }));
 }
 
@@ -16,12 +13,12 @@ export default function Login() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const [step, setStep]       = useState(1);
-    const [email, setEmail]     = useState('');
-    const [otp, setOtp]         = useState('');
+    const [step, setStep] = useState(1);
+    const [email, setEmail] = useState('');
+    const [otp, setOtp] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError]     = useState('');
-    const [timer, setTimer]     = useState(0);
+    const [error, setError] = useState('');
+    const [timer, setTimer] = useState(0);
 
     useEffect(() => {
         if (timer <= 0) return;
@@ -29,7 +26,7 @@ export default function Login() {
         return () => clearInterval(id);
     }, [timer]);
 
-    const sendOtp = async (e) => {
+    const sendOtp = async e => {
         e?.preventDefault();
         setError('');
         setLoading(true);
@@ -45,7 +42,7 @@ export default function Login() {
         }
     };
 
-    const verifyOtp = async (e) => {
+    const verifyOtp = async e => {
         e.preventDefault();
         setError('');
         setLoading(true);

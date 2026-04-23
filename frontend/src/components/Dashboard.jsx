@@ -86,7 +86,6 @@ export default function Dashboard() {
             const updated = await updateUser(email, form);
             setUser(u => ({ ...u, ...updated }));
             dispatch(updateUserStore(updated));
-            localStorage.setItem('user', JSON.stringify(updated));
             close();
         } catch (err) {
             setError(err.response?.data?.error || 'Update failed');

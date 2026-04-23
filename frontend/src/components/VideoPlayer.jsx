@@ -25,7 +25,8 @@ export default function VideoPlayer() {
                 setLikes(v.likes || 0);
                 setComments(v.comments || []);
                 if (currentUser) {
-                    setLiked(v.likedBy?.some(uid => uid === currentUser._id || uid?._id === currentUser._id));
+                    const uid = currentUser._id?.toString();
+                    setLiked(v.likedBy?.some(id => id?.toString() === uid));
                 }
                 setStatus('ok');
             })
@@ -37,7 +38,7 @@ export default function VideoPlayer() {
                     setStatus('error');
                 }
             });
-    }, [id]);
+    }, [id, currentUser]);
 
     async function handleLike() {
         if (!currentUser) return alert('Please log in to like videos');
@@ -72,6 +73,7 @@ export default function VideoPlayer() {
     );
 
     if (status === 'loading') return <div className="video-player-container"><p>Loading…</p></div>;
+
     if (status === 'locked') return (
         <div className="video-player-container">
             <button className="back-button" onClick={() => navigate('/')}>← Back</button>
@@ -83,6 +85,7 @@ export default function VideoPlayer() {
             </div>
         </div>
     );
+
     if (status === 'error') return (
         <div className="video-player-container">
             <p>Failed to load video.</p>
@@ -95,15 +98,7 @@ export default function VideoPlayer() {
             <button className="back-button" onClick={() => navigate('/')}>← Back</button>
 
             <div className="video-wrapper">
-                <video
-                    key={video.videoUrl}
-                    controls
-                    autoPlay
-                    preload="none"
-                    playsInline
-                    className="styled-video"
-                    poster={video.thumbnailUrl}
-                >
+                <video key={video.videoUrl} controls autoPlay preload="metadata" playsInline crossOrigin="anonymous" className="styled-video" poster={video.thumbnailUrl}>
                     <source src={video.videoUrl} type="video/mp4" />
                 </video>
             </div>
@@ -124,18 +119,14 @@ export default function VideoPlayer() {
             </div>
 
             <div className="comments-section">
-                <h2 className="comments-title">Comments <span className="comments-title__count">{comments.length}</span></h2>
+                <h2 className="comments-title">
+                    Comments <span className="comments-title__count">{comments.length}</span>
+                </h2>
 
                 {currentUser && (
                     <form className="comment-form" onSubmit={handleComment}>
-                        <input
-                            type="text"
-                            className="comment-input"
-                            placeholder="Add a comment…"
-                            value={commentText}
-                            onChange={e => setCommentText(e.target.value)}
-                            maxLength={500}
-                        />
+                        <input type="text" className="comment-input" placeholder="Add a comment…"
+                            value={commentText} onChange={e => setCommentText(e.target.value)} maxLength={500} />
                         <button type="submit" className="comment-submit" disabled={submitting || !commentText.trim()}>
                             {submitting ? 'Posting…' : 'Post'}
                         </button>

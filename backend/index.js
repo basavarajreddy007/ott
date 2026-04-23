@@ -12,10 +12,10 @@ const app = express();
 app.use(express.json({ limit: '500mb' }));
 app.use(express.urlencoded({ limit: '500mb', extended: true }));
 
-const ALLOWED = (process.env.CLIENT_URL || '').split(',').map(o => o.trim()).filter(Boolean);
+const allowed = (process.env.CLIENT_URL || '').split(',').map(s => s.trim()).filter(Boolean);
 
 app.use(cors({
-    origin: (origin, cb) => (!origin || !ALLOWED.length || ALLOWED.includes(origin)) ? cb(null, true) : cb(null, false),
+    origin: (origin, cb) => (!origin || !allowed.length || allowed.includes(origin)) ? cb(null, true) : cb(null, false),
     credentials: true
 }));
 

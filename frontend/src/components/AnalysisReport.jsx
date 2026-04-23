@@ -26,13 +26,8 @@ const AnalysisReport = memo(function AnalysisReport({ analysis, onCopy, copied }
                     <div className="an-overall">
                         <svg viewBox="0 0 120 120" className="an-dial">
                             <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="10" />
-                            <circle
-                                cx="60" cy="60" r="50"
-                                fill="none"
-                                stroke={color}
-                                strokeWidth="10"
-                                strokeLinecap="round"
-                                strokeDasharray={CIRCUMFERENCE}
+                            <circle cx="60" cy="60" r="50" fill="none" stroke={color} strokeWidth="10"
+                                strokeLinecap="round" strokeDasharray={CIRCUMFERENCE}
                                 strokeDashoffset={CIRCUMFERENCE * (1 - overall / 100)}
                                 transform="rotate(-90 60 60)"
                                 style={{ transition: 'stroke-dashoffset 1s ease' }}
@@ -46,7 +41,6 @@ const AnalysisReport = memo(function AnalysisReport({ analysis, onCopy, copied }
                         </svg>
                         <p className="an-overall-label">Overall Score</p>
                     </div>
-
                     <RadarChart scores={scores} />
                 </div>
 
@@ -64,20 +58,12 @@ const AnalysisReport = memo(function AnalysisReport({ analysis, onCopy, copied }
 
                 <div className="an-lists">
                     <div className="an-list an-list--strengths">
-                        <h4 className="an-list-title">
-                            <span className="an-list-icon">✓</span> Strengths
-                        </h4>
-                        <ul>
-                            {(analysis.strengths ?? []).map((s, i) => <li key={i}>{s}</li>)}
-                        </ul>
+                        <h4 className="an-list-title"><span className="an-list-icon">✓</span> Strengths</h4>
+                        <ul>{(analysis.strengths ?? []).map((s, i) => <li key={i}>{s}</li>)}</ul>
                     </div>
                     <div className="an-list an-list--improvements">
-                        <h4 className="an-list-title">
-                            <span className="an-list-icon">↑</span> Improvements
-                        </h4>
-                        <ul>
-                            {(analysis.improvements ?? []).map((s, i) => <li key={i}>{s}</li>)}
-                        </ul>
+                        <h4 className="an-list-title"><span className="an-list-icon">↑</span> Improvements</h4>
+                        <ul>{(analysis.improvements ?? []).map((s, i) => <li key={i}>{s}</li>)}</ul>
                     </div>
                 </div>
             </div>

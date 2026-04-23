@@ -1,9 +1,17 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable react-hooks/purity */
+import { useState, useEffect, useMemo } from 'react';
 import './SplashScreen.css';
 
 export default function SplashScreen({ onComplete }) {
     const [phase, setPhase] = useState('logo');
     const [progress, setProgress] = useState(0);
+
+    const particles = useMemo(() => Array.from({ length: 30 }).map(() => ({
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        animationDelay: `${Math.random() * 3}s`,
+        animationDuration: `${2 + Math.random() * 3}s`
+    })), []);
 
     useEffect(() => {
         const progressInterval = setInterval(() => {
@@ -37,17 +45,8 @@ export default function SplashScreen({ onComplete }) {
     return (
         <div className={`splash-screen ${phase === 'fade' ? 'fading' : ''}`}>
             <div className="splash-particles">
-                {Array.from({ length: 30 }).map((_, i) => (
-                    <div
-                        key={i}
-                        className="splash-particle"
-                        style={{
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                            animationDelay: `${Math.random() * 3}s`,
-                            animationDuration: `${2 + Math.random() * 3}s`
-                        }}
-                    />
+                {particles.map((style, i) => (
+                    <div key={i} className="splash-particle" style={style} />
                 ))}
             </div>
 

@@ -43,9 +43,7 @@ export default function AITool({ mode = 'script' }) {
     return (
         <div className="ai-page">
             <div className="ai-header">
-                <h2 className="ai-title">
-                    {analyze ? 'Script Analyser' : 'Script Writer'}
-                </h2>
+                <h2 className="ai-title">{analyze ? 'Script Analyser' : 'Script Writer'}</h2>
                 <p className="ai-subtitle">
                     {analyze
                         ? 'Paste your script or scene. Get a professional breakdown — scores, strengths, and actionable notes.'
@@ -58,17 +56,13 @@ export default function AITool({ mode = 'script' }) {
                     className="ai-textarea"
                     placeholder={analyze
                         ? `INT. COFFEE SHOP - DAY\n\nSARAH sits alone, staring at her phone...\n\nPaste your script or scene here.`
-                        : "A detective wakes up with no memory in a city that doesn't exist..."}
+                        : 'A detective wakes up with no memory in a city that doesn\'t exist...'}
                     value={input}
                     onChange={e => setInput(e.target.value)}
                 />
                 <div className="ai-editor-footer">
                     <span className="ai-char-count">{input.length} chars</span>
-                    <button
-                        className="ai-generate-btn"
-                        onClick={handleSubmit}
-                        disabled={loading || !input.trim()}
-                    >
+                    <button className="ai-generate-btn" onClick={handleSubmit} disabled={loading || !input.trim()}>
                         {loading ? (analyze ? 'Analysing...' : 'Generating...') : (analyze ? 'Analyse Script' : 'Generate Script')}
                     </button>
                 </div>
@@ -94,12 +88,8 @@ export default function AITool({ mode = 'script' }) {
             {result && !loading && result.type === 'text' && (
                 <div className="ai-result">
                     <div className="ai-result-header">
-                        <div className="ai-result-label">
-                            {analyze ? 'Analysis Report' : 'Result'}
-                        </div>
-                        <button className="ai-copy-btn" onClick={handleCopy}>
-                            {copied ? 'Copied!' : 'Copy'}
-                        </button>
+                        <div className="ai-result-label">{analyze ? 'Analysis Report' : 'Result'}</div>
+                        <button className="ai-copy-btn" onClick={handleCopy}>{copied ? 'Copied!' : 'Copy'}</button>
                     </div>
                     <div className="ai-result-body">{result.data}</div>
                 </div>

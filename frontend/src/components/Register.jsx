@@ -6,9 +6,6 @@ import api from '../services/api';
 import '../css/login.css';
 
 function saveSession(dispatch, email, token, user) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('email', email);
-    if (user) localStorage.setItem('user', JSON.stringify(user));
     dispatch(setUser({ email, token, user: user || null }));
 }
 
@@ -16,20 +13,20 @@ export default function Register() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const [form, setForm]       = useState({ email: '', password: '', confirmPassword: '' });
+    const [form, setForm] = useState({ email: '', password: '', confirmPassword: '' });
     const [loading, setLoading] = useState(false);
-    const [error, setError]     = useState('');
+    const [error, setError] = useState('');
 
     const handleChange = e => setForm(f => ({ ...f, [e.target.id]: e.target.value.trim() }));
 
-    const handleRegister = async (e) => {
+    const handleRegister = async e => {
         e.preventDefault();
         if (form.password !== form.confirmPassword) return setError('Passwords do not match');
+        if (form.password.length < 6) return setError('Password must be at least 6 characters');
         setError('');
         setLoading(true);
         try {
-            await api.post('/auth/register', { email: form.email.toLowerCase(), password: form.password });
-            const { data } = await api.post('/auth/login', { email: form.email.toLowerCase(), password: form.password });
+            const { data } = await api.post('/auth/register', { email: form.email.toLowerCase(), password: form.password });
             saveSession(dispatch, form.email, data.token, data.user);
             navigate('/');
         } catch (err) {

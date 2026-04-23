@@ -32,13 +32,20 @@ const authSlice = createSlice({
         setUser: (state, { payload }) => {
             state.email = payload.email;
             state.token = payload.token;
-            state.user  = payload.user || null;
+            state.user = payload.user || null;
+            localStorage.setItem('token', payload.token);
+            localStorage.setItem('email', payload.email);
+            if (payload.user) localStorage.setItem('user', JSON.stringify(payload.user));
         },
-        clearUser: (state) => {
+        clearUser: state => {
             state.email = state.token = state.user = null;
+            ['token', 'email', 'user'].forEach(k => localStorage.removeItem(k));
         },
         updateUser: (state, { payload }) => {
-            if (payload) state.user = { ...state.user, ...payload };
+            if (payload) {
+                state.user = { ...state.user, ...payload };
+                localStorage.setItem('user', JSON.stringify(state.user));
+            }
         }
     }
 });
@@ -47,7 +54,7 @@ const uiSlice = createSlice({
     name: 'ui',
     initialState: { theme: 'dark' },
     reducers: {
-        toggleTheme: (state) => { state.theme = state.theme === 'dark' ? 'light' : 'dark'; }
+        toggleTheme: state => { state.theme = state.theme === 'dark' ? 'light' : 'dark'; }
     }
 });
 

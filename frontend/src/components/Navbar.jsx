@@ -11,9 +11,7 @@ export default function Navbar() {
     const [search, setSearch] = useState('');
 
     function handleLogout() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('email');
-        localStorage.removeItem('user');
+        ['token', 'email', 'user'].forEach(k => localStorage.removeItem(k));
         dispatch(clearUser());
         navigate('/login');
     }

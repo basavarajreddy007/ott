@@ -1,6 +1,7 @@
 import { memo } from 'react';
 
-function scoreColor(val) {
+// eslint-disable-next-line react-refresh/only-export-components
+export function scoreColor(val) {
     if (val >= 80) return '#22c55e';
     if (val >= 60) return '#38bdf8';
     if (val >= 40) return '#f59e0b';
@@ -22,5 +23,4 @@ const ScoreBar = memo(function ScoreBar({ label, value }) {
     );
 });
 
-export { scoreColor };
 export default ScoreBar;

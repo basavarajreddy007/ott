@@ -1,5 +1,6 @@
-const asyncHandler = require('../utils/asyncHandler');
 const User = require('../models/User');
+
+const wrap = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
 const PLANS = {
     basic:    { name: 'Basic',    price: 149 },
@@ -7,17 +8,14 @@ const PLANS = {
     premium:  { name: 'Premium',  price: 999 }
 };
 
-exports.processPayment = asyncHandler(async (req, res) => {
+exports.processPayment = wrap(async (req, res) => {
     const { planId, amount } = req.body;
-
     if (!planId || !amount) {
         return res.status(400).json({ success: false, message: 'planId and amount are required' });
     }
 
     const plan = PLANS[planId];
-    if (!plan) {
-        return res.status(400).json({ success: false, message: 'Invalid plan' });
-    }
+    if (!plan) return res.status(400).json({ success: false, message: 'Invalid plan' });
 
     await User.findByIdAndUpdate(req.user._id, { plan: plan.name });
 

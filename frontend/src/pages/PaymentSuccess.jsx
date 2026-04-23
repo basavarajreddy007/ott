@@ -11,10 +11,8 @@ export default function PaymentSuccess() {
     useEffect(() => {
         if (state?.planName) {
             dispatch(updateUser({ plan: state.planName }));
-            const saved = JSON.parse(localStorage.getItem('user') || '{}');
-            localStorage.setItem('user', JSON.stringify({ ...saved, plan: state.planName }));
         }
-    }, []);
+    }, [dispatch, state?.planName]);
 
     if (!state?.transactionId) {
         navigate('/', { replace: true });

@@ -1,0 +1,98 @@
+﻿
+C:\Users\Admin\OneDrive\Desktop\frontend\ott\frontend\src\App.jsx
+  39:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  37 |
+  38 |     useEffect(() => {
+> 39 |         setLoading(true);
+     |         ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  40 |         const url = query ? `/videos/search?q=${encodeURIComponent(query)}` : '/videos';
+  41 |         api.get(url)
+  42 |             .then(res => { if (res.data.success) setMovies(res.data.data); })  react-hooks/set-state-in-effect
+
+C:\Users\Admin\OneDrive\Desktop\frontend\ott\frontend\src\components\HeroBanner.jsx
+  15:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  13 |
+  14 |     useEffect(() => {
+> 15 |         setProgress(0);
+     |         ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  16 |         if (paused || movies.length <= 1) return;
+  17 |
+  18 |         const start = Date.now();  react-hooks/set-state-in-effect
+
+C:\Users\Admin\OneDrive\Desktop\frontend\ott\frontend\src\components\RadarChart.jsx
+  9:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\Admin\OneDrive\Desktop\frontend\ott\frontend\src\components\ScoreBar.jsx
+  3:17  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\Admin\OneDrive\Desktop\frontend\ott\frontend\src\components\SplashScreen.jsx
+  45:38  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+  43 |                         className="splash-particle"
+  44 |                         style={{
+> 45 |                             left: `${Math.random() * 100}%`,
+     |                                      ^^^^^^^^^^^^^ Cannot call impure function
+  46 |                             top: `${Math.random() * 100}%`,
+  47 |                             animationDelay: `${Math.random() * 3}s`,
+  48 |                             animationDuration: `${2 + Math.random() * 3}s`  react-hooks/purity
+  46:37  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+  44 |                         style={{
+  45 |                             left: `${Math.random() * 100}%`,
+> 46 |                             top: `${Math.random() * 100}%`,
+     |                                     ^^^^^^^^^^^^^ Cannot call impure function
+  47 |                             animationDelay: `${Math.random() * 3}s`,
+  48 |                             animationDuration: `${2 + Math.random() * 3}s`
+  49 |                         }}                            react-hooks/purity
+  47:48  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+  45 |                             left: `${Math.random() * 100}%`,
+  46 |                             top: `${Math.random() * 100}%`,
+> 47 |                             animationDelay: `${Math.random() * 3}s`,
+     |                                                ^^^^^^^^^^^^^ Cannot call impure function
+  48 |                             animationDuration: `${2 + Math.random() * 3}s`
+  49 |                         }}
+  50 |                     />                           react-hooks/purity
+  48:55  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+  46 |                             top: `${Math.random() * 100}%`,
+  47 |                             animationDelay: `${Math.random() * 3}s`,
+> 48 |                             animationDuration: `${2 + Math.random() * 3}s`
+     |                                                       ^^^^^^^^^^^^^ Cannot call impure function
+  49 |                         }}
+  50 |                     />
+  51 |                 ))}                                                             react-hooks/purity
+
+C:\Users\Admin\OneDrive\Desktop\frontend\ott\frontend\src\components\VideoPlayer.jsx
+  40:8  warning  React Hook useEffect has a missing dependency: 'currentUser'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\Admin\OneDrive\Desktop\frontend\ott\frontend\src\components\payment\PaymentPage.jsx
+  54:40  error  Unnecessary escape character: \-  no-useless-escape
+
+C:\Users\Admin\OneDrive\Desktop\frontend\ott\frontend\src\pages\PaymentSuccess.jsx
+  17:8  warning  React Hook useEffect has missing dependencies: 'dispatch' and 'state.planName'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+Γ£û 11 problems (9 errors, 2 warnings)
+

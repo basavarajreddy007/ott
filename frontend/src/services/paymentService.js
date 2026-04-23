@@ -6,7 +6,6 @@ export const PLANS = {
     premium:  { id: 'premium',  name: 'Premium',  price: 999, description: '4K · 4 screens' }
 };
 
-
 export async function processPayment({ planId, amount }) {
     const { data } = await api.post('/payment', { planId, amount });
     if (!data.success) throw new Error(data.message || 'Payment failed');
