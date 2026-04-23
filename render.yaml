@@ -8,3 +8,7 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: CLIENT_URL
+        value: https://ott-u3vw.onrender.com
+      - key: VITE_API_URL
+        value: https://ott-u3vw.onrender.com

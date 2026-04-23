@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Fullstack streaming app",
   "scripts": {
-    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "build": "npm install --prefix backend && npm install --prefix frontend && VITE_API_URL=https://ott-u3vw.onrender.com npm run build --prefix frontend",
     "start": "node backend/index.js"
   },
   "engines": {
