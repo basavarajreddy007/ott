@@ -36,7 +36,6 @@ function MoviesFeed({ showHero = false }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // eslint-disable-next-line
         setLoading(true);
         const url = query ? `/videos/search?q=${encodeURIComponent(query)}` : '/videos';
         api.get(url)

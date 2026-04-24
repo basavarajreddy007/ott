@@ -34,7 +34,6 @@ export default function PaymentPage() {
     const [loading, setLoading]       = useState(false);
     const [error, setError]           = useState('');
 
-    // Redirect to login if not authenticated
     useEffect(() => {
         if (!token) {
             navigate('/login', { replace: true, state: { from: '/payment', plan: planId } });

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/purity */
 import { useState, useEffect, useMemo } from 'react';
 import './SplashScreen.css';
 

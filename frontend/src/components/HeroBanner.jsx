@@ -12,7 +12,6 @@ export default function HeroBanner({ movies }) {
     const timerRef = useRef(null);
 
     useEffect(() => {
-        // eslint-disable-next-line
         setProgress(0);
         if (paused || movies.length <= 1) return;
 

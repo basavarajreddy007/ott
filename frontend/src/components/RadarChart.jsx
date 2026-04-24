@@ -6,7 +6,6 @@ const CY = SIZE / 2;
 const R = 80;
 const LEVELS = 4;
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const SCORE_LABELS = {
     tone: 'Tone & Genre',
     characters: 'Characters',

@@ -92,7 +92,7 @@ exports.getVideo = wrap(async (req, res) => {
     const video = await Video.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } }, { new: true }).lean();
     if (!video) return notFound(res, 'Video not found');
 
-    let userRank = 1; // default: Basic plan rank for guests
+    let userRank = 1;
     if (req.user) {
         const user = await User.findById(req.user.id).select('plan').lean();
         userRank = PLAN_RANK[user?.plan] || 1;

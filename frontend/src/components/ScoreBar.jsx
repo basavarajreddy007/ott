@@ -1,6 +1,5 @@
 import { memo } from 'react';
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function scoreColor(val) {
     if (val >= 80) return '#22c55e';
     if (val >= 60) return '#38bdf8';

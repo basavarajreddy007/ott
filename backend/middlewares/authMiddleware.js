@@ -18,8 +18,6 @@ exports.protect = async (req, res, next) => {
     }
 };
 
-// Attaches user if token is present, but does NOT block unauthenticated requests.
-// Use for routes that are public but need user context when available.
 exports.optionalProtect = async (req, res, next) => {
     const auth = req.headers.authorization;
     if (!auth?.startsWith('Bearer ')) return next();
@@ -27,9 +25,7 @@ exports.optionalProtect = async (req, res, next) => {
         const decoded = jwt.verify(auth.split(' ')[1], process.env.JWT_SECRET);
         const user = await User.findById(decoded.id);
         if (user) req.user = user;
-    } catch {
-        // invalid/expired token — just continue as guest
-    }
+    } catch {}
     next();
 };
 
