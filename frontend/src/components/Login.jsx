@@ -3,11 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../store/index.js';
 import api from '../services/api';
+import SplashScreen from './SplashScreen';
 import '../css/login.css';
-
-function saveSession(dispatch, email, token, user) {
-    dispatch(setUser({ email, token, user: user || null }));
-}
 
 export default function Login() {
     const navigate = useNavigate();
@@ -19,15 +16,18 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [timer, setTimer] = useState(0);
+    const [showSplash, setShowSplash] = useState(false);
 
-    useEffect(() => {
+    useEffect(function() {
         if (timer <= 0) return;
-        const id = setInterval(() => setTimer(t => t - 1), 1000);
-        return () => clearInterval(id);
+        const id = setInterval(function() {
+            setTimer(function(t) { return t - 1; });
+        }, 1000);
+        return function() { clearInterval(id); };
     }, [timer]);
 
-    const sendOtp = async e => {
-        e?.preventDefault();
+    async function sendOtp(e) {
+        if (e) e.preventDefault();
         setError('');
         setLoading(true);
         try {
@@ -40,25 +40,29 @@ export default function Login() {
         } finally {
             setLoading(false);
         }
-    };
+    }
 
-    const verifyOtp = async e => {
+    async function verifyOtp(e) {
         e.preventDefault();
         setError('');
         setLoading(true);
         try {
-            const { data } = await api.post('/auth/verify-otp', { email, otp });
-            saveSession(dispatch, email, data.token, data.user);
-            navigate('/');
+            const res = await api.post('/auth/verify-otp', { email, otp });
+            dispatch(setUser({ email, token: res.data.token, user: res.data.user || null }));
+            setShowSplash(true);
         } catch (err) {
             setError(err.response?.data?.error || 'Invalid code');
         } finally {
             setLoading(false);
         }
-    };
+    }
 
     return (
-        <div className="login-page">
+        <>
+            {showSplash && (
+                <SplashScreen email={email} onDone={() => navigate('/')} />
+            )}
+            <div className="login-page">
             <div className="login-left">
                 <div className="login-left__grid" />
                 <div className="login-left__bg" />
@@ -78,9 +82,17 @@ export default function Login() {
                             {error && <div className="login-error">{error}</div>}
                             <div className="login-field">
                                 <label htmlFor="email" className="login-field-label">Email address</label>
-                                <input id="email" type="email" className="login-input" value={email}
-                                    onChange={e => setEmail(e.target.value.trim().toLowerCase())}
-                                    placeholder="you@example.com" required autoFocus disabled={loading} />
+                                <input
+                                    id="email"
+                                    type="email"
+                                    className="login-input"
+                                    value={email}
+                                    onChange={function(e) { setEmail(e.target.value.trim().toLowerCase()); }}
+                                    placeholder="you@example.com"
+                                    required
+                                    autoFocus
+                                    disabled={loading}
+                                />
                             </div>
                             <button className="login-btn" type="submit" disabled={loading}>
                                 {loading ? <span className="login-spinner" /> : 'Send Login Code'}
@@ -94,9 +106,19 @@ export default function Login() {
                             {error && <div className="login-error">{error}</div>}
                             <div className="login-field">
                                 <label htmlFor="otp" className="login-field-label">Login code</label>
-                                <input id="otp" type="text" inputMode="numeric" className="login-input" value={otp}
-                                    onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                                    placeholder="123456" required autoFocus disabled={loading} maxLength={6} />
+                                <input
+                                    id="otp"
+                                    type="text"
+                                    inputMode="numeric"
+                                    className="login-input"
+                                    value={otp}
+                                    onChange={function(e) { setOtp(e.target.value.replace(/\D/g, '').slice(0, 6)); }}
+                                    placeholder="123456"
+                                    required
+                                    autoFocus
+                                    disabled={loading}
+                                    maxLength={6}
+                                />
                             </div>
                             <button className="login-btn" type="submit" disabled={loading || otp.length < 6}>
                                 {loading ? <span className="login-spinner" /> : 'Sign In'}
@@ -104,13 +126,14 @@ export default function Login() {
                             <button type="button" className="login-back" onClick={sendOtp} disabled={timer > 0 || loading}>
                                 {timer > 0 ? `Resend in ${timer}s` : 'Resend Code'}
                             </button>
-                            <button type="button" className="login-back" onClick={() => { setStep(1); setError(''); }}>
+                            <button type="button" className="login-back" onClick={function() { setStep(1); setError(''); }}>
                                 ← Use a different email
                             </button>
                         </form>
                     )}
                 </div>
             </div>
-        </div>
+            </div>
+        </>
     );
 }

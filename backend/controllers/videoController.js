@@ -13,7 +13,7 @@ function uploadFromBuffer(buffer, folder = 'videos', resource_type = 'auto') {
     return new Promise((resolve, reject) => {
         streamifier.createReadStream(buffer).pipe(
             cloudinary.uploader.upload_stream(
-                { folder, resource_type, chunk_size: 6000000, access_mode: 'public' },
+                { folder, resource_type, chunk_size: 6000000, type: 'upload', access_mode: 'public' },
                 (err, result) => result ? resolve(result) : reject(err)
             )
         );

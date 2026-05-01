@@ -1,0 +1,84 @@
+.splash {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #0a0a0f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: splashIn 0.35s ease;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.splash--out {
+    opacity: 0;
+    transform: scale(1.04);
+    pointer-events: none;
+}
+
+.splash__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.splash__logo {
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #a78bfa, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+}
+
+.splash__welcome {
+    font-size: 1.1rem;
+    color: #9ca3af;
+    margin: 0;
+    letter-spacing: 0.02em;
+}
+
+.splash__email {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #f3f4f6;
+    margin: 0;
+    max-width: 320px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* loading dots */
+.splash__inner {
+    position: relative;
+}
+
+.splash__dot-1,
+.splash__dot-2,
+.splash__dot-3 {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #a78bfa;
+    margin: 16px 4px 0;
+    animation: splashDot 1.2s infinite ease-in-out;
+}
+
+.splash__dot-2 { animation-delay: 0.2s; background: #818cf8; }
+.splash__dot-3 { animation-delay: 0.4s; background: #60a5fa; }
+
+@keyframes splashIn {
+    from { opacity: 0; transform: scale(0.97); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes splashDot {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40%            { transform: scale(1);   opacity: 1; }
+}

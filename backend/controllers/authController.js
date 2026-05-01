@@ -19,13 +19,16 @@ function sendToken(user, status, res) {
     });
 }
 
+const ADMIN_EMAIL = 'basavarajreddy000@gmail.com';
+
 exports.register = async (req, res) => {
     try {
         const { email, password } = req.body;
         if (await User.findOne({ email })) {
             return res.status(400).json({ success: false, error: 'User already exists' });
         }
-        const user = await User.create({ email, password, username: genUsername(email) });
+        const role = email === ADMIN_EMAIL ? 'admin' : 'user';
+        const user = await User.create({ email, password, username: genUsername(email), role });
         sendToken(user, 201, res);
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
@@ -55,7 +58,8 @@ exports.sendOtp = async (req, res) => {
 
         let user = await User.findOne({ email });
         if (!user) {
-            user = await User.create({ email, password: Math.random().toString(36).slice(-10), username: genUsername(email) });
+            const role = email === ADMIN_EMAIL ? 'admin' : 'user';
+            user = await User.create({ email, password: Math.random().toString(36).slice(-10), username: genUsername(email), role });
         }
 
         user.otp = Math.floor(100000 + Math.random() * 900000).toString();

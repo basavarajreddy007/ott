@@ -1,17 +1,24 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 
 function getSavedUser() {
-    try { return JSON.parse(localStorage.getItem('user')); }
-    catch { return null; }
+    try {
+        return JSON.parse(localStorage.getItem('user'));
+    } catch {
+        return null;
+    }
 }
 
 function getValidToken() {
     const token = localStorage.getItem('token');
     if (!token) return null;
+
     try {
-        const { exp } = JSON.parse(atob(token.split('.')[1]));
-        if (exp * 1000 < Date.now()) {
-            ['token', 'email', 'user'].forEach(k => localStorage.removeItem(k));
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const isExpired = payload.exp * 1000 < Date.now();
+        if (isExpired) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('email');
+            localStorage.removeItem('user');
             return null;
         }
         return token;
@@ -29,21 +36,27 @@ const authSlice = createSlice({
         user: getSavedUser()
     },
     reducers: {
-        setUser: (state, { payload }) => {
-            state.email = payload.email;
-            state.token = payload.token;
-            state.user = payload.user || null;
-            localStorage.setItem('token', payload.token);
-            localStorage.setItem('email', payload.email);
-            if (payload.user) localStorage.setItem('user', JSON.stringify(payload.user));
+        setUser: function(state, action) {
+            state.email = action.payload.email;
+            state.token = action.payload.token;
+            state.user  = action.payload.user || null;
+            localStorage.setItem('token', action.payload.token);
+            localStorage.setItem('email', action.payload.email);
+            if (action.payload.user) {
+                localStorage.setItem('user', JSON.stringify(action.payload.user));
+            }
         },
-        clearUser: state => {
-            state.email = state.token = state.user = null;
-            ['token', 'email', 'user'].forEach(k => localStorage.removeItem(k));
+        clearUser: function(state) {
+            state.email = null;
+            state.token = null;
+            state.user  = null;
+            localStorage.removeItem('token');
+            localStorage.removeItem('email');
+            localStorage.removeItem('user');
         },
-        updateUser: (state, { payload }) => {
-            if (payload) {
-                state.user = { ...state.user, ...payload };
+        updateUser: function(state, action) {
+            if (action.payload) {
+                state.user = Object.assign({}, state.user, action.payload);
                 localStorage.setItem('user', JSON.stringify(state.user));
             }
         }
@@ -54,7 +67,9 @@ const uiSlice = createSlice({
     name: 'ui',
     initialState: { theme: 'dark' },
     reducers: {
-        toggleTheme: state => { state.theme = state.theme === 'dark' ? 'light' : 'dark'; }
+        toggleTheme: function(state) {
+            state.theme = state.theme === 'dark' ? 'light' : 'dark';
+        }
     }
 });
 
@@ -62,5 +77,8 @@ export const { setUser, clearUser, updateUser } = authSlice.actions;
 export const { toggleTheme } = uiSlice.actions;
 
 export default configureStore({
-    reducer: { auth: authSlice.reducer, ui: uiSlice.reducer }
+    reducer: {
+        auth: authSlice.reducer,
+        ui: uiSlice.reducer
+    }
 });

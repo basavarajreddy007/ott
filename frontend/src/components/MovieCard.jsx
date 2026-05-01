@@ -6,18 +6,22 @@ const PLAN_RANK = { Basic: 1, Standard: 2, Premium: 3 };
 
 export default function MovieCard({ movie }) {
     const navigate = useNavigate();
-    const user = useSelector(s => s.auth.user);
+    const user = useSelector(function(state) { return state.auth.user; });
 
     if (!movie) return null;
 
-    const id = movie._id || movie.id;
+    const id        = movie._id || movie.id;
     const thumbnail = movie.thumbnailUrl || movie.thumbnail;
-    const userRank = PLAN_RANK[user?.plan] || 1;
+    const userRank  = PLAN_RANK[user && user.plan] || 1;
     const videoRank = PLAN_RANK[movie.requiredPlan] || 1;
-    const locked = userRank < videoRank;
+    const locked    = user?.role !== 'admin' && userRank < videoRank;
+
+    function handleClick() {
+        navigate(`/watch/${id}`);
+    }
 
     return (
-        <div className={`movie-card${locked ? ' movie-card--locked' : ''}`} onClick={() => navigate(`/watch/${id}`)}>
+        <div className={`movie-card${locked ? ' movie-card--locked' : ''}`} onClick={handleClick}>
             <div className="movie-thumbnail">
                 {thumbnail
                     ? <img src={thumbnail} alt={movie.title} />

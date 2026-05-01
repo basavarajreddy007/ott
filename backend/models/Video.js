@@ -15,6 +15,7 @@ const VideoSchema = new mongoose.Schema({
     views: { type: Number, default: 0 },
     likes: { type: Number, default: 0 },
     requiredPlan: { type: String, enum: ['Basic', 'Standard', 'Premium'], default: 'Basic' },
+    featured: { type: Boolean, default: false },
     likedBy: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
     comments: [{
         user: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },

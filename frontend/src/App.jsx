@@ -1,147 +1,86 @@
-import { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import api from './services/api';
+import { HashRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
-import SplashScreen from './components/SplashScreen';
+import useAuth from './hooks/useAuth';
 import Navbar from './components/Navbar';
-import HeroBanner from './components/HeroBanner';
-import MovieCard from './components/MovieCard';
-import VideoPlayer from './components/VideoPlayer';
 import Login from './components/Login';
-import AIScript from './components/AIScript';
-import AIAnalyze from './components/AIAnalyze';
-import Upload from './components/Upload';
-import Dashboard from './components/Dashboard';
 import Register from './components/Register';
+import VideoPlayer from './components/VideoPlayer';
 import PaymentPage from './components/payment/PaymentPage';
 import PaymentSuccess from './pages/PaymentSuccess';
+import Home from './pages/Home';
+import AdminPanel from './pages/AdminPanel';
+import Dashboard from './components/Dashboard';
+import Upload from './components/Upload';
+import AIScript from './components/AIScript';
+import AIAnalyze from './components/AIAnalyze';
+import NotFound from './pages/NotFound';
 
 import './App.css';
 
-const Guard = ({ children }) => {
-    const token = useSelector(s => s.auth.token);
-    return token ? children : <Navigate to="/login" replace />;
-};
-
-const PublicRoute = ({ children }) => {
-    const token = useSelector(s => s.auth.token);
-    return token ? <Navigate to="/dashboard" replace /> : children;
-};
-
-function MoviesFeed({ showHero = false }) {
-    const [searchParams] = useSearchParams();
-    const query = searchParams.get('query') || '';
-    const [movies, setMovies] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        setLoading(true);
-        const url = query ? `/videos/search?q=${encodeURIComponent(query)}` : '/videos';
-        api.get(url)
-            .then(res => { if (res.data.success) setMovies(res.data.data); })
-            .catch(() => {})
-            .finally(() => setLoading(false));
-    }, [query]);
-
-    if (loading && showHero) return <div className="hero-loading">Loading...</div>;
-
-    const title = loading
-        ? (query ? `Searching "${query}"...` : 'Loading...')
-        : (query ? `Results for "${query}" (${movies.length})` : 'All Movies');
-
-    const trending = movies.slice(0, 8);
-    const topPicks = movies.slice(8, 16);
-    const recentlyAdded = [...movies].reverse().slice(0, 8);
-
-    return (
-        <div>
-            {showHero && <HeroBanner movies={movies} />}
-            <div className="home-container">
-                {query ? (
-                    <>
-                        <h2 className="section-title">{title}</h2>
-                        {!loading && (
-                            <div className="movie-grid">
-                                {movies.length > 0
-                                    ? movies.map(m => <MovieCard key={m._id} movie={m} />)
-                                    : <p style={{ color: 'var(--text-3)' }}>No results for "{query}".</p>
-                                }
-                            </div>
-                        )}
-                    </>
-                ) : !loading && showHero ? (
-                    <>
-                        {trending.length > 0 && (
-                            <div className="content-section">
-                                <h2 className="section-title section-title--red">Trending Now</h2>
-                                <div className="content-row">
-                                    {trending.map(m => <MovieCard key={m._id} movie={m} />)}
-                                </div>
-                            </div>
-                        )}
-                        {topPicks.length > 0 && (
-                            <div className="content-section">
-                                <h2 className="section-title section-title--gold">Top Picks</h2>
-                                <div className="content-row">
-                                    {topPicks.map(m => <MovieCard key={m._id} movie={m} />)}
-                                </div>
-                            </div>
-                        )}
-                        {recentlyAdded.length > 0 && (
-                            <div className="content-section">
-                                <h2 className="section-title">Recently Added</h2>
-                                <div className="content-row">
-                                    {recentlyAdded.map(m => <MovieCard key={m._id} movie={m} />)}
-                                </div>
-                            </div>
-                        )}
-                    </>
-                ) : !loading ? (
-                    <>
-                        <h2 className="section-title">{title}</h2>
-                        <div className="movie-grid">
-                            {movies.length > 0
-                                ? movies.map(m => <MovieCard key={m._id} movie={m} />)
-                                : <p style={{ color: 'var(--text-3)' }}>No movies available.</p>
-                            }
-                        </div>
-                    </>
-                ) : null}
-            </div>
-        </div>
-    );
-}
-
-export default function App() {
-    const [showSplash, setShowSplash] = useState(() => !sessionStorage.getItem('splashShown'));
-
+const ProtectedLayout = () => {
+    const { token, loading } = useAuth();
+    if (loading) return null;
+    if (!token) return <Navigate to="/login" replace />;
     return (
         <>
-            {showSplash && (
-                <SplashScreen onComplete={() => {
-                    sessionStorage.setItem('splashShown', 'true');
-                    setShowSplash(false);
-                }} />
-            )}
-            <Router>
-                <Navbar />
-                <Routes>
-                    <Route path="/login"          element={<PublicRoute><Login /></PublicRoute>} />
-                    <Route path="/register"        element={<PublicRoute><Register /></PublicRoute>} />
-                    <Route path="/"                element={<Guard><MoviesFeed showHero /></Guard>} />
-                    <Route path="/movies"          element={<Guard><MoviesFeed /></Guard>} />
-                    <Route path="/search"          element={<Guard><MoviesFeed /></Guard>} />
-                    <Route path="/watch/:id"       element={<Guard><VideoPlayer /></Guard>} />
-                    <Route path="/upload"          element={<Guard><Upload /></Guard>} />
-                    <Route path="/ai-script"       element={<Guard><AIScript /></Guard>} />
-                    <Route path="/ai-analyze"      element={<Guard><AIAnalyze /></Guard>} />
-                    <Route path="/dashboard"       element={<Guard><Dashboard /></Guard>} />
-                    <Route path="/payment"         element={<Guard><PaymentPage /></Guard>} />
-                    <Route path="/payment-success" element={<Guard><PaymentSuccess /></Guard>} />
-                    <Route path="*"                element={<Navigate to="/" replace />} />
-                </Routes>
-            </Router>
+            <Navbar />
+            <Outlet />
         </>
+    );
+};
+
+const PublicLayout = () => {
+    const { token, loading } = useAuth();
+    if (loading) return null;
+    if (token) return <Navigate to="/" replace />;
+    return <Outlet />;
+};
+
+const AdminLayout = () => {
+    const { token, user, loading } = useAuth();
+    if (loading) return null;
+    if (!token) return <Navigate to="/login" replace />;
+    if (user?.role !== 'admin') return <Navigate to="/" replace />;
+    return (
+        <>
+            <Navbar />
+            <Outlet />
+        </>
+    );
+};
+
+const AppRoutes = () => (
+    <Routes>
+        <Route element={<PublicLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+        </Route>
+
+        <Route element={<ProtectedLayout />}>
+            <Route path="/" element={<Home showHero />} />
+            <Route path="/movies" element={<Home />} />
+            <Route path="/search" element={<Home />} />
+            <Route path="/watch/:id" element={<VideoPlayer />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/upload" element={<Upload />} />
+            <Route path="/ai-script" element={<AIScript />} />
+            <Route path="/ai-analyze" element={<AIAnalyze />} />
+            <Route path="/payment" element={<PaymentPage />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+        </Route>
+
+        <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<AdminPanel />} />
+        </Route>
+
+        <Route path="*" element={<NotFound />} />
+    </Routes>
+);
+
+export default function App() {
+    return (
+        <Router>
+            <AppRoutes />
+        </Router>
     );
 }

@@ -7,18 +7,31 @@ import '../css/navbar.css';
 export default function Navbar() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { token, email, user } = useSelector(s => s.auth);
+    const token    = useSelector(function(state) { return state.auth.token; });
+    const email    = useSelector(function(state) { return state.auth.email; });
+    const user     = useSelector(function(state) { return state.auth.user; });
+
     const [search, setSearch] = useState('');
 
     function handleLogout() {
-        ['token', 'email', 'user'].forEach(k => localStorage.removeItem(k));
+        localStorage.removeItem('token');
+        localStorage.removeItem('email');
+        localStorage.removeItem('user');
         dispatch(clearUser());
         navigate('/login');
     }
 
     function handleSearch() {
         const val = search.trim();
-        if (val) navigate(`/search?query=${encodeURIComponent(val)}`);
+        if (val) {
+            navigate(`/search?query=${encodeURIComponent(val)}`);
+        }
+    }
+
+    function handleSearchKeyDown(e) {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
     }
 
     return (
@@ -34,7 +47,12 @@ export default function Navbar() {
                 <NavLink to="/ai-script">Script Writer</NavLink>
                 <NavLink to="/ai-analyze">Analyser</NavLink>
                 {token && <NavLink to="/dashboard">Dashboard</NavLink>}
-                {token && <NavLink to="/payment" className="navbar-subscribe-link">Upgrade</NavLink>}
+                {token && user && user.role === 'admin' && (
+                    <NavLink to="/admin" className="navbar-admin-link">⚡ Admin</NavLink>
+                )}
+                {token && user && user.role !== 'admin' && (
+                    <NavLink to="/payment" className="navbar-subscribe-link">⭐ Upgrade</NavLink>
+                )}
             </div>
 
             <div className="navbar-search">
@@ -42,8 +60,8 @@ export default function Navbar() {
                     type="text"
                     placeholder="Search movies..."
                     value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                    onChange={function(e) { setSearch(e.target.value); }}
+                    onKeyDown={handleSearchKeyDown}
                     className="navbar-search-input"
                 />
                 <button className="navbar-search-btn" onClick={handleSearch} aria-label="Search">
@@ -56,9 +74,9 @@ export default function Navbar() {
             <div className="navbar-profile">
                 {token && (
                     <Link to="/dashboard" className="navbar-avatar" title="My Dashboard">
-                        {user?.avatar
+                        {user && user.avatar
                             ? <img src={user.avatar} alt="avatar" className="navbar-avatar__img" />
-                            : <span className="navbar-avatar__initials">{email?.[0].toUpperCase()}</span>
+                            : <span className="navbar-avatar__initials">{email && email[0].toUpperCase()}</span>
                         }
                     </Link>
                 )}

@@ -1,7 +1,13 @@
 import api from './api';
 
-export const getUser = email =>
-    api.get(`/users/${email}`).then(res => res.data.data);
+export function getUser(email) {
+    return api.get(`/users/${email}`).then(function(res) {
+        return res.data.data;
+    });
+}
 
-export const updateUser = (email, data) =>
-    api.patch(`/users/${email}`, data).then(res => res.data.data);
+export function updateUser(email, data) {
+    return api.patch(`/users/${email}`, data).then(function(res) {
+        return res.data.data;
+    });
+}

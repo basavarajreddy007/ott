@@ -1,59 +1,81 @@
 ﻿:root {
-    /* Backgrounds */
-    --bg:        #000000;
-    --bg-2:      #050505;
-    --bg-3:      #0a0a0a;
-    --bg-4:      #111111;
-    --bg-5:      #1a1a1a;
+    /* Backgrounds — deep space blue like Hotstar/sky */
+    --bg:        #0a0e1a;
+    --bg-2:      #0d1220;
+    --bg-3:      #111827;
+    --bg-4:      #1a2235;
+    --bg-5:      #1e2a40;
 
     /* Glass */
-    --glass-1:   rgba(255,255,255,0.03);
-    --glass-2:   rgba(255,255,255,0.05);
-    --glass-3:   rgba(255,255,255,0.08);
-    --glass-4:   rgba(255,255,255,0.12);
-    --glass-5:   rgba(255,255,255,0.16);
-    --glass-6:   rgba(255,255,255,0.20);
+    --glass-1:   rgba(255,255,255,0.04);
+    --glass-2:   rgba(255,255,255,0.07);
+    --glass-3:   rgba(255,255,255,0.10);
+    --glass-4:   rgba(255,255,255,0.14);
+    --glass-5:   rgba(255,255,255,0.18);
+    --glass-6:   rgba(255,255,255,0.22);
 
-    /* Primary Accent — Red */
-    --red:       #ef233c;
-    --red-2:     #c1121f;
-    --red-3:     #ff3a50;
-    --red-4:     #ff6b7a;
-    --red-glow:  rgba(239,35,60,0.55);
+    /* Primary Accent — Electric Blue */
+    --blue:      #1d9bf0;
+    --blue-2:    #0d7fd4;
+    --blue-3:    #4db8ff;
+    --blue-4:    #93d5ff;
+    --blue-glow: rgba(29,155,240,0.55);
 
-    /* Premium — Gold */
-    --gold:      #d4a843;
-    --gold-2:    #f0c060;
-    --gold-glow: rgba(212,168,67,0.5);
+    /* Secondary — Vivid Purple */
+    --purple:      #8b5cf6;
+    --purple-2:    #7c3aed;
+    --purple-3:    #a78bfa;
+    --purple-glow: rgba(139,92,246,0.5);
 
-    /* Continue Watching — Saffron */
-    --saffron:      #f59e0b;
-    --saffron-glow: rgba(245,158,11,0.5);
+    /* Accent — Cyan */
+    --cyan:      #06b6d4;
+    --cyan-2:    #0891b2;
+    --cyan-3:    #67e8f9;
+    --cyan-glow: rgba(6,182,212,0.5);
 
-    /* Completed — Emerald */
+    /* Hotstar-style Orange/Gold CTA */
+    --gold:      #f59e0b;
+    --gold-2:    #fbbf24;
+    --gold-3:    #fcd34d;
+    --gold-glow: rgba(245,158,11,0.5);
+
+    /* Keep red for danger/delete only */
+    --red:       #ef4444;
+    --red-2:     #dc2626;
+    --red-3:     #f87171;
+    --red-4:     #fca5a5;
+    --red-glow:  rgba(239,68,68,0.55);
+
+    /* Emerald */
     --emerald:      #10b981;
     --emerald-glow: rgba(16,185,129,0.5);
 
+    /* Saffron */
+    --saffron:      #f59e0b;
+    --saffron-glow: rgba(245,158,11,0.5);
+
     /* Text */
-    --text-1:    #ffffff;
-    --text-2:    #a1a1aa;
-    --text-3:    #71717a;
-    --text-4:    #52525b;
+    --text-1:    #f0f4ff;
+    --text-2:    #a8b8d8;
+    --text-3:    #6b7fa3;
+    --text-4:    #4a5568;
 
     /* Borders */
-    --border:        rgba(255,255,255,0.07);
-    --border-2:      rgba(255,255,255,0.11);
-    --border-hover:  rgba(255,255,255,0.18);
-    --border-red:    rgba(239,35,60,0.4);
-    --border-gold:   rgba(212,168,67,0.4);
+    --border:        rgba(99,130,200,0.12);
+    --border-2:      rgba(99,130,200,0.20);
+    --border-hover:  rgba(99,130,200,0.35);
+    --border-blue:   rgba(29,155,240,0.4);
+    --border-purple: rgba(139,92,246,0.4);
 
     /* Shadows */
-    --sh-sm:  0 2px 8px rgba(0,0,0,0.6);
-    --sh-md:  0 8px 24px rgba(0,0,0,0.7);
-    --sh-lg:  0 16px 48px rgba(0,0,0,0.8);
-    --sh-xl:  0 24px 64px rgba(0,0,0,0.85);
-    --sh-red: 0 4px 20px rgba(239,35,60,0.5);
-    --sh-gold: 0 4px 20px rgba(212,168,67,0.4);
+    --sh-sm:     0 2px 8px rgba(0,0,0,0.6);
+    --sh-md:     0 8px 24px rgba(0,0,0,0.7);
+    --sh-lg:     0 16px 48px rgba(0,0,0,0.8);
+    --sh-xl:     0 24px 64px rgba(0,0,0,0.85);
+    --sh-blue:   0 4px 20px rgba(29,155,240,0.45);
+    --sh-purple: 0 4px 20px rgba(139,92,246,0.4);
+    --sh-gold:   0 4px 20px rgba(245,158,11,0.4);
+    --sh-red:    0 4px 20px rgba(239,68,68,0.4);
 
     /* Blur */
     --blur-sm: blur(8px);
@@ -79,20 +101,22 @@
     --t-slow: 350ms;
 
     /* Gradients */
-    --grad-red:    linear-gradient(135deg, #ef233c, #c1121f);
-    --grad-gold:   linear-gradient(135deg, #d4a843, #f0c060);
-    --grad-cta:    linear-gradient(135deg, #ef233c, #d4a843);
-    --grad-glass:  linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
-    --glow-top:    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(239,35,60,0.12) 0%, transparent 100%);
+    --grad-primary: linear-gradient(135deg, #1d9bf0, #8b5cf6);
+    --grad-cta:     linear-gradient(135deg, #f59e0b, #ef4444);
+    --grad-sky:     linear-gradient(135deg, #0a0e1a 0%, #0d1a3a 50%, #1a0d3a 100%);
+    --grad-glass:   linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    --glow-top:     radial-gradient(ellipse 80% 50% at 50% 0%, rgba(29,155,240,0.10) 0%, transparent 100%);
+    --glow-purple:  radial-gradient(ellipse 60% 40% at 80% 20%, rgba(139,92,246,0.08) 0%, transparent 100%);
 }
 
 /* Shared keyframes */
-@keyframes spin        { to { transform: rotate(360deg); } }
-@keyframes pulse       { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
-@keyframes fadeUp      { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-@keyframes fadeIn      { from { opacity:0; } to { opacity:1; } }
-@keyframes shimmer     { 0% { background-position:200% 0; } 100% { background-position:-200% 0; } }
+@keyframes spin          { to { transform: rotate(360deg); } }
+@keyframes pulse         { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+@keyframes fadeUp        { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn        { from { opacity:0; } to { opacity:1; } }
+@keyframes shimmer       { 0% { background-position:200% 0; } 100% { background-position:-200% 0; } }
 @keyframes gradientShift { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
-@keyframes float       { 0%,100% { transform:translateY(0) translateX(-50%); } 50% { transform:translateY(-8px) translateX(-50%); } }
-@keyframes ctaBorder   { to { --angle: 360deg; } }
-@keyframes neonPulse   { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+@keyframes float         { 0%,100% { transform:translateY(0) translateX(-50%); } 50% { transform:translateY(-8px) translateX(-50%); } }
+@keyframes ctaBorder     { to { --angle: 360deg; } }
+@keyframes neonPulse     { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+@keyframes aurora        { 0%,100% { transform:translate(0,0) scale(1); } 33% { transform:translate(40px,-30px) scale(1.1); } 66% { transform:translate(-20px,20px) scale(0.95); } }

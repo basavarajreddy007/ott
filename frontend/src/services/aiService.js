@@ -1,15 +1,20 @@
 import api from './api';
 
 export async function generateScript(prompt) {
-    const { data } = await api.post('/ai/script', { prompt });
-    if (!data.success) throw new Error(data.error);
-    return { type: 'text', data: data.text };
+    const res = await api.post('/ai/script', { prompt });
+    if (!res.data.success) {
+        throw new Error(res.data.error);
+    }
+    return { type: 'text', data: res.data.text };
 }
 
 export async function analyzeScript(script) {
-    const { data } = await api.post('/ai/analyze', { script });
-    if (!data.success) throw new Error(data.error);
-    return data.analysis
-        ? { type: 'structured', data: data.analysis }
-        : { type: 'text', data: data.text };
+    const res = await api.post('/ai/analyze', { script });
+    if (!res.data.success) {
+        throw new Error(res.data.error);
+    }
+    if (res.data.analysis) {
+        return { type: 'structured', data: res.data.analysis };
+    }
+    return { type: 'text', data: res.data.text };
 }

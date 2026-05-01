@@ -12,18 +12,15 @@ const app = express();
 app.use(express.json({ limit: '500mb' }));
 app.use(express.urlencoded({ limit: '500mb', extended: true }));
 
-const allowed = (process.env.CLIENT_URL || '').split(',').map(s => s.trim()).filter(Boolean);
+app.use(cors({ origin: true, credentials: true }));
 
-app.use(cors({
-    origin: (origin, cb) => (!origin || !allowed.length || allowed.includes(origin)) ? cb(null, true) : cb(null, false),
-    credentials: true
-}));
-
-app.use('/auth',    require('./routes/authRoutes'));
-app.use('/users',   require('./routes/userRoutes'));
-app.use('/videos',  require('./routes/videoRoutes'));
-app.use('/ai',      require('./routes/aiRoutes'));
-app.use('/payment', require('./routes/paymentRoutes'));
+app.use('/auth',     require('./routes/authRoutes'));
+app.use('/users',    require('./routes/userRoutes'));
+app.use('/videos',   require('./routes/videoRoutes'));
+app.use('/ai',       require('./routes/aiRoutes'));
+app.use('/payment',  require('./routes/paymentRoutes'));
+app.use('/requests', require('./routes/requestRoutes'));
+app.use('/admin',    require('./routes/adminRoutes'));
 
 app.use(express.static(path.join(__dirname, 'dist')));
 app.get('*splat', (_req, res) => res.sendFile(path.join(__dirname, 'dist', 'index.html')));

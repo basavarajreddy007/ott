@@ -3,36 +3,41 @@ import api from '../services/api';
 import '../css/upload.css';
 
 export default function Upload() {
-    const [form, setForm] = useState({ title: '', description: '', genres: '', releaseYear: '', type: 'Movie', requiredPlan: 'Basic' });
+    const [title, setTitle]           = useState('');
+    const [description, setDescription] = useState('');
+    const [genres, setGenres]         = useState('');
+    const [releaseYear, setReleaseYear] = useState('');
+    const [type, setType]             = useState('Movie');
+    const [requiredPlan, setRequiredPlan] = useState('Basic');
     const [videoOption, setVideoOption] = useState('file');
-    const [videoFile, setVideoFile] = useState(null);
-    const [videoUrl, setVideoUrl] = useState('');
-    const [thumbUrl, setThumbUrl] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState(false);
-
-    const set = key => e => setForm(f => ({ ...f, [key]: e.target.value }));
+    const [videoFile, setVideoFile]   = useState(null);
+    const [videoUrl, setVideoUrl]     = useState('');
+    const [thumbUrl, setThumbUrl]     = useState('');
+    const [loading, setLoading]       = useState(false);
+    const [error, setError]           = useState('');
+    const [success, setSuccess]       = useState(false);
 
     async function handleSubmit(e) {
         e.preventDefault();
-        if (!form.title || !form.description) return setError('Title and description are required.');
+
+        if (!title || !description) return setError('Title and description are required.');
         if (videoOption === 'file' && !videoFile) return setError('Please select a video file.');
         if (videoOption === 'url' && !videoUrl) return setError('Please provide a video URL.');
 
         const fd = new FormData();
-        fd.append('title', form.title);
-        fd.append('description', form.description);
-        fd.append('type', form.type);
-        if (form.genres) fd.append('genres', form.genres);
-        if (form.releaseYear) fd.append('releaseYear', form.releaseYear);
-        fd.append('requiredPlan', form.requiredPlan);
+        fd.append('title', title);
+        fd.append('description', description);
+        fd.append('type', type);
+        fd.append('requiredPlan', requiredPlan);
+        if (genres) fd.append('genres', genres);
+        if (releaseYear) fd.append('releaseYear', releaseYear);
         if (videoOption === 'file') fd.append('video', videoFile);
         else fd.append('videoUrl', videoUrl);
         if (thumbUrl) fd.append('thumbnailUrl', thumbUrl);
 
         setLoading(true);
         setError('');
+
         try {
             const res = await api.post('/videos', fd);
             if (!res.data.success) throw new Error(res.data.error || 'Upload failed');
@@ -44,17 +49,19 @@ export default function Upload() {
         }
     }
 
-    if (success) return (
-        <div className="upload-page">
-            <div className="upload-container">
-                <div className="upload-success">
-                    <div className="upload-success__icon">✓</div>
-                    <h3>Video Published</h3>
-                    <p>Your video is live and ready to watch.</p>
+    if (success) {
+        return (
+            <div className="upload-page">
+                <div className="upload-container">
+                    <div className="upload-success">
+                        <div className="upload-success__icon">✓</div>
+                        <h3>Video Published</h3>
+                        <p>Your video is live and ready to watch.</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    );
+        );
+    }
 
     return (
         <div className="upload-page">
@@ -66,43 +73,43 @@ export default function Upload() {
                 <form onSubmit={handleSubmit} noValidate>
                     <div className="upload-field">
                         <label className="upload-label">Title *</label>
-                        <input className="upload-input" value={form.title} onChange={set('title')} required />
+                        <input className="upload-input" value={title} onChange={function(e) { setTitle(e.target.value); }} required />
                     </div>
 
                     <div className="upload-field">
                         <label className="upload-label">Description *</label>
-                        <textarea className="upload-textarea" value={form.description} onChange={set('description')} required />
+                        <textarea className="upload-textarea" value={description} onChange={function(e) { setDescription(e.target.value); }} required />
                     </div>
 
                     <div className="upload-field">
                         <label className="upload-label">Video Source *</label>
                         <div className="upload-toggle">
-                            <button type="button" className={`upload-toggle__btn${videoOption === 'file' ? ' active' : ''}`} onClick={() => setVideoOption('file')}>File</button>
-                            <button type="button" className={`upload-toggle__btn${videoOption === 'url' ? ' active' : ''}`} onClick={() => setVideoOption('url')}>URL</button>
+                            <button type="button" className={`upload-toggle__btn${videoOption === 'file' ? ' active' : ''}`} onClick={function() { setVideoOption('file'); }}>File</button>
+                            <button type="button" className={`upload-toggle__btn${videoOption === 'url' ? ' active' : ''}`} onClick={function() { setVideoOption('url'); }}>URL</button>
                         </div>
                         {videoOption === 'file'
-                            ? <input className="upload-input" type="file" accept=".mp4,.mkv,.webm,.mov,.avi" onChange={e => setVideoFile(e.target.files[0])} />
-                            : <input className="upload-input" type="url" placeholder="https://example.com/video.mp4" value={videoUrl} onChange={e => setVideoUrl(e.target.value)} />
+                            ? <input className="upload-input" type="file" accept=".mp4,.mkv,.webm,.mov,.avi" onChange={function(e) { setVideoFile(e.target.files[0]); }} />
+                            : <input className="upload-input" type="url" placeholder="https://example.com/video.mp4" value={videoUrl} onChange={function(e) { setVideoUrl(e.target.value); }} />
                         }
                     </div>
 
                     <div className="upload-field">
                         <label className="upload-label">Thumbnail URL</label>
-                        <input className="upload-input" type="url" placeholder="https://example.com/cover.jpg" value={thumbUrl} onChange={e => setThumbUrl(e.target.value)} />
+                        <input className="upload-input" type="url" placeholder="https://example.com/cover.jpg" value={thumbUrl} onChange={function(e) { setThumbUrl(e.target.value); }} />
                     </div>
 
                     <div className="upload-row upload-row--cols">
                         <div className="upload-field">
                             <label className="upload-label">Genres</label>
-                            <input className="upload-input" placeholder="Sci-Fi, Action" value={form.genres} onChange={set('genres')} />
+                            <input className="upload-input" placeholder="Sci-Fi, Action" value={genres} onChange={function(e) { setGenres(e.target.value); }} />
                         </div>
                         <div className="upload-field">
                             <label className="upload-label">Release Year</label>
-                            <input className="upload-input" type="number" placeholder="2024" value={form.releaseYear} onChange={set('releaseYear')} />
+                            <input className="upload-input" type="number" placeholder="2024" value={releaseYear} onChange={function(e) { setReleaseYear(e.target.value); }} />
                         </div>
                         <div className="upload-field">
                             <label className="upload-label">Type</label>
-                            <select className="upload-select" value={form.type} onChange={set('type')}>
+                            <select className="upload-select" value={type} onChange={function(e) { setType(e.target.value); }}>
                                 <option>Movie</option>
                                 <option>TV Show</option>
                                 <option>Series</option>
@@ -112,7 +119,7 @@ export default function Upload() {
                         </div>
                         <div className="upload-field">
                             <label className="upload-label">Required Plan</label>
-                            <select className="upload-select" value={form.requiredPlan} onChange={set('requiredPlan')}>
+                            <select className="upload-select" value={requiredPlan} onChange={function(e) { setRequiredPlan(e.target.value); }}>
                                 <option>Basic</option>
                                 <option>Standard</option>
                                 <option>Premium</option>

@@ -5,36 +5,39 @@ import { setUser } from '../store/index.js';
 import api from '../services/api';
 import '../css/login.css';
 
-function saveSession(dispatch, email, token, user) {
-    dispatch(setUser({ email, token, user: user || null }));
-}
-
 export default function Register() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const [form, setForm] = useState({ email: '', password: '', confirmPassword: '' });
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const handleChange = e => setForm(f => ({ ...f, [e.target.id]: e.target.value.trim() }));
-
-    const handleRegister = async e => {
+    async function handleRegister(e) {
         e.preventDefault();
-        if (form.password !== form.confirmPassword) return setError('Passwords do not match');
-        if (form.password.length < 6) return setError('Password must be at least 6 characters');
+
+        if (password !== confirmPassword) {
+            return setError('Passwords do not match');
+        }
+        if (password.length < 6) {
+            return setError('Password must be at least 6 characters');
+        }
+
         setError('');
         setLoading(true);
+
         try {
-            const { data } = await api.post('/auth/register', { email: form.email.toLowerCase(), password: form.password });
-            saveSession(dispatch, form.email, data.token, data.user);
+            const res = await api.post('/auth/register', { email: email.toLowerCase(), password });
+            dispatch(setUser({ email, token: res.data.token, user: res.data.user || null }));
             navigate('/');
         } catch (err) {
             setError(err.response?.data?.error || 'Registration failed. Please try again.');
         } finally {
             setLoading(false);
         }
-    };
+    }
 
     return (
         <div className="login-page">
@@ -55,16 +58,26 @@ export default function Register() {
                         <p className="login-form-sub">Enter your details to create an account.</p>
                         {error && <div className="login-error">{error}</div>}
 
-                        {[
-                            { id: 'email', type: 'email', label: 'Email address', placeholder: 'you@example.com' },
-                            { id: 'password', type: 'password', label: 'Password', placeholder: '••••••••', minLength: 6 },
-                            { id: 'confirmPassword', type: 'password', label: 'Confirm Password', placeholder: '••••••••', minLength: 6 }
-                        ].map(({ id, label, ...props }) => (
-                            <div key={id} className="login-field">
-                                <label htmlFor={id} className="login-field-label">{label}</label>
-                                <input id={id} className="login-input" value={form[id]} onChange={handleChange} required disabled={loading} {...props} />
-                            </div>
-                        ))}
+                        <div className="login-field">
+                            <label htmlFor="email" className="login-field-label">Email address</label>
+                            <input id="email" type="email" className="login-input" value={email}
+                                onChange={function(e) { setEmail(e.target.value.trim()); }}
+                                placeholder="you@example.com" required disabled={loading} />
+                        </div>
+
+                        <div className="login-field">
+                            <label htmlFor="password" className="login-field-label">Password</label>
+                            <input id="password" type="password" className="login-input" value={password}
+                                onChange={function(e) { setPassword(e.target.value.trim()); }}
+                                placeholder="••••••••" minLength={6} required disabled={loading} />
+                        </div>
+
+                        <div className="login-field">
+                            <label htmlFor="confirmPassword" className="login-field-label">Confirm Password</label>
+                            <input id="confirmPassword" type="password" className="login-input" value={confirmPassword}
+                                onChange={function(e) { setConfirmPassword(e.target.value.trim()); }}
+                                placeholder="••••••••" minLength={6} required disabled={loading} />
+                        </div>
 
                         <button className="login-btn" type="submit" disabled={loading}>
                             {loading ? <span className="login-spinner" /> : 'Create Account'}
