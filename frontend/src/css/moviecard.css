@@ -9,12 +9,12 @@
 }
 
 .movie-card:hover {
-    transform: scale(1.04) translateY(-4px);
-    border-color: rgba(29,155,240,0.4);
+    transform: scale(1.035) translateY(-6px);
+    border-color: rgba(56,189,248,0.5);
     box-shadow:
         0 20px 50px rgba(0,0,0,0.8),
-        0 0 0 1px rgba(29,155,240,0.2),
-        0 0 30px rgba(29,155,240,0.15);
+        0 0 0 1px rgba(56,189,248,0.26),
+        0 0 34px rgba(167,139,250,0.16);
     z-index: 10;
 }
 
@@ -64,7 +64,7 @@
 }
 
 .play-button {
-    background: linear-gradient(135deg, var(--blue), var(--purple));
+    background: var(--grad-primary);
     color: #fff;
     border: none;
     border-radius: 50%;
@@ -88,7 +88,7 @@
 
 .movie-info {
     padding: 12px 14px 14px;
-    background: linear-gradient(180deg, var(--bg-3), var(--bg-4));
+    background: linear-gradient(180deg, rgba(16,26,50,0.96), rgba(12,20,38,0.98));
     border-top: 1px solid var(--border);
 }
 
@@ -116,7 +116,7 @@
     top: 10px;
     right: 10px;
     padding: 3px 9px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-2));
+    background: linear-gradient(135deg, #fcd34d, #f59e0b);
     color: #000;
     font-size: 0.6rem;
     font-weight: 800;

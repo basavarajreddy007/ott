@@ -17,10 +17,11 @@ app.use(cors({ origin: true, credentials: true }));
 app.use('/auth',     require('./routes/authRoutes'));
 app.use('/users',    require('./routes/userRoutes'));
 app.use('/videos',   require('./routes/videoRoutes'));
-app.use('/ai',       require('./routes/aiRoutes'));
 app.use('/payment',  require('./routes/paymentRoutes'));
 app.use('/requests', require('./routes/requestRoutes'));
 app.use('/admin',    require('./routes/adminRoutes'));
+app.use('/api/ai',   require('./routes/aiRoutes'));
+app.use('/api/upload', require('./routes/uploadRoutes'));
 
 app.use(express.static(path.join(__dirname, 'dist')));
 app.get('*splat', (_req, res) => res.sendFile(path.join(__dirname, 'dist', 'index.html')));

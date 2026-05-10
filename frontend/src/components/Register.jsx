@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { setUser } from '../store/index.js';
+import { useAuthDispatch, setUser } from '../store/index.jsx';
 import api from '../services/api';
 import '../css/login.css';
 
 export default function Register() {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+    const dispatch = useAuthDispatch();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -61,21 +60,21 @@ export default function Register() {
                         <div className="login-field">
                             <label htmlFor="email" className="login-field-label">Email address</label>
                             <input id="email" type="email" className="login-input" value={email}
-                                onChange={function(e) { setEmail(e.target.value.trim()); }}
+                                onChange={e => setEmail(e.target.value.trim())}
                                 placeholder="you@example.com" required disabled={loading} />
                         </div>
 
                         <div className="login-field">
                             <label htmlFor="password" className="login-field-label">Password</label>
                             <input id="password" type="password" className="login-input" value={password}
-                                onChange={function(e) { setPassword(e.target.value.trim()); }}
+                                onChange={e => setPassword(e.target.value.trim())}
                                 placeholder="••••••••" minLength={6} required disabled={loading} />
                         </div>
 
                         <div className="login-field">
                             <label htmlFor="confirmPassword" className="login-field-label">Confirm Password</label>
                             <input id="confirmPassword" type="password" className="login-input" value={confirmPassword}
-                                onChange={function(e) { setConfirmPassword(e.target.value.trim()); }}
+                                onChange={e => setConfirmPassword(e.target.value.trim())}
                                 placeholder="••••••••" minLength={6} required disabled={loading} />
                         </div>
 

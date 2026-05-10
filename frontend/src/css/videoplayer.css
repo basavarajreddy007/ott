@@ -41,14 +41,14 @@
     box-shadow:
         0 0 0 1px var(--border),
         0 40px 100px rgba(0,0,0,0.85),
-        0 0 100px rgba(229,9,20,0.1);
+        0 0 100px rgba(56,189,248,0.12);
     transition: box-shadow var(--t-slow) ease;
 }
 .video-wrapper:hover {
     box-shadow:
         0 0 0 1px var(--border-2),
         0 50px 120px rgba(0,0,0,0.9),
-        0 0 120px rgba(229,9,20,0.15);
+        0 0 120px rgba(167,139,250,0.16);
 }
 
 .video-wrapper::before {
@@ -56,7 +56,7 @@
     position: absolute;
     top: 0; left: 10%; right: 10%;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(229,9,20,0.6), transparent);
+    background: linear-gradient(90deg, transparent, rgba(56,189,248,0.6), rgba(167,139,250,0.45), transparent);
     z-index: 2;
     pointer-events: none;
     animation: shimmer 3s linear infinite;
@@ -144,12 +144,12 @@
     box-shadow: var(--sh-md);
 }
 .like-btn.active {
-    background: rgba(229,9,20,0.1);
-    border-color: rgba(229,9,20,0.35);
-    color: #ff8a8a;
-    box-shadow: 0 0 20px rgba(229,9,20,0.15);
+    background: rgba(56,189,248,0.14);
+    border-color: rgba(56,189,248,0.35);
+    color: var(--blue-3);
+    box-shadow: 0 0 20px rgba(56,189,248,0.2);
 }
-.like-btn.active:hover { background: rgba(229,9,20,0.18); }
+.like-btn.active:hover { background: rgba(56,189,248,0.2); }
 
 
 .comments-section { max-width: 860px; }
@@ -186,8 +186,8 @@
     transition: border-color var(--t-base) ease, box-shadow var(--t-base) ease, background var(--t-base) ease;
 }
 .comment-form:focus-within {
-    border-color: rgba(229,9,20,0.4);
-    box-shadow: 0 0 0 3px rgba(229,9,20,0.08);
+    border-color: rgba(56,189,248,0.4);
+    box-shadow: 0 0 0 3px rgba(56,189,248,0.12);
     background: var(--glass-2);
 }
 .comment-input {
@@ -201,7 +201,7 @@
 .comment-input::placeholder { color: var(--text-4); }
 
 .comment-submit {
-    background: var(--red);
+    background: var(--grad-primary);
     border: none;
     border-radius: var(--r-full);
     padding: 9px 24px;
@@ -209,12 +209,12 @@
     font-size: 0.83rem;
     font-weight: 700;
     flex-shrink: 0;
-    box-shadow: 0 2px 12px rgba(229,9,20,0.35);
+    box-shadow: var(--sh-blue);
     transition: background var(--t-base) ease, box-shadow var(--t-base) ease, transform var(--t-base) var(--ease-spring);
 }
 .comment-submit:hover:not(:disabled) {
-    background: var(--red-3);
-    box-shadow: 0 4px 20px rgba(229,9,20,0.55);
+    filter: brightness(1.08);
+    box-shadow: 0 4px 20px rgba(56,189,248,0.55);
     transform: scale(1.03);
 }
 .comment-submit:disabled { opacity: 0.28; cursor: not-allowed; box-shadow: none; }
@@ -261,28 +261,28 @@
     margin-top: 2px;
     transition: all var(--t-fast) ease;
 }
-.comment-delete:hover { color: #ff8a8a; background: rgba(229,9,20,0.1); }
+.comment-delete:hover { color: var(--blue-3); background: rgba(56,189,248,0.14); }
 
 
 .vp-locked {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 18px; padding: 110px 24px; text-align: center;
 }
-.vp-locked__icon { font-size: 4rem; filter: drop-shadow(0 0 24px rgba(229,9,20,0.35)); }
+.vp-locked__icon { font-size: 4rem; filter: drop-shadow(0 0 24px rgba(56,189,248,0.4)); }
 .vp-locked h2 { font-size: 1.7rem; font-weight: 900; color: var(--text-1); margin: 0; letter-spacing: -0.6px; }
 .vp-locked p { font-size: 0.93rem; color: var(--text-3); margin: 0; max-width: 380px; line-height: 1.72; }
 
 .vp-upgrade-btn {
     margin-top: 8px;
     padding: 14px 36px;
-    background: var(--red);
+    background: var(--grad-primary);
     color: #fff;
     border: none;
     border-radius: var(--r-lg);
     font-size: 0.97rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 6px 28px rgba(229,9,20,0.45);
+    box-shadow: var(--sh-blue);
     transition: background var(--t-base) ease, box-shadow var(--t-base) ease, transform var(--t-base) var(--ease-spring);
     position: relative; overflow: hidden;
 }
@@ -294,8 +294,8 @@
     transition: opacity var(--t-base) ease;
 }
 .vp-upgrade-btn:hover {
-    background: var(--red-3);
-    box-shadow: 0 10px 40px rgba(229,9,20,0.65);
+    filter: brightness(1.08);
+    box-shadow: 0 10px 40px rgba(56,189,248,0.55);
     transform: translateY(-2px);
 }
 .vp-upgrade-btn:hover::before { opacity: 1; }

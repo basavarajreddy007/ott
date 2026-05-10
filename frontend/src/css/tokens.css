@@ -1,122 +1,124 @@
 ﻿:root {
-    /* Backgrounds — deep space blue like Hotstar/sky */
-    --bg:        #0a0e1a;
-    --bg-2:      #0d1220;
-    --bg-3:      #111827;
-    --bg-4:      #1a2235;
-    --bg-5:      #1e2a40;
+    --bg:        #050508;
+    --bg-2:      #09090f;
+    --bg-3:      #0e0e18;
+    --bg-4:      #131320;
+    --bg-5:      #1a1a2e;
 
-    /* Glass */
-    --glass-1:   rgba(255,255,255,0.04);
-    --glass-2:   rgba(255,255,255,0.07);
-    --glass-3:   rgba(255,255,255,0.10);
-    --glass-4:   rgba(255,255,255,0.14);
+    --glass-1:   rgba(255,255,255,0.03);
+    --glass-2:   rgba(255,255,255,0.06);
+    --glass-3:   rgba(255,255,255,0.09);
+    --glass-4:   rgba(255,255,255,0.13);
     --glass-5:   rgba(255,255,255,0.18);
-    --glass-6:   rgba(255,255,255,0.22);
 
-    /* Primary Accent — Electric Blue */
-    --blue:      #1d9bf0;
-    --blue-2:    #0d7fd4;
-    --blue-3:    #4db8ff;
-    --blue-4:    #93d5ff;
-    --blue-glow: rgba(29,155,240,0.55);
+    --blue:      #00d4ff;
+    --blue-2:    #0099cc;
+    --blue-3:    #66e5ff;
+    --blue-4:    #b3f0ff;
+    --blue-glow: rgba(0,212,255,0.55);
 
-    /* Secondary — Vivid Purple */
-    --purple:      #8b5cf6;
+    --purple:      #9b59ff;
     --purple-2:    #7c3aed;
-    --purple-3:    #a78bfa;
-    --purple-glow: rgba(139,92,246,0.5);
+    --purple-3:    #c084fc;
+    --purple-glow: rgba(155,89,255,0.55);
 
-    /* Accent — Cyan */
-    --cyan:      #06b6d4;
-    --cyan-2:    #0891b2;
-    --cyan-3:    #67e8f9;
-    --cyan-glow: rgba(6,182,212,0.5);
+    --crimson:      #ff2d55;
+    --crimson-2:    #cc0033;
+    --crimson-3:    #ff6b8a;
+    --crimson-glow: rgba(255,45,85,0.55);
 
-    /* Hotstar-style Orange/Gold CTA */
-    --gold:      #f59e0b;
-    --gold-2:    #fbbf24;
-    --gold-3:    #fcd34d;
-    --gold-glow: rgba(245,158,11,0.5);
+    --cyan:      #00ffcc;
+    --cyan-2:    #00cc99;
+    --cyan-3:    #80ffe8;
+    --cyan-glow: rgba(0,255,204,0.5);
 
-    /* Keep red for danger/delete only */
-    --red:       #ef4444;
-    --red-2:     #dc2626;
-    --red-3:     #f87171;
-    --red-4:     #fca5a5;
-    --red-glow:  rgba(239,68,68,0.55);
+    --gold:      #ffd700;
+    --gold-2:    #ffb800;
+    --gold-3:    #ffe566;
+    --gold-glow: rgba(255,215,0,0.5);
 
-    /* Emerald */
-    --emerald:      #10b981;
-    --emerald-glow: rgba(16,185,129,0.5);
+    --red:       #ff3b30;
+    --red-2:     #cc2200;
+    --red-3:     #ff7066;
+    --red-4:     #ffb3ae;
+    --red-glow:  rgba(255,59,48,0.55);
+    --err-bg:    rgba(255,59,48,0.1);
+    --err-border:rgba(255,59,48,0.3);
+    --err-text:  #ff9f9a;
 
-    /* Saffron */
+    --emerald:      #00e676;
+    --emerald-glow: rgba(0,230,118,0.5);
+    --ok-bg:        rgba(0,230,118,0.1);
+    --ok-border:    rgba(0,230,118,0.3);
+    --ok-text:      #69ffb4;
+
     --saffron:      #f59e0b;
     --saffron-glow: rgba(245,158,11,0.5);
 
-    /* Text */
-    --text-1:    #f0f4ff;
-    --text-2:    #a8b8d8;
-    --text-3:    #6b7fa3;
-    --text-4:    #4a5568;
+    --text-1:    #ffffff;
+    --text-2:    #c8c8d8;
+    --text-3:    #8888aa;
+    --text-4:    #555570;
 
-    /* Borders */
-    --border:        rgba(99,130,200,0.12);
-    --border-2:      rgba(99,130,200,0.20);
-    --border-hover:  rgba(99,130,200,0.35);
-    --border-blue:   rgba(29,155,240,0.4);
-    --border-purple: rgba(139,92,246,0.4);
+    --border:         rgba(255,255,255,0.07);
+    --border-2:       rgba(255,255,255,0.13);
+    --border-hover:   rgba(255,255,255,0.2);
+    --border-blue:    rgba(0,212,255,0.4);
+    --border-purple:  rgba(155,89,255,0.4);
+    --border-crimson: rgba(255,45,85,0.4);
 
-    /* Shadows */
-    --sh-sm:     0 2px 8px rgba(0,0,0,0.6);
-    --sh-md:     0 8px 24px rgba(0,0,0,0.7);
-    --sh-lg:     0 16px 48px rgba(0,0,0,0.8);
-    --sh-xl:     0 24px 64px rgba(0,0,0,0.85);
-    --sh-blue:   0 4px 20px rgba(29,155,240,0.45);
-    --sh-purple: 0 4px 20px rgba(139,92,246,0.4);
-    --sh-gold:   0 4px 20px rgba(245,158,11,0.4);
-    --sh-red:    0 4px 20px rgba(239,68,68,0.4);
+    --sh-sm:      0 4px 16px rgba(0,0,0,0.6);
+    --sh-md:      0 12px 32px rgba(0,0,0,0.7);
+    --sh-lg:      0 24px 56px rgba(0,0,0,0.8);
+    --sh-xl:      0 40px 80px rgba(0,0,0,0.85);
+    --sh-blue:    0 8px 32px rgba(0,212,255,0.3);
+    --sh-purple:  0 8px 32px rgba(155,89,255,0.3);
+    --sh-crimson: 0 8px 32px rgba(255,45,85,0.3);
+    --sh-gold:    0 4px 20px rgba(255,215,0,0.35);
 
-    /* Blur */
     --blur-sm: blur(8px);
     --blur-md: blur(16px);
-    --blur-lg: blur(24px);
-    --blur-xl: blur(40px);
+    --blur-lg: blur(28px);
+    --blur-xl: blur(48px);
 
-    /* Radius */
-    --r-sm:   8px;
-    --r-md:   12px;
-    --r-lg:   16px;
-    --r-xl:   20px;
+    --r-sm:   6px;
+    --r-md:   10px;
+    --r-lg:   14px;
+    --r-xl:   18px;
     --r-2xl:  24px;
     --r-3xl:  32px;
     --r-full: 9999px;
 
-    /* Easing */
     --ease-out:    cubic-bezier(0.16,1,0.3,1);
     --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
     --ease-smooth: cubic-bezier(0.4,0,0.2,1);
-    --t-fast: 100ms;
-    --t-base: 200ms;
-    --t-slow: 350ms;
+    --t-fast: 80ms;
+    --t-base: 180ms;
+    --t-slow: 320ms;
 
-    /* Gradients */
-    --grad-primary: linear-gradient(135deg, #1d9bf0, #8b5cf6);
-    --grad-cta:     linear-gradient(135deg, #f59e0b, #ef4444);
-    --grad-sky:     linear-gradient(135deg, #0a0e1a 0%, #0d1a3a 50%, #1a0d3a 100%);
-    --grad-glass:   linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-    --glow-top:     radial-gradient(ellipse 80% 50% at 50% 0%, rgba(29,155,240,0.10) 0%, transparent 100%);
-    --glow-purple:  radial-gradient(ellipse 60% 40% at 80% 20%, rgba(139,92,246,0.08) 0%, transparent 100%);
+    --grad-primary: linear-gradient(135deg,#00d4ff 0%,#9b59ff 50%,#ff2d55 100%);
+    --grad-cta:     linear-gradient(135deg,#00d4ff 0%,#9b59ff 100%);
+    --grad-dark:    linear-gradient(180deg,#050508 0%,#0a0812 50%,#0f0818 100%);
+    --grad-glass:   linear-gradient(135deg,rgba(255,255,255,0.1),rgba(255,255,255,0.02));
+    --glow-top:     radial-gradient(ellipse 80% 50% at 50% 0%,rgba(0,212,255,0.1) 0%,transparent 100%);
+    --glow-purple:  radial-gradient(ellipse 60% 40% at 80% 20%,rgba(155,89,255,0.1) 0%,transparent 100%);
+    --glow-crimson: radial-gradient(ellipse 50% 30% at 20% 80%,rgba(255,45,85,0.08) 0%,transparent 100%);
 }
 
-/* Shared keyframes */
-@keyframes spin          { to { transform: rotate(360deg); } }
-@keyframes pulse         { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
-@keyframes fadeUp        { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-@keyframes fadeIn        { from { opacity:0; } to { opacity:1; } }
-@keyframes shimmer       { 0% { background-position:200% 0; } 100% { background-position:-200% 0; } }
-@keyframes gradientShift { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
-@keyframes float         { 0%,100% { transform:translateY(0) translateX(-50%); } 50% { transform:translateY(-8px) translateX(-50%); } }
-@keyframes ctaBorder     { to { --angle: 360deg; } }
-@keyframes neonPulse     { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
-@keyframes aurora        { 0%,100% { transform:translate(0,0) scale(1); } 33% { transform:translate(40px,-30px) scale(1.1); } 66% { transform:translate(-20px,20px) scale(0.95); } }
+@property --angle { syntax:'<angle>'; initial-value:0deg; inherits:false; }
+
+@keyframes spin          { to { transform:rotate(360deg); } }
+@keyframes pulse         { 0%,100%{opacity:1}50%{opacity:0.4} }
+@keyframes fadeUp        { from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn        { from{opacity:0}to{opacity:1} }
+@keyframes shimmer       { 0%{background-position:200% 0}100%{background-position:-200% 0} }
+@keyframes gradientShift { 0%,100%{background-position:0% 50%}50%{background-position:100% 50%} }
+@keyframes float         { 0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)} }
+@keyframes floatX        { 0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)} }
+@keyframes ctaBorder     { to{--angle:360deg} }
+@keyframes neonPulse     { 0%,100%{opacity:1}50%{opacity:0.6} }
+@keyframes aurora        { 0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,-40px) scale(1.15)}66%{transform:translate(-30px,30px) scale(0.9)} }
+@keyframes orb           { 0%,100%{transform:translate(0,0)}25%{transform:translate(40px,-60px)}50%{transform:translate(-30px,-20px)}75%{transform:translate(20px,40px)} }
+@keyframes starTwinkle   { 0%,100%{opacity:0.15;transform:scale(1)}50%{opacity:1;transform:scale(1.5)} }
+@keyframes scanline      { 0%{transform:translateY(-100%)}100%{transform:translateY(100vh)} }
+@keyframes particleDrift { 0%{transform:translateY(0) translateX(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-100vh) translateX(40px);opacity:0} }

@@ -2,7 +2,7 @@
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background: #0a0a0f;
+    background: radial-gradient(circle at 20% 15%, rgba(56,189,248,0.18), transparent 42%), radial-gradient(circle at 78% 20%, rgba(167,139,250,0.18), transparent 45%), #060b16;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -27,7 +27,7 @@
     font-size: 2.4rem;
     font-weight: 800;
     letter-spacing: -1px;
-    background: linear-gradient(135deg, #a78bfa, #60a5fa);
+    background: var(--grad-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -36,7 +36,7 @@
 
 .splash__welcome {
     font-size: 1.1rem;
-    color: #9ca3af;
+    color: var(--text-2);
     margin: 0;
     letter-spacing: 0.02em;
 }
@@ -44,7 +44,7 @@
 .splash__email {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #f3f4f6;
+    color: var(--text-1);
     margin: 0;
     max-width: 320px;
     text-align: center;
@@ -65,13 +65,13 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #a78bfa;
+    background: #7dd3fc;
     margin: 16px 4px 0;
     animation: splashDot 1.2s infinite ease-in-out;
 }
 
-.splash__dot-2 { animation-delay: 0.2s; background: #818cf8; }
-.splash__dot-3 { animation-delay: 0.4s; background: #60a5fa; }
+.splash__dot-2 { animation-delay: 0.2s; background: #22d3ee; }
+.splash__dot-3 { animation-delay: 0.4s; background: #a78bfa; }
 
 @keyframes splashIn {
     from { opacity: 0; transform: scale(0.97); }

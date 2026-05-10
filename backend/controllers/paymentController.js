@@ -20,7 +20,7 @@ exports.processPayment = async (req, res) => {
 
         res.json({
             success: true,
-            transactionId: 'TXN' + Date.now(),
+            transactionId: `TXN${Date.now()}`,
             timestamp: new Date().toISOString(),
             amount,
             planName: plan.name

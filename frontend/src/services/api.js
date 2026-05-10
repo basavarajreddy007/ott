@@ -5,27 +5,22 @@ const api = axios.create({
     withCredentials: true
 });
 
-api.interceptors.request.use(function(config) {
+api.interceptors.request.use(config => {
     const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
 });
 
 api.interceptors.response.use(
-    function(res) {
-        return res;
-    },
-    function(err) {
-        const status = err.response && err.response.status;
-        const path   = window.location.hash;
-        const isAuthPage = path.includes('/login') || path.includes('/register');
+    res => res,
+    err => {
+        const status = err.response?.status;
+        const hash = window.location.hash;
+        const isAuthPage = hash.includes('/login') || hash.includes('/register');
+        const isUploadRoute = err.config?.url?.includes('/api/upload/');
 
-        if (status === 401 && !isAuthPage) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('email');
-            localStorage.removeItem('user');
+        if (status === 401 && !isAuthPage && !isUploadRoute) {
+            ['token', 'email', 'user'].forEach(k => localStorage.removeItem(k));
             window.location.href = '/#/login';
         }
 

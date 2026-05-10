@@ -11,42 +11,29 @@ import Home from './pages/Home';
 import AdminPanel from './pages/AdminPanel';
 import Dashboard from './components/Dashboard';
 import Upload from './components/Upload';
-import AIScript from './components/AIScript';
-import AIAnalyze from './components/AIAnalyze';
+import CreatorDashboard from './pages/CreatorDashboard';
+import ScriptStudio from './pages/ScriptStudio';
 import NotFound from './pages/NotFound';
 
 import './App.css';
 
 const ProtectedLayout = () => {
-    const { token, loading } = useAuth();
-    if (loading) return null;
+    const { token } = useAuth();
     if (!token) return <Navigate to="/login" replace />;
-    return (
-        <>
-            <Navbar />
-            <Outlet />
-        </>
-    );
+    return <><Navbar /><Outlet /></>;
 };
 
 const PublicLayout = () => {
-    const { token, loading } = useAuth();
-    if (loading) return null;
+    const { token } = useAuth();
     if (token) return <Navigate to="/" replace />;
     return <Outlet />;
 };
 
 const AdminLayout = () => {
-    const { token, user, loading } = useAuth();
-    if (loading) return null;
+    const { token, user } = useAuth();
     if (!token) return <Navigate to="/login" replace />;
     if (user?.role !== 'admin') return <Navigate to="/" replace />;
-    return (
-        <>
-            <Navbar />
-            <Outlet />
-        </>
-    );
+    return <><Navbar /><Outlet /></>;
 };
 
 const AppRoutes = () => (
@@ -63,10 +50,10 @@ const AppRoutes = () => (
             <Route path="/watch/:id" element={<VideoPlayer />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/upload" element={<Upload />} />
-            <Route path="/ai-script" element={<AIScript />} />
-            <Route path="/ai-analyze" element={<AIAnalyze />} />
             <Route path="/payment" element={<PaymentPage />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/creator" element={<CreatorDashboard />} />
+            <Route path="/studio" element={<ScriptStudio />} />
         </Route>
 
         <Route element={<AdminLayout />}>

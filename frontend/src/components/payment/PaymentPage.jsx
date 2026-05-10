@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useAuthState } from '../../store/index.jsx';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PaymentMethods from './PaymentMethods';
 import OrderSummary from './OrderSummary';
@@ -20,7 +20,7 @@ const PLAN_IDS = ['basic', 'standard', 'premium'];
 export default function PaymentPage() {
     const navigate        = useNavigate();
     const location        = useLocation();
-    const { email, user, token } = useSelector(s => s.auth);
+    const { email, user, token } = useAuthState();
 
     const initPlan = location.state?.plan || new URLSearchParams(location.search).get('plan') || 'standard';
     const [planId, setPlanId]         = useState(PLAN_IDS.includes(initPlan) ? initPlan : 'standard');
@@ -38,7 +38,7 @@ export default function PaymentPage() {
         if (!token) {
             navigate('/login', { replace: true, state: { from: '/payment', plan: planId } });
         }
-    }, [token, navigate, planId]);
+    }, [token, navigate]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const planPrice = (PLANS[planId] || PLANS.standard).price;
 

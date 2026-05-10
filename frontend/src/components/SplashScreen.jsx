@@ -1,16 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import '../css/splash.css';
 
 export default function SplashScreen({ email, onDone }) {
     const [visible, setVisible] = useState(true);
+    const onDoneRef = useRef(onDone);
+    onDoneRef.current = onDone;
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setVisible(false);
-            setTimeout(onDone, 400); // wait for fade-out
+            setTimeout(() => onDoneRef.current(), 400);
         }, 2500);
         return () => clearTimeout(timer);
-    }, [onDone]);
+    }, []);
 
     return (
         <div className={`splash${visible ? '' : ' splash--out'}`}>

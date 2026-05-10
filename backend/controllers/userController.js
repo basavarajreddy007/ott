@@ -28,10 +28,11 @@ exports.updateUserByEmail = async (req, res) => {
         }
 
         const { username, bio, avatar } = req.body;
-        const fields = {};
-        if (username !== undefined) fields.username = username;
-        if (bio !== undefined) fields.bio = bio;
-        if (avatar !== undefined) fields.avatar = avatar;
+        const fields = {
+            ...(username !== undefined && { username }),
+            ...(bio      !== undefined && { bio }),
+            ...(avatar   !== undefined && { avatar }),
+        };
 
         const user = await User.findOneAndUpdate({ email: req.params.email }, fields, { new: true, runValidators: true }).select(SAFE);
         if (!user) return res.status(404).json({ success: false, error: 'User not found' });

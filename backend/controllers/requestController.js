@@ -8,7 +8,8 @@ exports.createRequest = async (req, res) => {
         }
 
         const normalised = title.trim();
-        const regex = new RegExp(`^${normalised}$`, 'i');
+        const escaped = normalised.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`^${escaped}$`, 'i');
         const existing = await Request.findOne({ title: regex });
 
         if (existing) {

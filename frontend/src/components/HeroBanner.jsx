@@ -5,32 +5,30 @@ import '../css/herobanner.css';
 const SLIDE_INTERVAL = 6000;
 
 export default function HeroBanner({ movies }) {
-    const navigate  = useNavigate();
+    const navigate = useNavigate();
     const [index, setIndex]     = useState(0);
     const [paused, setPaused]   = useState(false);
     const [progress, setProgress] = useState(0);
     const timerRef = useRef(null);
 
-    useEffect(function() {
+    useEffect(() => {
         setProgress(0);
         if (paused || movies.length <= 1) return;
 
         const start = Date.now();
-
-        const tick = setInterval(function() {
-            const elapsed = Date.now() - start;
-            setProgress(Math.min((elapsed / SLIDE_INTERVAL) * 100, 100));
+        const tick = setInterval(() => {
+            setProgress(Math.min(((Date.now() - start) / SLIDE_INTERVAL) * 100, 100));
         }, 50);
 
-        timerRef.current = setTimeout(function() {
-            setIndex(function(i) { return (i + 1) % movies.length; });
+        timerRef.current = setTimeout(() => {
+            setIndex(i => (i + 1) % movies.length);
         }, SLIDE_INTERVAL);
 
-        return function() {
+        return () => {
             clearTimeout(timerRef.current);
             clearInterval(tick);
         };
-    }, [index, paused, movies.length]);
+    }, [index, paused, movies]);
 
     if (!movies || movies.length === 0) {
         return (
@@ -46,8 +44,8 @@ export default function HeroBanner({ movies }) {
     return (
         <section
             className="hero"
-            onMouseEnter={function() { setPaused(true); }}
-            onMouseLeave={function() { setPaused(false); }}
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
         >
             <video
                 key={movie._id}
@@ -74,14 +72,14 @@ export default function HeroBanner({ movies }) {
 
                 <div className="hero-meta">
                     {movie.releaseYear && <span className="hero-meta__item">{movie.releaseYear}</span>}
-                    {movie.genres && movie.genres[0] && <span className="hero-meta__item hero-meta__item--genre">{movie.genres[0]}</span>}
+                    {movie.genres?.[0] && <span className="hero-meta__item hero-meta__item--genre">{movie.genres[0]}</span>}
                     {movie.duration && <span className="hero-meta__item">{movie.duration} min</span>}
                 </div>
 
                 <p className="hero-description">{movie.description}</p>
 
                 <div className="hero-actions">
-                    <button className="hero-btn hero-btn--primary" onClick={function() { navigate(`/watch/${movie._id}`); }}>
+                    <button className="hero-btn hero-btn--primary" onClick={() => navigate(`/watch/${movie._id}`)}>
                         <span className="hero-btn__inner">
                             <svg className="hero-btn__icon" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M8 5v14l11-7z" />
@@ -89,7 +87,7 @@ export default function HeroBanner({ movies }) {
                             Play Now
                         </span>
                     </button>
-                    <button className="hero-btn hero-btn--secondary" onClick={function() { navigate('/movies'); }}>
+                    <button className="hero-btn hero-btn--secondary" onClick={() => navigate('/movies')}>
                         <svg className="hero-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <circle cx="12" cy="12" r="10" /><path d="M12 8v4m0 4h.01" />
                         </svg>
@@ -100,24 +98,22 @@ export default function HeroBanner({ movies }) {
 
             {movies.length > 1 && (
                 <div className="hero-controls">
-                    {movies.map(function(m, i) {
-                        return (
-                            <button
-                                key={m._id}
-                                className={`hero-slide-btn${i === index ? ' active' : ''}`}
-                                onClick={function() { setIndex(i); }}
-                                aria-label={`Go to ${m.title}`}
-                            >
-                                <span className="hero-slide-btn__label">{m.title}</span>
-                                <span className="hero-slide-btn__track">
-                                    <span
-                                        className="hero-slide-btn__fill"
-                                        style={{ width: i === index ? `${progress}%` : i < index ? '100%' : '0%' }}
-                                    />
-                                </span>
-                            </button>
-                        );
-                    })}
+                    {movies.map((m, i) => (
+                        <button
+                            key={m._id}
+                            className={`hero-slide-btn${i === index ? ' active' : ''}`}
+                            onClick={() => setIndex(i)}
+                            aria-label={`Go to ${m.title}`}
+                        >
+                            <span className="hero-slide-btn__label">{m.title}</span>
+                            <span className="hero-slide-btn__track">
+                                <span
+                                    className="hero-slide-btn__fill"
+                                    style={{ width: i === index ? `${progress}%` : i < index ? '100%' : '0%' }}
+                                />
+                            </span>
+                        </button>
+                    ))}
                 </div>
             )}
 

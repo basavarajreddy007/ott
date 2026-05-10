@@ -1,41 +1,12 @@
 import api from './api';
 
-export function getStats() {
-    return api.get('/admin/stats').then(function(r) { return r.data.data; });
-}
-
-export function getAllUsers() {
-    return api.get('/admin/users').then(function(r) { return r.data.data; });
-}
-
-export function updateUserRole(id, role) {
-    return api.patch(`/admin/users/${id}/role`, { role }).then(function(r) { return r.data.data; });
-}
-
-export function updateUserPlan(id, plan) {
-    return api.patch(`/admin/users/${id}/plan`, { plan }).then(function(r) { return r.data.data; });
-}
-
-export function deleteUser(id) {
-    return api.delete(`/admin/users/${id}`);
-}
-
-export function getAllVideos() {
-    return api.get('/admin/videos').then(function(r) { return r.data.data; });
-}
-
-export function updateAdminVideo(id, data) {
-    return api.put(`/admin/videos/${id}`, data).then(function(r) { return r.data.data; });
-}
-
-export function deleteVideo(id) {
-    return api.delete(`/admin/videos/${id}`);
-}
-
-export function getAllRequests() {
-    return api.get('/admin/requests').then(function(r) { return r.data.data; });
-}
-
-export function deleteRequest(id) {
-    return api.delete(`/admin/requests/${id}`);
-}
+export const getStats        = ()          => api.get('/admin/stats').then(r => r.data.data);
+export const getAllUsers      = ()          => api.get('/admin/users').then(r => r.data.data.users || []);
+export const updateUserRole  = (id, role)  => api.patch(`/admin/users/${id}/role`, { role }).then(r => r.data.data);
+export const updateUserPlan  = (id, plan)  => api.patch(`/admin/users/${id}/plan`, { plan }).then(r => r.data.data);
+export const deleteUser      = id          => api.delete(`/admin/users/${id}`);
+export const getAllVideos     = ()          => api.get('/admin/videos').then(r => r.data.data.videos || []);
+export const updateAdminVideo = (id, data) => api.put(`/admin/videos/${id}`, data).then(r => r.data.data);
+export const deleteVideo     = id          => api.delete(`/admin/videos/${id}`);
+export const getAllRequests   = ()          => api.get('/admin/requests').then(r => r.data.data.requests || []);
+export const deleteRequest   = id          => api.delete(`/admin/requests/${id}`);

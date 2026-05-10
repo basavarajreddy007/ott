@@ -1,22 +1,24 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { updateUser } from '../store/index.js';
+import { useAuthDispatch, updateUser } from '../store/index.jsx';
 
 export default function PaymentSuccess() {
     const location = useLocation();
     const navigate  = useNavigate();
-    const dispatch  = useDispatch();
+    const dispatch  = useAuthDispatch();
     const state     = location.state;
 
-    useEffect(function() {
-        if (state && state.planName) {
+    useEffect(() => {
+        if (!state || !state.transactionId) {
+            navigate('/', { replace: true });
+            return;
+        }
+        if (state.planName) {
             dispatch(updateUser({ plan: state.planName }));
         }
-    }, [dispatch, state]);
+    }, [dispatch, navigate, state]);
 
     if (!state || !state.transactionId) {
-        navigate('/', { replace: true });
         return null;
     }
 
@@ -39,10 +41,10 @@ export default function PaymentSuccess() {
                 </div>
 
                 <div className="pay-success-actions">
-                    <button className="pay-btn pay-btn--primary pay-btn--full" onClick={function() { navigate('/'); }}>
+                    <button className="pay-btn pay-btn--primary pay-btn--full" onClick={() => navigate('/')}>
                         Start Watching
                     </button>
-                    <button className="pay-btn pay-btn--ghost pay-btn--full" onClick={function() { navigate('/dashboard'); }}>
+                    <button className="pay-btn pay-btn--ghost pay-btn--full" onClick={() => navigate('/dashboard')}>
                         Go to Dashboard
                     </button>
                 </div>

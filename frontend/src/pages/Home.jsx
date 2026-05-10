@@ -14,9 +14,7 @@ function Section({ title, className, items }) {
         <div className="content-section">
             <h2 className={`section-title ${className || ''}`}>{title}</h2>
             <div className="content-row">
-                {items.map(function(movie) {
-                    return <MovieCard key={movie._id} movie={movie} />;
-                })}
+                {items.map(movie => <MovieCard key={movie._id} movie={movie} />)}
             </div>
         </div>
     );
@@ -44,41 +42,33 @@ function TopRequestBanner({ request }) {
 
 export default function Home({ showHero = false }) {
     const [searchParams] = useSearchParams();
-    const query = searchParams.get('query') || '';
+    const query = searchParams.get('q') || '';
 
     const [movies, setMovies]     = useState([]);
     const [loading, setLoading]   = useState(true);
     const [requests, setRequests] = useState([]);
 
-    useEffect(function() {
+    useEffect(() => {
         setLoading(true);
         const url = query ? `/videos/search?q=${encodeURIComponent(query)}` : '/videos';
         api.get(url)
-            .then(function(res) {
-                if (res.data.success) setMovies(res.data.data);
-            })
-            .catch(function() {})
-            .finally(function() { setLoading(false); });
+            .then(res => { if (res.data.success) setMovies(res.data.data); })
+            .catch(() => {})
+            .finally(() => setLoading(false));
     }, [query]);
 
-    useEffect(function() {
-        if (!query) {
-            getRequests().then(setRequests).catch(function() {});
-        }
+    useEffect(() => {
+        if (!query) getRequests().then(setRequests).catch(() => {});
     }, [query]);
 
-    function handleNewRequest(newReq) {
+    const handleNewRequest = newReq => {
         if (!newReq) return;
-        setRequests(function(prev) {
-            const exists = prev.find(function(r) { return r._id === newReq._id; });
-            if (exists) {
-                return prev
-                    .map(function(r) { return r._id === newReq._id ? newReq : r; })
-                    .sort(function(a, b) { return b.count - a.count; });
-            }
-            return [newReq, ...prev].sort(function(a, b) { return b.count - a.count; });
+        setRequests(prev => {
+            const exists = prev.find(r => r._id === newReq._id);
+            if (exists) return prev.map(r => r._id === newReq._id ? newReq : r).sort((a, b) => b.count - a.count);
+            return [newReq, ...prev].sort((a, b) => b.count - a.count);
         });
-    }
+    };
 
     if (query) {
         return (
@@ -89,7 +79,7 @@ export default function Home({ showHero = false }) {
                 {!loading && (
                     <div className="movie-grid">
                         {movies.length > 0
-                            ? movies.map(function(movie) { return <MovieCard key={movie._id} movie={movie} />; })
+                            ? movies.map(movie => <MovieCard key={movie._id} movie={movie} />)
                             : <p style={{ color: 'var(--text-3)' }}>No results for "{query}".</p>
                         }
                     </div>

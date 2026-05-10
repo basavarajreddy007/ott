@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useAuthState } from '../store/index.jsx';
 import '../css/moviecard.css';
 
 const PLAN_RANK = { Basic: 1, Standard: 2, Premium: 3 };
 
 export default function MovieCard({ movie }) {
     const navigate = useNavigate();
-    const user = useSelector(function(state) { return state.auth.user; });
+    const user = useAuthState().user;
 
     if (!movie) return null;
 

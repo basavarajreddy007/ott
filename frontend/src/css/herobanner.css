@@ -1,7 +1,7 @@
 ﻿.hero {
     position: relative;
     height: 90vh;
-    min-height: 580px;
+    min-height: 620px;
     overflow: hidden;
     background: var(--bg);
     display: flex;
@@ -24,22 +24,22 @@
 .hero-overlay--vignette {
     background: radial-gradient(ellipse 120% 100% at 50% 50%,
         transparent 20%,
-        rgba(10,14,26,0.5) 65%,
-        rgba(10,14,26,0.92) 100%);
+        rgba(6,11,22,0.5) 65%,
+        rgba(6,11,22,0.94) 100%);
 }
 
 .hero-overlay--bottom {
     background: linear-gradient(to top,
-        #0a0e1a 0%,
-        rgba(10,14,26,0.88) 18%,
-        rgba(10,14,26,0.35) 40%,
+        #060b16 0%,
+        rgba(6,11,22,0.9) 18%,
+        rgba(6,11,22,0.36) 40%,
         transparent 65%);
 }
 
 .hero-overlay--left {
     background: linear-gradient(to right,
-        rgba(10,14,26,0.75) 0%,
-        rgba(10,14,26,0.3) 40%,
+        rgba(6,11,22,0.75) 0%,
+        rgba(6,11,22,0.3) 40%,
         transparent 70%);
 }
 
@@ -54,8 +54,8 @@
 .hero-content {
     position: relative;
     z-index: 10;
-    max-width: 680px;
-    padding: 0 64px 96px;
+    max-width: 760px;
+    padding: 0 72px 110px;
     animation: fadeUp 0.7s var(--ease-out) 0.15s both;
 }
 
@@ -63,8 +63,8 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: rgba(29,155,240,0.1);
-    border: 1px solid rgba(29,155,240,0.3);
+    background: rgba(56,189,248,0.12);
+    border: 1px solid rgba(56,189,248,0.34);
     color: var(--blue-3);
     font-size: 0.68rem;
     font-weight: 700;
@@ -86,7 +86,7 @@
 
 .hero-title {
     font-family: 'Manrope', sans-serif;
-    font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+    font-size: clamp(2.8rem, 5.8vw, 4.6rem);
     font-weight: 800;
     line-height: 1.0;
     letter-spacing: -0.03em;
@@ -115,12 +115,12 @@
 
 .hero-meta__item--genre {
     color: var(--cyan-3);
-    background: rgba(6,182,212,0.08);
-    border-color: rgba(6,182,212,0.3);
+    background: rgba(34,211,238,0.12);
+    border-color: rgba(34,211,238,0.32);
 }
 
 .hero-description {
-    font-size: 0.95rem;
+    font-size: 1rem;
     line-height: 1.7;
     color: var(--text-2);
     margin-bottom: 32px;
@@ -169,7 +169,7 @@
 
 .hero-btn--primary {
     padding: 2px;
-    background: conic-gradient(from var(--angle), #1d9bf0, #8b5cf6, #06b6d4, #1d9bf0);
+    background: conic-gradient(from var(--angle), #38bdf8, #22d3ee, #a78bfa, #38bdf8);
     animation: ctaBorder 3s linear infinite;
 }
 
@@ -178,7 +178,7 @@
     position: absolute;
     inset: 2px;
     border-radius: var(--r-full);
-    background: #0d1220;
+    background: #0a1020;
     z-index: 0;
 }
 
@@ -193,8 +193,8 @@
 }
 
 .hero-btn--primary:hover {
-    transform: scale(1.04);
-    box-shadow: 0 6px 32px rgba(29,155,240,0.5), 0 0 0 1px rgba(139,92,246,0.3);
+    transform: scale(1.04) translateY(-2px);
+    box-shadow: 0 8px 34px rgba(56,189,248,0.45), 0 0 0 1px rgba(167,139,250,0.35);
 }
 
 .hero-btn--primary:hover .hero-btn__icon { transform: translateX(3px); }
@@ -208,9 +208,9 @@
 
 .hero-btn--secondary:hover {
     background: var(--glass-3);
-    border-color: rgba(29,155,240,0.3);
+    border-color: rgba(56,189,248,0.3);
     transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(29,155,240,0.15);
+    box-shadow: 0 4px 20px rgba(56,189,248,0.2);
 }
 
 /* Slide controls */

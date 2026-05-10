@@ -3,23 +3,21 @@ const { sendOtpEmail } = require('../services/emailService');
 
 const genUsername = email => email.split('@')[0] + '_' + Math.floor(Math.random() * 10000);
 
-function sendToken(user, status, res) {
-    res.status(status).json({
-        success: true,
-        token: user.getSignedJwtToken(),
-        user: {
-            _id: user._id,
-            email: user.email,
-            username: user.username,
-            avatar: user.avatar,
-            role: user.role,
-            plan: user.plan || 'none',
-            subscribedTo: user.subscribedTo ?? []
-        }
-    });
-}
+const sendToken = (user, status, res) => res.status(status).json({
+    success: true,
+    token: user.getSignedJwtToken(),
+    user: {
+        _id: user._id,
+        email: user.email,
+        username: user.username,
+        avatar: user.avatar,
+        role: user.role,
+        plan: user.plan || 'none',
+        subscribedTo: user.subscribedTo ?? []
+    }
+});
 
-const ADMIN_EMAIL = 'basavarajreddy000@gmail.com';
+const ADMIN_EMAIL = process.env.SUPER_ADMIN_EMAIL || 'basavarajreddy000@gmail.com';
 
 exports.register = async (req, res) => {
     try {
@@ -93,7 +91,8 @@ exports.verifyOtp = async (req, res) => {
 
 exports.getMe = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.user._id).select('-password -otp -otpExpire');
+        if (!user) return res.status(404).json({ success: false, error: 'User not found' });
         res.json({ success: true, data: user });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });

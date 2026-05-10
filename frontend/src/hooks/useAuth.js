@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
+import { useAuthState } from '../store/index.jsx';
 
-const useAuth = () => useSelector((state) => state.auth);
+const useAuth = () => useAuthState();
 
 export default useAuth;

@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { updateUser as updateUserStore } from '../store';
+import { useAuthState, useAuthDispatch, updateUser as updateUserStore } from '../store/index.jsx';
 import { getVideosByUser, updateVideo, deleteVideo } from '../services/videoService';
 import { getAllVideos } from '../services/adminService';
 import { getUser, updateUser } from '../services/userService';
@@ -12,9 +11,10 @@ const avatarUrl = email =>
 
 export default function Dashboard() {
     const navigate  = useNavigate();
-    const dispatch  = useDispatch();
-    const authUser  = useSelector(s => s.auth.user);
-    const email     = useSelector(s => s.auth.email);
+    const dispatch  = useAuthDispatch();
+    const authState = useAuthState();
+    const authUser  = authState.user;
+    const email     = authState.email;
     const isAdmin   = authUser?.role === 'admin';
 
     const [user, setUser]       = useState(null);

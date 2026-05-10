@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useAuthState } from '../store/index.jsx';
 import {
     getStats, getAllUsers, updateUserRole, updateUserPlan, deleteUser,
     getAllVideos, updateAdminVideo, deleteVideo, getAllRequests, deleteRequest
@@ -16,7 +16,7 @@ function StatCard({ label, value, icon, color, onClick }) {
             onClick={onClick}
             role={onClick ? 'button' : undefined}
             tabIndex={onClick ? 0 : undefined}
-            onKeyDown={onClick ? function(e) { if (e.key === 'Enter') onClick(); } : undefined}
+            onKeyDown={onClick ? e => { if (e.key === 'Enter') onClick(); } : undefined}
         >
             <div className="adm-stat-icon">{icon}</div>
             <div className="adm-stat-body">
@@ -30,7 +30,7 @@ function StatCard({ label, value, icon, color, onClick }) {
 
 function Confirm({ message, onConfirm, onCancel }) {
     return (
-        <div className="adm-overlay" onClick={function(e) { if (e.target === e.currentTarget) onCancel(); }}>
+        <div className="adm-overlay" onClick={e => { if (e.target === e.currentTarget) onCancel(); }}>
             <div className="adm-confirm">
                 <div className="adm-confirm-icon">⚠️</div>
                 <p className="adm-confirm-msg">{message}</p>
@@ -56,12 +56,10 @@ function VideoEditModal({ video, onSave, onClose }) {
     const [saving, setSaving] = useState(false);
     const [error, setError]   = useState('');
 
-    function set(key) {
-        return function(e) {
-            const val = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-            setForm(function(prev) { return { ...prev, [key]: val }; });
-        };
-    }
+    const set = key => e => {
+        const val = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+        setForm(prev => ({ ...prev, [key]: val }));
+    };
 
     async function handleSave(e) {
         e.preventDefault();
@@ -161,7 +159,7 @@ function VideoEditModal({ video, onSave, onClose }) {
 
 export default function AdminPanel() {
     const navigate = useNavigate();
-    const user = useSelector(function(s) { return s.auth.user; });
+    const user = useAuthState().user;
 
     const [tab, setTab]           = useState('Overview');
     const [stats, setStats]       = useState(null);
@@ -173,28 +171,28 @@ export default function AdminPanel() {
     const [editVideo, setEditVideo] = useState(null);
     const [search, setSearch]     = useState('');
 
-    useEffect(function() {
+    useEffect(() => {
         if (!user || user.role !== 'admin') navigate('/', { replace: true });
     }, [user, navigate]);
 
-    useEffect(function() {
+    useEffect(() => {
         setLoading(true);
         Promise.all([getStats(), getAllVideos(), getAllRequests(), getAllUsers()])
-            .then(function([s, v, r, u]) {
+            .then(([s, v, r, u]) => {
                 setStats(s);
                 setVideos(v);
                 setRequests(r);
                 setUsers(u);
             })
-            .finally(function() { setLoading(false); });
+            .finally(() => setLoading(false));
     }, []);
 
     function handleDeleteUser(id) {
         setConfirm({
             message: 'Permanently delete this user and all their data?',
-            onConfirm: async function() {
+            onConfirm: async () => {
                 await deleteUser(id);
-                setUsers(function(prev) { return prev.filter(function(u) { return u._id !== id; }); });
+                setUsers(prev => prev.filter(u => u._id !== id));
                 setConfirm(null);
             }
         });
@@ -203,9 +201,9 @@ export default function AdminPanel() {
     function handleDeleteVideo(id, title) {
         setConfirm({
             message: `Permanently delete "${title}"?`,
-            onConfirm: async function() {
+            onConfirm: async () => {
                 await deleteVideo(id);
-                setVideos(function(prev) { return prev.filter(function(v) { return v._id !== id; }); });
+                setVideos(prev => prev.filter(v => v._id !== id));
                 setConfirm(null);
             }
         });
@@ -214,9 +212,9 @@ export default function AdminPanel() {
     function handleDeleteRequest(id) {
         setConfirm({
             message: 'Delete this request?',
-            onConfirm: async function() {
+            onConfirm: async () => {
                 await deleteRequest(id);
-                setRequests(function(prev) { return prev.filter(function(r) { return r._id !== id; }); });
+                setRequests(prev => prev.filter(r => r._id !== id));
                 setConfirm(null);
             }
         });
@@ -224,27 +222,27 @@ export default function AdminPanel() {
 
     async function handleRoleChange(id, role) {
         const updated = await updateUserRole(id, role);
-        setUsers(function(prev) { return prev.map(function(u) { return u._id === id ? { ...u, role: updated.role } : u; }); });
+        setUsers(prev => prev.map(u => u._id === id ? { ...u, role: updated.role } : u));
     }
 
     async function handlePlanChange(id, plan) {
         const updated = await updateUserPlan(id, plan);
-        setUsers(function(prev) { return prev.map(function(u) { return u._id === id ? { ...u, plan: updated.plan } : u; }); });
+        setUsers(prev => prev.map(u => u._id === id ? { ...u, plan: updated.plan } : u));
     }
 
     async function handleFeatureToggle(id, current) {
         const updated = await updateAdminVideo(id, { featured: !current });
-        setVideos(function(prev) { return prev.map(function(v) { return v._id === id ? { ...v, featured: updated.featured } : v; }); });
+        setVideos(prev => prev.map(v => v._id === id ? { ...v, featured: updated.featured } : v));
     }
 
     function handleVideoSaved(updated) {
-        setVideos(function(prev) { return prev.map(function(v) { return v._id === updated._id ? updated : v; }); });
+        setVideos(prev => prev.map(v => v._id === updated._id ? updated : v));
         setEditVideo(null);
     }
 
-    const filteredUsers  = users.filter(function(u) { return u.email.toLowerCase().includes(search.toLowerCase()) || (u.username || '').toLowerCase().includes(search.toLowerCase()); });
-    const filteredVideos = videos.filter(function(v) { return (v.title || '').toLowerCase().includes(search.toLowerCase()); });
-    const filteredReqs   = requests.filter(function(r) { return r.title.toLowerCase().includes(search.toLowerCase()); });
+    const filteredUsers  = users.filter(u => u.email.toLowerCase().includes(search.toLowerCase()) || (u.username || '').toLowerCase().includes(search.toLowerCase()));
+    const filteredVideos = videos.filter(v => (v.title || '').toLowerCase().includes(search.toLowerCase()));
+    const filteredReqs   = requests.filter(r => r.title.toLowerCase().includes(search.toLowerCase()));
 
     if (!user || user.role !== 'admin') return null;
 
@@ -256,10 +254,10 @@ export default function AdminPanel() {
                     <span className="adm-brand-text">Admin Panel</span>
                 </div>
                 <nav className="adm-nav">
-                    {TABS.map(function(t) {
+                    {TABS.map(t => {
                         const icons = { Overview: '📊', Users: '👥', Videos: '🎬', Requests: '📋' };
                         return (
-                            <button key={t} className={`adm-nav-item${tab === t ? ' active' : ''}`} onClick={function() { setTab(t); }}>
+                            <button key={t} className={`adm-nav-item${tab === t ? ' active' : ''}`} onClick={() => setTab(t)}>
                                 <span className="adm-nav-icon">{icons[t]}</span>
                                 {t}
                                 {t === 'Videos'   && <span className="adm-nav-count">{videos.length || ''}</span>}
@@ -274,7 +272,7 @@ export default function AdminPanel() {
                         <span className="adm-admin-dot" />
                         Super Admin
                     </div>
-                    <button className="adm-btn adm-btn--ghost adm-back-btn" onClick={function() { navigate('/'); }}>
+                    <button className="adm-btn adm-btn--ghost adm-back-btn" onClick={() => navigate('/')}>
                         ← Back to Site
                     </button>
                 </div>
@@ -287,7 +285,7 @@ export default function AdminPanel() {
                         <p className="adm-page-sub">
                             {tab === 'Overview' && 'Platform statistics at a glance'}
                             {tab === 'Users'    && `${users.length} registered users`}
-                            {tab === 'Videos'   && `${videos.length} uploaded videos · ${videos.filter(function(v) { return v.featured; }).length} featured`}
+                            {tab === 'Videos'   && `${videos.length} uploaded videos · ${videos.filter(v => v.featured).length} featured`}
                             {tab === 'Requests' && `${requests.length} community requests`}
                         </p>
                     </div>
@@ -296,7 +294,7 @@ export default function AdminPanel() {
                             className="adm-search"
                             placeholder={`Search ${tab.toLowerCase()}...`}
                             value={search}
-                            onChange={function(e) { setSearch(e.target.value); }}
+                            onChange={e => setSearch(e.target.value)}
                         />
                     )}
                 </div>
@@ -306,9 +304,9 @@ export default function AdminPanel() {
                 {!loading && tab === 'Overview' && stats && (
                     <div className="adm-overview">
                         <div className="adm-stats-grid">
-                            <StatCard label="Total Users"   value={stats.totalUsers}    icon="👥" color="blue"    onClick={function() { setTab('Users'); }} />
-                            <StatCard label="Total Videos"  value={stats.totalVideos}   icon="🎬" color="red"     onClick={function() { setTab('Videos'); }} />
-                            <StatCard label="Requests"      value={stats.totalRequests} icon="📋" color="gold"    onClick={function() { setTab('Requests'); }} />
+                            <StatCard label="Total Users"   value={stats.totalUsers}    icon="👥" color="blue"    onClick={() => setTab('Users')} />
+                            <StatCard label="Total Videos"  value={stats.totalVideos}   icon="🎬" color="red"     onClick={() => setTab('Videos')} />
+                            <StatCard label="Requests"      value={stats.totalRequests} icon="📋" color="gold"    onClick={() => setTab('Requests')} />
                             <StatCard label="Premium Users" value={stats.premiumUsers}  icon="💎" color="emerald" />
                         </div>
 
@@ -316,7 +314,7 @@ export default function AdminPanel() {
                         <div className="adm-overview-section">
                             <div className="adm-overview-section-head">
                                 <h3 className="adm-recent-title">All Videos <span className="adm-count-badge">{videos.length}</span></h3>
-                                <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={function() { setTab('Videos'); }}>Manage →</button>
+                                <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => setTab('Videos')}>Manage →</button>
                             </div>
                             <div className="adm-table-wrap">
                                 <table className="adm-table">
@@ -330,8 +328,7 @@ export default function AdminPanel() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {videos.map(function(v) {
-                                            return (
+                                        {videos.map(v => (
                                                 <tr key={v._id} className={v.featured ? 'adm-row--featured' : ''}>
                                                     <td>
                                                         <div className="adm-video-cell">
@@ -367,13 +364,12 @@ export default function AdminPanel() {
                                                     </td>
                                                     <td>
                                                         <div className="adm-actions">
-                                                            <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={function() { navigate(`/watch/${v._id}`); }}>View</button>
-                                                            <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={function() { handleDeleteVideo(v._id, v.title); }}>Delete</button>
+                                                            <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => navigate(`/watch/${v._id}`)}>View</button>
+                                                            <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => handleDeleteVideo(v._id, v.title)}>Delete</button>
                                                         </div>
                                                     </td>
                                                 </tr>
-                                            );
-                                        })}
+                                            ))}
                                     </tbody>
                                 </table>
                                 {videos.length === 0 && <div className="adm-empty">No videos yet.</div>}
@@ -384,7 +380,7 @@ export default function AdminPanel() {
                         <div className="adm-overview-section">
                             <div className="adm-overview-section-head">
                                 <h3 className="adm-recent-title">All Requests <span className="adm-count-badge">{requests.length}</span></h3>
-                                <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={function() { setTab('Requests'); }}>Manage →</button>
+                                <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => setTab('Requests')}>Manage →</button>
                             </div>
                             <div className="adm-table-wrap">
                                 <table className="adm-table">
@@ -399,8 +395,7 @@ export default function AdminPanel() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {requests.map(function(r, i) {
-                                            return (
+                                        {requests.map((r, i) => (
                                                 <tr key={r._id}>
                                                     <td className="adm-date">{i + 1}</td>
                                                     <td className="adm-req-title">{r.title}</td>
@@ -408,11 +403,10 @@ export default function AdminPanel() {
                                                     <td className="adm-date">{r.count || 1}</td>
                                                     <td className="adm-date">{new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
                                                     <td>
-                                                        <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={function() { handleDeleteRequest(r._id); }}>Delete</button>
+                                                        <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => handleDeleteRequest(r._id)}>Delete</button>
                                                     </td>
                                                 </tr>
-                                            );
-                                        })}
+                                            ))}
                                     </tbody>
                                 </table>
                                 {requests.length === 0 && <div className="adm-empty">No requests yet.</div>}
@@ -434,7 +428,7 @@ export default function AdminPanel() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredUsers.map(function(u) {
+                                {filteredUsers.map(u => {
                                     const isSuperAdmin = u.email === 'basavarajreddy000@gmail.com';
                                     return (
                                         <tr key={u._id}>
@@ -453,19 +447,19 @@ export default function AdminPanel() {
                                                 </div>
                                             </td>
                                             <td>
-                                                <select className="adm-select" value={u.plan || 'none'} onChange={function(e) { handlePlanChange(u._id, e.target.value); }}>
-                                                    {['none', 'Basic', 'Standard', 'Premium'].map(function(p) { return <option key={p} value={p}>{p}</option>; })}
+                                                <select className="adm-select" value={u.plan || 'none'} onChange={e => handlePlanChange(u._id, e.target.value)}>
+                                                    {['none', 'Basic', 'Standard', 'Premium'].map(p => <option key={p} value={p}>{p}</option>)}
                                                 </select>
                                             </td>
                                             <td>
-                                                <select className="adm-select" value={u.role} onChange={function(e) { handleRoleChange(u._id, e.target.value); }} disabled={isSuperAdmin}>
+                                                <select className="adm-select" value={u.role} onChange={e => handleRoleChange(u._id, e.target.value)} disabled={isSuperAdmin}>
                                                     <option value="user">user</option>
                                                     <option value="admin">admin</option>
                                                 </select>
                                             </td>
                                             <td className="adm-date">{new Date(u.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
                                             <td>
-                                                <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={function() { handleDeleteUser(u._id); }} disabled={isSuperAdmin}>
+                                                <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => handleDeleteUser(u._id)} disabled={isSuperAdmin}>
                                                     Delete
                                                 </button>
                                             </td>
@@ -492,8 +486,7 @@ export default function AdminPanel() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredVideos.map(function(v) {
-                                    return (
+                                {filteredVideos.map(v => (
                                         <tr key={v._id} className={v.featured ? 'adm-row--featured' : ''}>
                                             <td>
                                                 <div className="adm-video-cell">
@@ -530,7 +523,7 @@ export default function AdminPanel() {
                                             <td>
                                                 <button
                                                     className={`adm-feature-btn${v.featured ? ' adm-feature-btn--on' : ''}`}
-                                                    onClick={function() { handleFeatureToggle(v._id, v.featured); }}
+                                                    onClick={() => handleFeatureToggle(v._id, v.featured)}
                                                     title={v.featured ? 'Remove from featured' : 'Feature this video'}
                                                 >
                                                     {v.featured ? '⭐ Featured' : '☆ Feature'}
@@ -538,14 +531,13 @@ export default function AdminPanel() {
                                             </td>
                                             <td>
                                                 <div className="adm-actions">
-                                                    <button className="adm-btn adm-btn--edit adm-btn--sm" onClick={function() { setEditVideo(v); }}>Edit</button>
-                                                    <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={function() { navigate(`/watch/${v._id}`); }}>View</button>
-                                                    <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={function() { handleDeleteVideo(v._id, v.title); }}>Delete</button>
+                                                    <button className="adm-btn adm-btn--edit adm-btn--sm" onClick={() => setEditVideo(v)}>Edit</button>
+                                                    <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => navigate(`/watch/${v._id}`)}>View</button>
+                                                    <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => handleDeleteVideo(v._id, v.title)}>Delete</button>
                                                 </div>
                                             </td>
                                         </tr>
-                                    );
-                                })}
+                                    ))}
                             </tbody>
                         </table>
                         {filteredVideos.length === 0 && <div className="adm-empty">No videos found.</div>}
@@ -565,19 +557,17 @@ export default function AdminPanel() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredReqs.map(function(r, i) {
-                                    return (
+                                {filteredReqs.map((r, i) => (
                                         <tr key={r._id}>
                                             <td className="adm-date">{i + 1}</td>
                                             <td className="adm-req-title">{r.title}</td>
                                             <td className="adm-date">{r.requestedBy}</td>
                                             <td className="adm-date">{new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
                                             <td>
-                                                <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={function() { handleDeleteRequest(r._id); }}>Delete</button>
+                                                <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => handleDeleteRequest(r._id)}>Delete</button>
                                             </td>
                                         </tr>
-                                    );
-                                })}
+                                    ))}
                             </tbody>
                         </table>
                         {filteredReqs.length === 0 && <div className="adm-empty">No requests found.</div>}
@@ -586,11 +576,11 @@ export default function AdminPanel() {
             </main>
 
             {confirm && (
-                <Confirm message={confirm.message} onConfirm={confirm.onConfirm} onCancel={function() { setConfirm(null); }} />
+                <Confirm message={confirm.message} onConfirm={confirm.onConfirm} onCancel={() => setConfirm(null)} />
             )}
 
             {editVideo && (
-                <VideoEditModal video={editVideo} onSave={handleVideoSaved} onClose={function() { setEditVideo(null); }} />
+                <VideoEditModal video={editVideo} onSave={handleVideoSaved} onClose={() => setEditVideo(null)} />
             )}
         </div>
     );
