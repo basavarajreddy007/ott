@@ -12,7 +12,27 @@ const app = express();
 app.use(express.json({ limit: '500mb' }));
 app.use(express.urlencoded({ limit: '500mb', extended: true }));
 
-app.use(cors({ origin: true, credentials: true }));
+const allowedOrigins = [
+    'https://ott-kp7e.onrender.com',
+    'http://localhost:5173',
+];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        // Allow requests with no origin (e.g. mobile apps, curl, Postman)
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error(`CORS policy: origin ${origin} not allowed`));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+// Explicitly handle preflight for all routes
+app.options('*', cors());
 
 app.use('/auth',     require('./routes/authRoutes'));
 app.use('/users',    require('./routes/userRoutes'));
