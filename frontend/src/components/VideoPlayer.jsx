@@ -36,7 +36,7 @@ export default function VideoPlayer() {
             .catch(err => {
                 if (err.response?.status === 403) {
                     setStatus('locked');
-                    setVideo({ upgradeMessage: err.response.data.message });
+                    setVideo({ upgradeMessage: err.response.data.error || err.response.data.message });
                 } else {
                     setStatus('error');
                 }

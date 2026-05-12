@@ -65,7 +65,7 @@ exports.getVideo = async (req, res) => {
         }
         const videoRank = PLAN_RANK[video.requiredPlan] || 1;
         if (userRank < videoRank) {
-            return res.status(403).json({ success: false, message: `Upgrade to ${video.requiredPlan} plan to watch this video` });
+            return res.status(403).json({ success: false, error: `Upgrade to ${video.requiredPlan} plan to watch this video` });
         }
 
         res.json({ success: true, data: video });

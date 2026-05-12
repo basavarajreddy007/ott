@@ -47,8 +47,8 @@ export default function Navbar() {
 
     const isActive = (path) => location.pathname === path;
 
-    const initials = user?.name
-        ? user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+    const initials = user?.username
+        ? user.username.slice(0, 2).toUpperCase()
         : user?.email?.[0]?.toUpperCase() ?? '?';
 
     return (

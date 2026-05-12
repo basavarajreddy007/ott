@@ -6,11 +6,8 @@ export const getVideosByUser = email =>
 export const updateVideo = (videoId, data) =>
     api.put(`/videos/${videoId}`, data).then(r => r.data.data);
 
-export const updateThumbnail = (videoId, file) => {
-    const form = new FormData();
-    form.append('thumbnail', file);
-    return api.patch(`/videos/${videoId}/thumbnail`, form).then(r => r.data.data);
-};
+export const updateThumbnail = (videoId, thumbnailUrl) =>
+    api.patch(`/videos/${videoId}/thumbnail`, { thumbnailUrl }).then(r => r.data.data);
 
 export const deleteVideo = videoId =>
     api.delete(`/videos/${videoId}`);

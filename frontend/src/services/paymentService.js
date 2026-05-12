@@ -9,7 +9,7 @@ export const PLANS = {
 export async function processPayment({ planId, amount }) {
     const res = await api.post('/payment', { planId, amount });
     if (!res.data.success) {
-        throw new Error(res.data.message || 'Payment failed');
+        throw new Error(res.data.error || res.data.message || 'Payment failed');
     }
     return res.data;
 }

@@ -10,11 +10,11 @@ exports.processPayment = async (req, res) => {
     try {
         const { planId, amount } = req.body;
         if (!planId || !amount) {
-            return res.status(400).json({ success: false, message: 'planId and amount are required' });
+            return res.status(400).json({ success: false, error: 'planId and amount are required' });
         }
 
         const plan = PLANS[planId];
-        if (!plan) return res.status(400).json({ success: false, message: 'Invalid plan' });
+        if (!plan) return res.status(400).json({ success: false, error: 'Invalid plan' });
 
         await User.findByIdAndUpdate(req.user._id, { plan: plan.name });
 
