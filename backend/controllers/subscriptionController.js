@@ -64,7 +64,7 @@ const subscribe = async (req, res, next) => {
     if (!customerId) {
       customerId = await paymentService.createCustomer(user.email, user.name);
       user.subscription.stripeCustomerId = customerId;
-      await user.save();
+      await user.save({ validateModifiedOnly: true });
     }
 
     const subscription = await paymentService.createSubscription(customerId, plan.stripePriceId);
@@ -84,7 +84,7 @@ const subscribe = async (req, res, next) => {
     user.subscription.startDate = new Date();
     user.subscription.endDate = new Date(Date.now() + plan.duration * 24 * 60 * 60 * 1000);
     user.subscription.stripeSubscriptionId = subscription.subscriptionId;
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     const confirmResult = await sendSubscriptionConfirmation(user.email, plan.name, plan.price);
     if (!confirmResult.success) {
@@ -112,7 +112,7 @@ const cancelSubscription = async (req, res, next) => {
 
     user.subscription.status = "cancelled";
     user.subscription.endDate = new Date();
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     res.status(200).json({ success: true, message: "Subscription cancelled" });
   } catch (error) {

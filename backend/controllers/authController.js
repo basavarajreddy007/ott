@@ -83,7 +83,7 @@ const verifyOtp = async (req, res, next) => {
     user.isVerified = true;
     user.otp = undefined;
     user.otpExpires = undefined;
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     await sendWelcomeEmail(email, user.name);
 
@@ -91,7 +91,7 @@ const verifyOtp = async (req, res, next) => {
     const refreshToken = generateRefreshToken(user._id);
 
     user.refreshToken = refreshToken;
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -136,7 +136,7 @@ const resendOtp = async (req, res, next) => {
     const otp = generateOtp();
     user.otp = otp;
     user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     const otpResult = await sendOtpEmail(email, otp);
     if (!otpResult.success) {
@@ -182,7 +182,16 @@ const login = async (req, res, next) => {
 
     user.refreshToken = refreshToken;
     if (rememberMe) user.rememberMe = true;
-    await user.save();
+    try {
+      await user.save();
+    } catch (saveErr) {
+      if (saveErr.name === "ValidationError" && saveErr.errors?.role) {
+        user.role = "user";
+        await user.save();
+      } else {
+        throw saveErr;
+      }
+    }
 
     const cookieMaxAge = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000;
 
@@ -220,7 +229,7 @@ const logout = async (req, res, next) => {
     if (req.user) {
       req.user.refreshToken = null;
       req.user.rememberMe = false;
-      await req.user.save();
+      await req.user.save({ validateModifiedOnly: true });
     }
 
     res.status(200).json({ success: true, message: "Logged out successfully" });
@@ -247,7 +256,7 @@ const refreshToken = async (req, res, next) => {
     const newRefreshToken = generateRefreshToken(user._id);
 
     user.refreshToken = newRefreshToken;
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     res.cookie("token", newToken, {
       httpOnly: true,
@@ -286,7 +295,7 @@ const forgotPassword = async (req, res, next) => {
     const otp = generateOtp();
     user.resetPasswordOtp = otp;
     user.resetPasswordOtpExpires = new Date(Date.now() + 10 * 60 * 1000);
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     const emailResult = await sendPasswordResetOtp(email, otp);
     if (!emailResult.success) {
@@ -329,7 +338,7 @@ const resetPassword = async (req, res, next) => {
     user.password = password;
     user.resetPasswordOtp = undefined;
     user.resetPasswordOtpExpires = undefined;
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     res.status(200).json({ success: true, message: "Password reset successful" });
   } catch (error) {

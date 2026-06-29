@@ -9,7 +9,7 @@ const updateProfile = async (req, res, next) => {
     if (name) user.name = name;
     if (bio) user.bio = bio;
 
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     res.status(200).json({ success: true, message: "Profile updated", data: user });
   } catch (error) {
@@ -29,7 +29,7 @@ const changePassword = async (req, res, next) => {
     }
 
     user.password = newPassword;
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     res.status(200).json({ success: true, message: "Password changed successfully" });
   } catch (error) {
@@ -47,7 +47,7 @@ const uploadAvatar = async (req, res, next) => {
 
     const user = await User.findById(req.user._id);
     user.avatar = result.url;
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     res.status(200).json({ success: true, message: "Avatar updated", data: { url: result.url } });
   } catch (error) {

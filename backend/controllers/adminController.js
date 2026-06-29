@@ -76,7 +76,7 @@ const getUserById = async (req, res, next) => {
 
 const updateUserRole = async (req, res, next) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, { role: req.body.role }, { new: true });
+    const user = await User.findByIdAndUpdate(req.params.id, { role: req.body.role }, { new: true, runValidators: true });
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
     res.status(200).json({ success: true, message: "User role updated", data: user });
   } catch (error) {
