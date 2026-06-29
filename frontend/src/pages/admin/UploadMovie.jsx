@@ -38,12 +38,11 @@ export default function UploadMovie() {
       video: { url: "video", publicId: "videoPublicId" },
       trailer: { url: "trailer", publicId: "trailerPublicId" },
     };
-    const fd = new FormData();
+      const fd = new FormData();
     fd.append("file", file);
-    fd.append("folder", "movies");
-    fd.append("type", field);
     try {
-      const { data } = await uploadAPI.upload(fd);
+      const uploadFn = field === "trailer" ? uploadAPI.video : (uploadAPI[field] || uploadAPI.image);
+      const { data } = await uploadFn(fd);
       const map = fieldMap[field];
       setForm((prev) => ({ ...prev, [map.url]: data.data.url, [map.publicId]: data.data.publicId }));
     } catch {

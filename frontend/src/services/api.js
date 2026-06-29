@@ -1,6 +1,6 @@
 ﻿import axios from "axios";
 
-const API_URL = "https://ott-gi0u.onrender.com/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -111,7 +111,7 @@ export const webSeriesAPI = {
 };
 
 export const genreAPI = {
-  getAll: () => api.get("/genres"),
+  getAll: (params) => api.get("/genres", { params }),
   getById: (id) => api.get(`/genres/${id}`),
   create: (data) => api.post("/genres", data),
   update: (id, data) => api.put(`/genres/${id}`, data),
@@ -119,7 +119,7 @@ export const genreAPI = {
 };
 
 export const categoryAPI = {
-  getAll: () => api.get("/categories"),
+  getAll: (params) => api.get("/categories", { params }),
   create: (data) => api.post("/categories", data),
   delete: (id) => api.delete(`/categories/${id}`),
 };

@@ -9,7 +9,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    adminAPI.getStats().then(({ data }) => setStats(data)).catch(() => {}).finally(() => setLoading(false));
+    adminAPI.getDashboard().then(({ data }) => setStats(data.data)).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
   const statCards = [
