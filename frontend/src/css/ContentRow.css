@@ -1,0 +1,118 @@
+.content-row {
+  margin-bottom: var(--space-2xl);
+  padding: 0 clamp(20px, 3vw, 40px);
+}
+
+.content-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+}
+
+.content-row-wrapper {
+  position: relative;
+}
+
+.content-row-wrapper::before,
+.content-row-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-smooth);
+}
+
+.content-row-wrapper::before {
+  left: 0;
+  background: linear-gradient(to right, var(--color-bg-main) 0%, transparent 100%);
+}
+
+.content-row-wrapper::after {
+  right: 0;
+  background: linear-gradient(to left, var(--color-bg-main) 0%, transparent 100%);
+}
+
+.content-row-wrapper:hover::before,
+.content-row-wrapper:hover::after {
+  opacity: 1;
+}
+
+.content-row-track {
+  display: flex;
+  gap: var(--space-md);
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding: var(--space-sm) 0;
+  mask-image: linear-gradient(to right, transparent 0%, black 30px, black calc(100% - 30px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30px, black calc(100% - 30px), transparent 100%);
+}
+
+.content-row-track::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 80px;
+  background: rgba(11, 11, 11, 0.7);
+  backdrop-filter: blur(4px);
+  color: var(--color-text-primary);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  z-index: 5;
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  opacity: 0;
+}
+
+.content-row-wrapper:hover .scroll-btn {
+  opacity: 1;
+}
+
+.scroll-btn:hover {
+  background: rgba(229, 9, 20, 0.8);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.scroll-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.scroll-left {
+  left: 0;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.scroll-right {
+  right: 0;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+@media (max-width: 768px) {
+  .content-row-track {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .scroll-btn {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content-row-track {
+    scroll-behavior: auto;
+  }
+}

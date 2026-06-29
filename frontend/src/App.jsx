@@ -1,0 +1,111 @@
+import { lazy, Suspense, useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import MainLayout from "./layouts/MainLayout";
+import AdminLayout from "./layouts/AdminLayout";
+import ScrollToTop from "./components/common/ScrollToTop";
+import ProtectedRoute from "./components/common/ProtectedRoute";
+import AdminRoute from "./components/common/AdminRoute";
+import Spinner from "./components/common/Spinner";
+import SplashScreen from "./components/common/SplashScreen";
+
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const VerifyOtp = lazy(() => import("./pages/VerifyOtp"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Movies = lazy(() => import("./pages/Movies"));
+const TvShows = lazy(() => import("./pages/TvShows"));
+const WebSeriesPage = lazy(() => import("./pages/WebSeriesPage"));
+const MovieDetails = lazy(() => import("./pages/MovieDetails"));
+const TvShowDetails = lazy(() => import("./pages/TvShowDetails"));
+const WebSeriesDetails = lazy(() => import("./pages/WebSeriesDetails"));
+const Watch = lazy(() => import("./pages/Watch"));
+const Search = lazy(() => import("./pages/Search"));
+
+const ContinueWatchingPage = lazy(() => import("./pages/ContinueWatchingPage"));
+const History = lazy(() => import("./pages/History"));
+const Favorites = lazy(() => import("./pages/Favorites"));
+const Subscription = lazy(() => import("./pages/Subscription"));
+const Payment = lazy(() => import("./pages/Payment"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Notifications = lazy(() => import("./pages/Notifications"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Faq = lazy(() => import("./pages/Faq"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const GenrePage = lazy(() => import("./pages/GenrePage"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const ScriptGenerator = lazy(() => import("./pages/ScriptGenerator"));
+const Upload = lazy(() => import("./pages/Upload"));
+const UploadMovie = lazy(() => import("./pages/admin/UploadMovie"));
+const EditMovie = lazy(() => import("./pages/admin/EditMovie"));
+const ManageUsers = lazy(() => import("./pages/admin/ManageUsers"));
+const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
+const ManageReviews = lazy(() => import("./pages/admin/ManageReviews"));
+const ManageSubscriptions = lazy(() => import("./pages/admin/ManageSubscriptions"));
+const ManageBrands = lazy(() => import("./pages/admin/ManageBrands"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
+  if (showSplash) return <SplashScreen onFinish={() => setShowSplash(false)} />;
+
+  return (
+    <Suspense fallback={<Spinner fullScreen />}>
+      <ScrollToTop />
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/verify-otp" element={<VerifyOtp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/movies" element={<Movies />} />
+          <Route path="/movies/:slug" element={<MovieDetails />} />
+          <Route path="/tv-shows" element={<TvShows />} />
+          <Route path="/tv-shows/:slug" element={<TvShowDetails />} />
+          <Route path="/web-series" element={<WebSeriesPage />} />
+          <Route path="/web-series/:slug" element={<WebSeriesDetails />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/genre/:genreId" element={<GenrePage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/faq" element={<Faq />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/watch/:type/:slug" element={<Watch />} />
+            <Route path="/continue-watching" element={<ContinueWatchingPage />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/subscription" element={<Subscription />} />
+            <Route path="/payment/:planId" element={<Payment />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/upload" element={<Upload />} />
+            <Route path="/ai/script" element={<ScriptGenerator />} />
+          </Route>
+        </Route>
+        <Route element={<AdminRoute />}>
+          <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/upload-movie" element={<UploadMovie />} />
+            <Route path="/admin/edit-movie/:id" element={<EditMovie />} />
+            <Route path="/admin/users" element={<ManageUsers />} />
+            <Route path="/admin/analytics" element={<AdminAnalytics />} />
+            <Route path="/admin/reviews" element={<ManageReviews />} />
+            <Route path="/admin/subscriptions" element={<ManageSubscriptions />} />
+            <Route path="/admin/brands" element={<ManageBrands />} />
+          </Route>
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
+  );
+}
