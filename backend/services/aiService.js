@@ -18,8 +18,8 @@ const systemPrompts = {
 };
 
 async function aiChat({ messages, system = "chat", temperature = 0.7 }) {
-  const apiKey = process.env.OPENROUTER_KEY || process.env.OPENAI_KEY;
-  if (!apiKey) throw new Error("No AI API key configured");
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) throw new Error("OPENROUTER_API_KEY is missing from environment variables.");
 
   const systemMsg = systemPrompts[system] || systemPrompts.chat;
 
@@ -156,8 +156,8 @@ Format the response with clear section headers for each aspect and a final overa
 }
 
 async function generateThumbnail({ title, description, genre, style }) {
-  const apiKey = process.env.OPENROUTER_KEY || process.env.OPENAI_KEY;
-  if (!apiKey) throw new Error("No AI API key configured");
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) throw new Error("OPENROUTER_API_KEY is missing from environment variables.");
 
   const promptResult = await aiChat({
     messages: [{
