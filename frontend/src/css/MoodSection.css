@@ -247,3 +247,49 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .mood-section {
+    margin-bottom: 32px;
+  }
+
+  .mood-cards {
+    gap: 10px;
+  }
+
+  .mood-card {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .mood-card-poster {
+    width: 56px;
+    height: 84px;
+  }
+
+  .mood-card-genre {
+    font-size: 10px;
+  }
+
+  .mood-card-title {
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mood-section {
+    animation: none;
+  }
+
+  .mood-card {
+    animation: none;
+  }
+
+  .mood-recommendations {
+    animation: none;
+  }
+
+  .mood-loading-spinner {
+    animation-duration: 1.5s;
+  }
+}

@@ -88,6 +88,7 @@ export default function Navbar() {
 
         <div className="navbar-right">
           <Link to="/ai/script" className="nav-link nav-link-ai" onClick={closeMenu}>AI Studio</Link>
+          <Link to="/ai/thumbnail" className="nav-link" onClick={closeMenu}>AI Thumbnail</Link>
           <div className="navbar-actions">
             <form onSubmit={handleSearch} className="search-form" role="search">
               <HiSearch className="search-icon" />

@@ -199,6 +199,49 @@
   }
 }
 
+@media (max-width: 480px) {
+  .hero-banner {
+    height: 60vh;
+    min-height: 350px;
+  }
+
+  .hero-content {
+    padding: 80px 16px 24px;
+  }
+
+  .hero-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .hero-description {
+    display: none;
+  }
+
+  .hero-actions {
+    flex-wrap: wrap;
+  }
+
+  .hero-actions .btn {
+    font-size: 12px;
+    padding: 10px 16px;
+    flex: 1;
+  }
+
+  .hero-meta {
+    font-size: 13px;
+    gap: var(--space-sm);
+  }
+
+  .hero-badge {
+    font-size: 10px;
+    padding: 3px 10px;
+  }
+
+  .hero-dots {
+    bottom: 20px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-gradient {
     animation: none;

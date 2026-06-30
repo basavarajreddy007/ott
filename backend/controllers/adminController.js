@@ -149,11 +149,18 @@ const getRevenue = async (req, res, next) => {
       .populate("subscriptionPlan", "name")
       .sort({ createdAt: -1 });
 
-    const totalRevenue = payments.reduce((acc, p) => acc + p.amount, 0);
-    const thisMonth = payments.filter(
-      (p) => new Date(p.createdAt).getMonth() === new Date().getMonth()
-    );
-    const monthlyRevenue = thisMonth.reduce((acc, p) => acc + p.amount, 0);
+    const totalRevenue = payments.reduce((acc, p) => acc + (p.amount || 0), 0);
+
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+
+    const thisMonthPayments = payments.filter((p) => {
+      if (!p.createdAt) return false;
+      const d = new Date(p.createdAt);
+      return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+    });
+    const monthlyRevenue = thisMonthPayments.reduce((acc, p) => acc + (p.amount || 0), 0);
 
     res.status(200).json({
       success: true,

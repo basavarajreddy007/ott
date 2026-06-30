@@ -8,4 +8,5 @@ export const aiAPI = {
   recommend: (data) => api.post("/ai/recommend", data),
   moodRecommend: (mood) => api.post("/ai/mood-recommend", { mood }),
   analyzeStory: (data) => api.post("/ai/analyze", data),
+  generateThumbnail: (data) => api.post("/ai/thumbnail/generate", data),
 };

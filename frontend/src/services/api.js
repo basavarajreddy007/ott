@@ -25,7 +25,8 @@ api.interceptors.response.use(
       originalRequest.url?.includes("/auth/register") ||
       originalRequest.url?.includes("/auth/forgot-password") ||
       originalRequest.url?.includes("/auth/reset-password") ||
-      originalRequest.url?.includes("/auth/refresh-token");
+      originalRequest.url?.includes("/auth/refresh-token") ||
+      originalRequest.url?.includes("/auth/me");
 
     if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       originalRequest._retry = true;
@@ -57,6 +58,7 @@ export const authAPI = {
   resendOtp: (data) => api.post("/auth/resend-otp", data),
   login: (data) => api.post("/auth/login", data),
   logout: () => api.post("/auth/logout"),
+  verifyLoginOtp: (data) => api.post("/auth/verify-login-otp", data),
   refreshToken: (data) => api.post("/auth/refresh-token", data),
   forgotPassword: (data) => api.post("/auth/forgot-password", data),
   resetPassword: (data) => api.post("/auth/reset-password", data),

@@ -1,7 +1,9 @@
 const axios = require("axios");
+const { uploadFromUrl } = require("./cloudinaryService");
 
 const OPENROUTER_API = "https://openrouter.ai/api/v1/chat/completions";
 const MODEL = "qwen/qwen-2.5-7b-instruct";
+const IMAGE_MODEL = "black-forest-labs/flux-1.1-pro";
 
 const systemPrompts = {
   chat: `You are CineBot, an AI assistant for MOVIEMAX — a premium OTT streaming platform. Help users with movie recommendations, platform features, scriptwriting tips, and general entertainment questions. Be concise, knowledgeable, and friendly.`,
@@ -11,6 +13,8 @@ const systemPrompts = {
   describe: `You are a copywriter for a streaming platform. Generate engaging, SEO-friendly movie and show descriptions based on key details provided. Keep descriptions 2-3 paragraphs, highlight unique selling points, and match the tone (dramatic, comedic, thrilling, etc.).`,
 
   recommend: `You are a movie recommendation engine for MOVIEMAX. Based on the user's watch history, favorite genres, and preferences, recommend movies, TV shows, and web series. Give brief reasons for each recommendation.`,
+
+  thumbnail: `You are a creative director for MOVIEMAX, a premium OTT streaming platform. Generate detailed, vivid image generation prompts for movie/show thumbnails. Focus on cinematic composition, lighting, color grading, and visual storytelling. Describe scenes that would make compelling, clickable thumbnails.`,
 };
 
 async function aiChat({ messages, system = "chat", temperature = 0.7 }) {
@@ -151,4 +155,62 @@ Format the response with clear section headers for each aspect and a final overa
   });
 }
 
-module.exports = { aiChat, generateScript, continueScript, generateDescription, getRecommendations, getMoodRecommendations, analyzeStory };
+async function generateThumbnail({ title, description, genre, style }) {
+  const apiKey = process.env.OPENROUTER_KEY || process.env.OPENAI_KEY;
+  if (!apiKey) throw new Error("No AI API key configured");
+
+  const promptResult = await aiChat({
+    messages: [{
+      role: "user",
+      content: `Create a detailed image generation prompt for a movie/show thumbnail.
+Title: ${title || "Untitled"}
+Description: ${description || "No description provided"}${genre ? `\nGenre: ${genre}` : ""}${style ? `\nStyle: ${style}"` : ""}
+
+The prompt must describe a cinematic, visually striking thumbnail suitable for a streaming platform. Include composition, lighting, color palette, mood, and visual elements. Return only the prompt text, single paragraph.`
+    }],
+    system: "thumbnail",
+    temperature: 0.7,
+  });
+
+  const imagePrompt = promptResult.content;
+
+  try {
+    const response = await axios.post(OPENROUTER_API, {
+      model: IMAGE_MODEL,
+      messages: [{ role: "user", content: imagePrompt }],
+    }, {
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://moviemax.app",
+        "X-Title": "MOVIEMAX",
+      },
+      timeout: 120000,
+    });
+
+    const imageUrl = response.data.choices[0].message.content.trim();
+
+    let url = imageUrl;
+    let publicId = null;
+    try {
+      const uploadResult = await uploadFromUrl(imageUrl, "ott-platform/thumbnails");
+      url = uploadResult.url;
+      publicId = uploadResult.publicId;
+    } catch {
+      console.warn("Cloudinary upload failed, returning direct URL");
+    }
+
+    return { url, publicId, prompt: imagePrompt };
+  } catch (error) {
+    if (error.response) {
+      const status = error.response.status;
+      const errMsg = error.response.data?.error?.message || error.response.data?.message || JSON.stringify(error.response.data);
+      throw new Error(`Image generation API error (${status}): ${errMsg}`);
+    } else if (error.request) {
+      throw new Error("No response from image generation API. Check your network connection.");
+    }
+    throw error;
+  }
+}
+
+module.exports = { aiChat, generateScript, continueScript, generateDescription, getRecommendations, getMoodRecommendations, analyzeStory, generateThumbnail };

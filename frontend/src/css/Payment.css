@@ -612,3 +612,26 @@
     font-size: 32px;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .payment-page::before {
+    animation: none;
+  }
+
+  .payment-brand {
+    animation: none;
+  }
+
+  .payment-card-wrap {
+    animation: none;
+  }
+
+  .payment-benefit {
+    animation: none;
+  }
+
+  .payment-btn-spinner,
+  .payment-loader-spinner {
+    animation-duration: 1.5s;
+  }
+}

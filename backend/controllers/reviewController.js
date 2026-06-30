@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Review = require("../models/Review");
 const Movie = require("../models/Movie");
 const TvShow = require("../models/TvShow");
@@ -39,7 +40,7 @@ const createReview = async (req, res, next) => {
     });
 
     const stats = await Review.aggregate([
-      { $match: { contentId: contentId._id || contentId, contentType } },
+      { $match: { contentId: new mongoose.Types.ObjectId(contentId), contentType } },
       { $group: { _id: null, averageRating: { $avg: "$rating" }, count: { $sum: 1 } } },
     ]);
 

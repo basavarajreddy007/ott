@@ -181,6 +181,30 @@ textarea.form-input {
   min-height: 100px;
 }
 
+@media (max-width: 640px) {
+  .auth-page {
+    padding: var(--space-md);
+  }
+
+  .auth-card {
+    padding: var(--space-lg);
+  }
+
+  .auth-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .auth-btn {
+    padding: 14px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .form-input {
     transition: none;

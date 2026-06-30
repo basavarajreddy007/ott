@@ -1,4 +1,4 @@
-const { aiChat, generateScript, continueScript, generateDescription, getRecommendations, getMoodRecommendations, analyzeStory } = require("../services/aiService");
+const { aiChat, generateScript, continueScript, generateDescription, getRecommendations, getMoodRecommendations, analyzeStory, generateThumbnail } = require("../services/aiService");
 
 const chat = async (req, res, next) => {
   try {
@@ -95,4 +95,17 @@ const storyAnalyze = async (req, res, next) => {
   }
 };
 
-module.exports = { chat, scriptGenerate, scriptContinue, describe, recommend, moodRecommend, storyAnalyze };
+const generateThumbnailHandler = async (req, res, next) => {
+  try {
+    const { title, description, genre, style } = req.body;
+    if (!title || !description) {
+      return res.status(400).json({ success: false, message: "Title and description are required" });
+    }
+    const result = await generateThumbnail({ title, description, genre, style });
+    res.json({ success: true, data: result });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { chat, scriptGenerate, scriptContinue, describe, recommend, moodRecommend, storyAnalyze, generateThumbnail: generateThumbnailHandler };

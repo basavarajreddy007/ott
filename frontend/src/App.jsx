@@ -36,9 +36,12 @@ const Contact = lazy(() => import("./pages/Contact"));
 const Faq = lazy(() => import("./pages/Faq"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Terms = lazy(() => import("./pages/Terms"));
+const Categories = lazy(() => import("./pages/Categories"));
+const Watchlist = lazy(() => import("./pages/Watchlist"));
 const GenrePage = lazy(() => import("./pages/GenrePage"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const ScriptGenerator = lazy(() => import("./pages/ScriptGenerator"));
+const ThumbnailGenerator = lazy(() => import("./pages/ThumbnailGenerator"));
 const Upload = lazy(() => import("./pages/Upload"));
 const UploadMovie = lazy(() => import("./pages/admin/UploadMovie"));
 const EditMovie = lazy(() => import("./pages/admin/EditMovie"));
@@ -72,6 +75,7 @@ export default function App() {
           <Route path="/web-series" element={<WebSeriesPage />} />
           <Route path="/web-series/:slug" element={<WebSeriesDetails />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/categories" element={<Categories />} />
           <Route path="/genre/:genreId" element={<GenrePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
@@ -83,6 +87,7 @@ export default function App() {
             <Route path="/continue-watching" element={<ContinueWatchingPage />} />
             <Route path="/history" element={<History />} />
             <Route path="/favorites" element={<Favorites />} />
+            <Route path="/watchlist" element={<Watchlist />} />
             <Route path="/subscription" element={<Subscription />} />
             <Route path="/payment/:planId" element={<Payment />} />
             <Route path="/profile" element={<Profile />} />
@@ -90,6 +95,7 @@ export default function App() {
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/upload" element={<Upload />} />
             <Route path="/ai/script" element={<ScriptGenerator />} />
+            <Route path="/ai/thumbnail" element={<ThumbnailGenerator />} />
           </Route>
         </Route>
         <Route element={<AdminRoute />}>

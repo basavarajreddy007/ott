@@ -356,6 +356,52 @@
   }
 }
 
+@media (max-width: 480px) {
+  .details-banner {
+    height: 50vh;
+    min-height: 300px;
+  }
+
+  .details-content {
+    margin-top: -60px;
+  }
+
+  .details-poster {
+    width: 140px;
+  }
+
+  .details-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .details-meta {
+    font-size: 13px;
+    gap: var(--space-sm);
+  }
+
+  .details-desc {
+    font-size: var(--font-size-sm);
+  }
+
+  .similar-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+  }
+
+  .review-form {
+    padding: var(--space-md);
+  }
+
+  .cast-item {
+    min-width: 80px;
+  }
+
+  .cast-item img {
+    width: 56px;
+    height: 56px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .details-banner-gradient {
     animation: none;

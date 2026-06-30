@@ -27,4 +27,20 @@ const deleteFromCloudinary = async (publicId) => {
   }
 };
 
-module.exports = { uploadToCloudinary, deleteFromCloudinary };
+const uploadFromUrl = async (url, folder = "ott-platform") => {
+  try {
+    const result = await cloudinary.uploader.upload(url, {
+      folder,
+      resource_type: "image",
+    });
+    return {
+      url: result.secure_url,
+      publicId: result.public_id,
+    };
+  } catch (error) {
+    console.error("Cloudinary URL upload error:", error);
+    throw new Error("Image upload from URL failed");
+  }
+};
+
+module.exports = { uploadToCloudinary, deleteFromCloudinary, uploadFromUrl };

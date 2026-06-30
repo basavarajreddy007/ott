@@ -14,10 +14,11 @@ export default function Upload() {
   const [plans, setPlans] = useState([]);
   const [videoFile, setVideoFile] = useState(null);
   const [posterFile, setPosterFile] = useState(null);
-  const [useUrlPoster, setUseUrlPoster] = useState(false);
+  const [posterMode, setPosterMode] = useState("upload");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [aiDescLoading, setAiDescLoading] = useState(false);
+  const [aiThumbLoading, setAiThumbLoading] = useState(false);
   const [videoResult, setVideoResult] = useState(null);
   const [posterResult, setPosterResult] = useState(null);
 
@@ -85,17 +86,35 @@ export default function Upload() {
     }
   };
 
+  const handleAiThumbnail = async () => {
+    if (!form.title.trim()) return toast.error("Enter a title first");
+    if (!form.description.trim()) return toast.error("Enter a description first");
+    setAiThumbLoading(true);
+    try {
+      const { data } = await aiAPI.generateThumbnail({
+        title: form.title,
+        description: form.description,
+      });
+      setForm(p => ({ ...p, posterUrl: data.data.url }));
+      toast.success("Thumbnail generated");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to generate thumbnail");
+    } finally {
+      setAiThumbLoading(false);
+    }
+  };
+
   const handlePublish = async () => {
     if (!videoResult) return toast.error("Upload a video first");
     if (!form.title.trim()) return toast.error("Enter a title");
 
-    if (useUrlPoster && !form.posterUrl.trim()) {
+    if (posterMode === "url" && !form.posterUrl.trim()) {
       return toast.error("Enter a poster URL or upload a file");
     }
 
     setSaving(true);
     try {
-      const poster = useUrlPoster
+      const poster = posterMode === "url" || posterMode === "ai"
         ? { url: form.posterUrl, publicId: "" }
         : posterResult;
 
@@ -279,27 +298,34 @@ export default function Upload() {
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                   Thumbnail / Poster
                 </h3>
-                {(posterResult || (useUrlPoster && form.posterUrl)) && <span className="upload-card-badge done">Done</span>}
+                {(posterResult || ((posterMode === "url" || posterMode === "ai") && form.posterUrl)) && <span className="upload-card-badge done">Done</span>}
               </div>
 
               <div className="upload-toggle-row">
                 <button
-                  className={`upload-toggle-btn ${!useUrlPoster ? "active" : ""}`}
-                  onClick={() => setUseUrlPoster(false)}
+                  className={`upload-toggle-btn ${posterMode === "upload" ? "active" : ""}`}
+                  onClick={() => setPosterMode("upload")}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                   Upload File
                 </button>
                 <button
-                  className={`upload-toggle-btn ${useUrlPoster ? "active" : ""}`}
-                  onClick={() => setUseUrlPoster(true)}
+                  className={`upload-toggle-btn ${posterMode === "url" ? "active" : ""}`}
+                  onClick={() => setPosterMode("url")}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                   Paste URL
                 </button>
+                <button
+                  className={`upload-toggle-btn ${posterMode === "ai" ? "active" : ""}`}
+                  onClick={() => setPosterMode("ai")}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a4 4 0 0 1 4 4c0 2-2 4-4 4s-4-2-4-4 2-4 4-4z"/><path d="M12 14c-4 0-6 2-6 4v2h12v-2c0-2-2-4-6-4z"/><line x1="19" y1="7" x2="22" y2="7"/><line x1="20" y1="6" x2="20" y2="8"/></svg>
+                  AI Generate
+                </button>
               </div>
 
-              {useUrlPoster ? (
+              {posterMode === "url" ? (
                 <div className="form-group">
                   <label className="form-label">Poster Image URL</label>
                   <input
@@ -312,6 +338,32 @@ export default function Upload() {
                   {form.posterUrl && (
                     <div className="upload-poster-preview">
                       <img src={form.posterUrl} alt="preview" onError={(e) => { e.target.style.display = "none" }} />
+                    </div>
+                  )}
+                </div>
+              ) : posterMode === "ai" ? (
+                <div className="form-group">
+                  <label className="form-label">Generate with AI</label>
+                  <p className="upload-plan-hint" style={{ marginBottom: 12 }}>
+                    Uses your title &amp; description to generate a cinematic thumbnail
+                  </p>
+                  <button
+                    type="button"
+                    className="ai-desc-btn"
+                    onClick={handleAiThumbnail}
+                    disabled={aiThumbLoading || !form.title.trim() || !form.description.trim()}
+                    style={{ width: "100%", justifyContent: "center" }}
+                  >
+                    {aiThumbLoading ? (
+                      <span className="upload-spinner" />
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a4 4 0 0 1 4 4c0 2-2 4-4 4s-4-2-4-4 2-4 4-4z"/><path d="M12 14c-4 0-6 2-6 4v2h12v-2c0-2-2-4-6-4z"/><line x1="19" y1="7" x2="22" y2="7"/><line x1="20" y1="6" x2="20" y2="8"/></svg>
+                    )}
+                    <span>{aiThumbLoading ? "Generating..." : "Generate AI Thumbnail"}</span>
+                  </button>
+                  {form.posterUrl && posterMode === "ai" && (
+                    <div className="upload-poster-preview" style={{ marginTop: 12 }}>
+                      <img src={form.posterUrl} alt="generated thumbnail" />
                     </div>
                   )}
                 </div>

@@ -112,4 +112,4 @@ const addWebSeriesEpisode = async (req, res, next) => {
   }
 };
 
-module.exports = { getWebSeries, getWebSeriesById, createWebSeries, updateWebSeries, deleteWebSeries, addWebSeriesSeason, addWebSeriesEpisode };
+module.exports = { getWebSeries, createWebSeries, updateWebSeries, deleteWebSeries, addWebSeriesSeason, addWebSeriesEpisode };

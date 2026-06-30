@@ -409,6 +409,10 @@
     padding: 24px;
   }
 
+  .sub-current-actions {
+    flex-wrap: wrap;
+  }
+
   .sub-current-meta {
     gap: 12px;
   }
@@ -416,5 +420,37 @@
   .plans-grid,
   .sub-loading {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .sub-page {
+    padding: var(--space-lg) 0;
+  }
+
+  .sub-header {
+    padding: 0 12px;
+  }
+
+  .sub-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .plan-card {
+    padding: 24px 20px;
+  }
+
+  .plan-card-amount {
+    font-size: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sub-skeleton {
+    animation: none;
+  }
+
+  .plan-card:hover {
+    transform: none;
   }
 }

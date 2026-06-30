@@ -778,6 +778,39 @@ textarea.form-input {
   }
 }
 
+@media (max-width: 480px) {
+  .upload-page {
+    padding: 80px 12px 40px;
+  }
+
+  .upload-card {
+    padding: 20px;
+  }
+
+  .upload-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .upload-step {
+    font-size: 10px;
+    padding: 4px 10px;
+  }
+
+  .upload-step-line {
+    width: 16px;
+  }
+
+  .upload-dropzone {
+    padding: 24px 12px;
+    min-height: 80px;
+  }
+
+  .upload-toggle-btn {
+    font-size: 10px;
+    padding: 8px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .upload-page::before,
   .upload-page::after,

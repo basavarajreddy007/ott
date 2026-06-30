@@ -3,7 +3,6 @@ dotenv.config();
 
 const requiredEnvVars = [
   "MONGODB_URI", "JWT_SECRET", "JWT_REFRESH_SECRET",
-  "SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS", "EMAIL_FROM",
 ];
 for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
@@ -47,18 +46,27 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
-app.use(morgan("dev"));
+if (process.env.NODE_ENV === "production") app.use(morgan("dev"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://basavarajreddy007.github.io",
+  "https://ott-gi0u.onrender.com",
+].filter(Boolean);
+
 app.use(cors({
-  origin: [
-    process.env.CLIENT_URL,
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "https://basavarajreddy007.github.io",
-  ].filter(Boolean),
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 }));
 

@@ -1,0 +1,282 @@
+.tg-page {
+  min-height: 100vh;
+  background: var(--color-bg-main);
+  display: flex;
+  flex-direction: column;
+}
+
+.tg-container {
+  flex: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 var(--space-lg);
+  padding-top: 40px;
+  padding-bottom: 60px;
+}
+
+.tg-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.tg-title {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+}
+
+.tg-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  margin-top: 6px;
+}
+
+.tg-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .tg-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tg-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.tg-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tg-label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.tg-input,
+.tg-select,
+.tg-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: #1A1A1A;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  transition: border-color var(--transition-base);
+}
+
+.tg-input:focus,
+.tg-select:focus,
+.tg-textarea:focus {
+  border-color: var(--color-accent-primary);
+  outline: none;
+}
+
+.tg-input::placeholder,
+.tg-textarea::placeholder {
+  color: var(--color-text-placeholder);
+}
+
+.tg-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+.tg-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.tg-select option {
+  background: #1A1A1A;
+  color: var(--color-text-primary);
+}
+
+.tg-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 480px) {
+  .tg-form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tg-generate-btn {
+  padding: 14px 28px;
+  background: var(--color-accent-primary);
+  color: var(--color-text-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-base), transform var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: inherit;
+  margin-top: 4px;
+}
+
+.tg-generate-btn:hover:not(:disabled) {
+  background: var(--color-accent-primary-hover);
+  transform: translateY(-1px);
+}
+
+.tg-generate-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tg-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: var(--color-text-primary);
+  border-radius: 50%;
+  animation: tgSpin 0.6s linear infinite;
+}
+
+@keyframes tgSpin {
+  to { transform: rotate(360deg); }
+}
+
+.tg-result-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tg-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+}
+
+.tg-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(229, 9, 20, 0.15);
+  border-top-color: var(--color-accent-primary);
+  border-radius: 50%;
+  animation: tgSpin 0.8s linear infinite;
+}
+
+.tg-loading p {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+.tg-result {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tg-image-wrapper {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  aspect-ratio: 16 / 9;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tg-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.tg-action-btn {
+  flex: 1;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: all var(--transition-base);
+}
+
+.tg-download-btn {
+  background: var(--color-accent-primary);
+  color: var(--color-text-primary);
+}
+
+.tg-download-btn:hover {
+  background: var(--color-accent-primary-hover);
+}
+
+.tg-copy-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-primary);
+}
+
+.tg-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.tg-prompt-details {
+  margin-top: 8px;
+}
+
+.tg-prompt-details summary {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.tg-prompt-details summary:hover {
+  color: var(--color-text-secondary);
+}
+
+.tg-prompt-text {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+  margin-top: 8px;
+  line-height: 1.6;
+}

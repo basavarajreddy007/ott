@@ -88,3 +88,33 @@
   text-transform: uppercase;
   margin-top: 4px;
 }
+
+@media (max-width: 480px) {
+  .splash-logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .splash-title {
+    font-size: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-content {
+    animation: none;
+  }
+
+  .splash-logo {
+    animation: none;
+  }
+
+  .splash-loader-bar {
+    animation: none;
+    width: 60%;
+  }
+
+  .splash-screen {
+    transition: none;
+  }
+}

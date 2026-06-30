@@ -96,3 +96,23 @@
     align-items: flex-start;
   }
 }
+
+@media (max-width: 480px) {
+  .browse-page {
+    padding: 70px 12px 16px;
+  }
+
+  .browse-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+  }
+
+  .browse-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .filter-select {
+    min-width: 100px;
+    padding: 8px 12px;
+  }
+}

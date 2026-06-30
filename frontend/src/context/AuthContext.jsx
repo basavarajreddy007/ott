@@ -32,6 +32,11 @@ export function AuthProvider({ children }) {
 
   const login = async (credentials) => {
     const { data } = await authAPI.login(credentials);
+    return data;
+  };
+
+  const verifyLoginOtp = async (otpData) => {
+    const { data } = await authAPI.verifyLoginOtp(otpData);
     localStorage.setItem("token", data.data.token);
     localStorage.setItem("refreshToken", data.data.refreshToken);
     localStorage.setItem("user", JSON.stringify(data.data.user));
@@ -66,7 +71,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, login, register, verifyOtp, logout, loadUser }}>
+    <AuthContext.Provider value={{ user, setUser, loading, login, verifyLoginOtp, register, verifyOtp, logout, loadUser }}>
       {children}
     </AuthContext.Provider>
   );
