@@ -1,14 +1,19 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
-const requiredEnvVars = [
-  "MONGODB_URI", "JWT_SECRET", "JWT_REFRESH_SECRET", "OPENROUTER_API_KEY",
-];
+// These are truly required — the app cannot function without them
+const requiredEnvVars = ["MONGODB_URI", "JWT_SECRET", "JWT_REFRESH_SECRET"];
 for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
     console.error(`Missing required environment variable: ${envVar}`);
     process.exit(1);
   }
+}
+
+// Optional — AI features are disabled when absent
+const AI_ENABLED = Boolean(process.env.OPENROUTER_API_KEY);
+if (!AI_ENABLED) {
+  console.warn("OPENROUTER_API_KEY not found. AI features are disabled.");
 }
 
 const express = require("express");
@@ -108,7 +113,13 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/brands", brandRoutes);
 app.use("/api/ratings", ratingRoutes);
-app.use("/api/ai", aiRoutes);
+if (AI_ENABLED) {
+  app.use("/api/ai", aiRoutes);
+} else {
+  app.use("/api/ai", (req, res) => {
+    res.status(503).json({ success: false, message: "AI features are currently disabled." });
+  });
+}
 app.use("/api/admin", adminRoutes);
 
 app.get("/api/health", (req, res) => {
