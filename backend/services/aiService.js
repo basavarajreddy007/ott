@@ -1,5 +1,6 @@
 const axios = require("axios");
 const { uploadFromUrl } = require("./cloudinaryService");
+const { OPENROUTER_API_KEY } = require("../config/env");
 
 const OPENROUTER_API = "https://openrouter.ai/api/v1/chat/completions";
 const MODEL = "qwen/qwen-2.5-7b-instruct";
@@ -18,7 +19,7 @@ const systemPrompts = {
 };
 
 async function aiChat({ messages, system = "chat", temperature = 0.7 }) {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = OPENROUTER_API_KEY;
   if (!apiKey) throw new Error("OPENROUTER_API_KEY is missing from environment variables.");
 
   const systemMsg = systemPrompts[system] || systemPrompts.chat;
@@ -156,7 +157,7 @@ Format the response with clear section headers for each aspect and a final overa
 }
 
 async function generateThumbnail({ title, description, genre, style }) {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = OPENROUTER_API_KEY;
   if (!apiKey) throw new Error("OPENROUTER_API_KEY is missing from environment variables.");
 
   const promptResult = await aiChat({
@@ -182,7 +183,7 @@ The prompt must describe a cinematic, visually striking thumbnail suitable for a
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://moviemax.app",
+        "HTTP-Referer": "https:
         "X-Title": "MOVIEMAX",
       },
       timeout: 120000,

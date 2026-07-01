@@ -1,4 +1,5 @@
 const stripe = require("../config/stripe");
+const { STRIPE_WEBHOOK_SECRET } = require("../config/env");
 
 class PaymentService {
   async createPaymentIntent(amount, currency = "usd", metadata = {}) {
@@ -42,7 +43,7 @@ class PaymentService {
 
   async constructWebhookEvent(payload, signature) {
     if (!stripe) return { type: "payment_intent.succeeded", data: { object: { id: "mock_pi" } } };
-    return stripe.webhooks.constructEvent(payload, signature, process.env.STRIPE_WEBHOOK_SECRET);
+    return stripe.webhooks.constructEvent(payload, signature, STRIPE_WEBHOOK_SECRET);
   }
 
   _mockPaymentIntent(amount, currency, metadata) {

@@ -1,3 +1,5 @@
+const { IS_PRODUCTION } = require("../config/env");
+
 const errorHandler = (err, req, res, next) => {
   let statusCode = err.statusCode || 500;
   let message = err.message || "Internal server error";
@@ -33,12 +35,15 @@ const errorHandler = (err, req, res, next) => {
     message = err.code === "LIMIT_FILE_SIZE" ? "File too large. Maximum size is 50MB." : err.message;
   }
 
-  console.error(`[${new Date().toISOString()}] ${statusCode} - ${message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+  console.error(
+    `[${new Date().toISOString()}] ${statusCode} - ${message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+  );
 
   res.status(statusCode).json({
     success: false,
     message,
-    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+    
+    ...(!IS_PRODUCTION && { stack: err.stack }),
   });
 };
 

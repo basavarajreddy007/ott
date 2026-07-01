@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { JWT_SECRET } = require("../config/env");
 
 const protect = async (req, res, next) => {
   try {
@@ -9,7 +10,7 @@ const protect = async (req, res, next) => {
       return res.status(401).json({ success: false, message: "Not authorized, no token provided" });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = await User.findById(decoded.id).select("-password");
 
     if (!req.user) {
@@ -38,10 +39,11 @@ const optionalAuth = async (req, res, next) => {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
 
     if (token) {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, JWT_SECRET);
       req.user = await User.findById(decoded.id).select("-password");
     }
-  } catch (error) {
+  } catch {
+    
   }
   next();
 };

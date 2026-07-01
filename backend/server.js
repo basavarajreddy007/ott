@@ -1,18 +1,5 @@
-const dotenv = require("dotenv");
-dotenv.config();
 
-const requiredEnvVars = ["MONGODB_URI", "JWT_SECRET", "JWT_REFRESH_SECRET"];
-for (const envVar of requiredEnvVars) {
-  if (!process.env[envVar]) {
-    console.error(`FATAL: Missing required environment variable: ${envVar}`);
-    process.exit(1);
-  }
-}
-
-const AI_ENABLED = Boolean(process.env.OPENROUTER_API_KEY);
-if (!AI_ENABLED) {
-  console.warn("WARN: OPENROUTER_API_KEY not set. AI features are disabled.");
-}
+const config = require("./config/env");
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -46,32 +33,33 @@ const errorHandler = require("./middleware/errorHandler");
 const { verifySmtpConnection } = require("./services/emailService");
 const seedPlans = require("./scripts/seedPlans");
 
-const PORT = process.env.PORT || 5000;
 const app = express();
 
 app.set("trust proxy", 1);
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
-app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
+app.use(morgan(config.IS_PRODUCTION ? "combined" : "dev"));
 
 app.use(compression());
 
 const allowedOrigins = [
-  process.env.CLIENT_URL,
+  config.CLIENT_URL,
   "http://localhost:5173",
   "http://localhost:3000",
   "https://basavarajreddy007.github.io",
   "https://ott-gi0u.onrender.com",
 ].filter(Boolean);
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-    return callback(new Error("Not allowed by CORS"));
-  },
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
 
 app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
 
@@ -101,7 +89,7 @@ app.use("/api/", globalLimiter);
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
 
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.status(200).json({
     success: true,
     message: "OTT Backend API is running 🚀",
@@ -110,7 +98,7 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get("/api/health", (req, res) => {
+app.get("/api/health", (_req, res) => {
   res.status(200).json({
     success: true,
     message: "Server is healthy",
@@ -137,27 +125,27 @@ app.use("/api/brands", brandRoutes);
 app.use("/api/ratings", ratingRoutes);
 app.use("/api/admin", adminRoutes);
 
-if (AI_ENABLED) {
+if (config.AI_ENABLED) {
   app.use("/api/ai", aiRoutes);
 } else {
-  app.use("/api/ai", (req, res) => {
+  app.use("/api/ai", (_req, res) => {
     res.status(503).json({ success: false, message: "AI features are currently disabled." });
   });
 }
 
-app.use("/api/*", (req, res) => {
-  res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
+app.use("/api/*", (_req, res) => {
+  res.status(404).json({ success: false, message: "Route not found" });
 });
 
 app.use(errorHandler);
 
 const startServer = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(config.MONGODB_URI);
     console.log("MongoDB connected");
 
-    const server = app.listen(PORT, async () => {
-      console.log(`Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`);
+    const server = app.listen(config.PORT, async () => {
+      console.log(`Server running in ${config.NODE_ENV} mode on port ${config.PORT}`);
       await seedPlans();
       const smtpOk = await verifySmtpConnection();
       if (!smtpOk) {
@@ -181,7 +169,6 @@ const startServer = async () => {
       console.error("Unhandled Promise Rejection:", err.message);
       server.close(() => process.exit(1));
     });
-
   } catch (err) {
     console.error("Failed to connect to MongoDB:", err.message);
     process.exit(1);

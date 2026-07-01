@@ -3,6 +3,7 @@ const User = require("../models/User");
 const { generateToken, generateRefreshToken, verifyRefreshToken } = require("../utils/generateToken");
 const generateOtp = require("../utils/generateOtp");
 const { sendOtpEmail, sendWelcomeEmail, sendPasswordResetOtp, sendEmail } = require("../services/emailService");
+const { IS_PRODUCTION } = require("../config/env");
 
 const register = async (req, res, next) => {
   try {
@@ -35,7 +36,7 @@ const register = async (req, res, next) => {
 
     const otpResult = await sendOtpEmail(email, otp);
     if (!otpResult.success) {
-      if (process.env.NODE_ENV === "development") {
+      if (!IS_PRODUCTION) {
         console.log(`[DEV] Registration OTP for ${email}: ${otp}`);
       } else {
         await User.findByIdAndDelete(user._id);
@@ -47,7 +48,7 @@ const register = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: "Account created. Please verify your email with the OTP sent.",
-      data: { email: user.email, ...(process.env.NODE_ENV === "development" && { otp }) },
+      data: { email: user.email, ...(!IS_PRODUCTION && { otp }) },
     });
   } catch (error) {
     next(error);
@@ -99,7 +100,7 @@ const verifyOtp = async (req, res, next) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: IS_PRODUCTION,
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -144,13 +145,13 @@ const resendOtp = async (req, res, next) => {
 
     const otpResult = await sendOtpEmail(email, otp);
     if (!otpResult.success) {
-      if (process.env.NODE_ENV !== "development") {
+      if (IS_PRODUCTION) {
         console.error("ResendOtp - email failed:", otpResult.error);
         return res.status(500).json({ success: false, message: "Failed to resend OTP. Please try again." });
       }
     }
 
-    res.status(200).json({ success: true, message: "OTP resent successfully", ...(process.env.NODE_ENV === "development" && { otp }) });
+    res.status(200).json({ success: true, message: "OTP resent successfully", ...(!IS_PRODUCTION && { otp }) });
   } catch (error) {
     next(error);
   }
@@ -223,7 +224,7 @@ const login = async (req, res, next) => {
     });
 
     if (!otpResult.success) {
-      if (process.env.NODE_ENV !== "development") {
+      if (IS_PRODUCTION) {
         user.loginOtp = undefined;
         user.loginOtpExpires = undefined;
         await user.save({ validateModifiedOnly: true });
@@ -235,7 +236,7 @@ const login = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "OTP sent to your email",
-      data: { email: user.email, ...(process.env.NODE_ENV === "development" && { otp }) },
+      data: { email: user.email, ...(!IS_PRODUCTION && { otp }) },
     });
   } catch (error) {
     next(error);
@@ -291,7 +292,7 @@ const verifyLoginOtp = async (req, res, next) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: IS_PRODUCTION,
       sameSite: "strict",
       maxAge: cookieMaxAge,
     });
@@ -354,7 +355,7 @@ const refreshToken = async (req, res, next) => {
 
     res.cookie("token", newToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: IS_PRODUCTION,
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -393,13 +394,13 @@ const forgotPassword = async (req, res, next) => {
 
     const emailResult = await sendPasswordResetOtp(email, otp);
     if (!emailResult.success) {
-      if (process.env.NODE_ENV !== "development") {
+      if (IS_PRODUCTION) {
         console.error("ForgotPassword - reset email failed:", emailResult.error);
         return res.status(500).json({ success: false, message: "Failed to send reset email" });
       }
     }
 
-    res.status(200).json({ success: true, message: "Password reset OTP sent to your email", ...(process.env.NODE_ENV === "development" && { otp }) });
+    res.status(200).json({ success: true, message: "Password reset OTP sent to your email", ...(!IS_PRODUCTION && { otp }) });
   } catch (error) {
     next(error);
   }
