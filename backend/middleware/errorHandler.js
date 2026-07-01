@@ -4,8 +4,7 @@ const errorHandler = (err, req, res, next) => {
 
   if (err.name === "ValidationError") {
     statusCode = 400;
-    const messages = Object.values(err.errors).map((e) => e.message);
-    message = messages.join(", ");
+    message = Object.values(err.errors).map((e) => e.message).join(", ");
   }
 
   if (err.code === 11000) {
@@ -31,14 +30,10 @@ const errorHandler = (err, req, res, next) => {
 
   if (err.name === "MulterError") {
     statusCode = 400;
-    if (err.code === "LIMIT_FILE_SIZE") {
-      message = "File too large. Maximum size is 50MB.";
-    } else {
-      message = err.message;
-    }
+    message = err.code === "LIMIT_FILE_SIZE" ? "File too large. Maximum size is 50MB." : err.message;
   }
 
-  console.error("Error:", err);
+  console.error(`[${new Date().toISOString()}] ${statusCode} - ${message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
 
   res.status(statusCode).json({
     success: false,
