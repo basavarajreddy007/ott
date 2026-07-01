@@ -17,11 +17,11 @@
 }
 
 .navbar-scrolled {
-  background: rgba(11, 11, 11, 0.88);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  background: rgba(8, 8, 8, 0.92);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.5);
 }
 
 .navbar-container {
@@ -50,12 +50,17 @@
 
 /* Logo */
 .navbar-logo {
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-xl);
   font-weight: 900;
   color: var(--color-accent-primary);
-  letter-spacing: 3px;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  text-shadow: 0 0 30px rgba(229, 9, 20, 0.3);
+  text-shadow: 0 0 24px rgba(229, 9, 20, 0.4);
+  transition: text-shadow var(--transition-smooth);
+}
+
+.navbar-logo:hover {
+  text-shadow: 0 0 40px rgba(229, 9, 20, 0.6);
 }
 
 /* Center nav links */
@@ -212,7 +217,7 @@
 
 .search-input {
   background: var(--color-bg-input);
-  border: 1px solid var(--color-border-subtle);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-md);
   padding: 8px 12px 8px 38px;
   color: var(--color-text-primary);
@@ -224,9 +229,9 @@
 
 .search-input:focus {
   width: 280px;
-  border-color: rgba(229, 9, 20, 0.4);
+  border-color: rgba(229, 9, 20, 0.45);
   background: var(--color-bg-input-hover);
-  box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.08), 0 0 20px rgba(229, 9, 20, 0.06);
+  box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.1);
 }
 
 .search-input:focus-visible {
@@ -301,20 +306,20 @@
 
 .user-dropdown {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 10px);
   right: 0;
-  width: 200px;
-  background: rgba(26, 26, 26, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: var(--radius-lg);
+  width: 210px;
+  background: rgba(20, 20, 20, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-xl);
   padding: var(--space-sm);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(6px) scale(0.98);
+  transform: translateY(8px) scale(0.97);
   transition: opacity var(--transition-smooth), transform var(--transition-smooth), visibility var(--transition-smooth);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   transform-origin: top right;
   pointer-events: none;
 }

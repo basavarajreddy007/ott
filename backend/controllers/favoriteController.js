@@ -1,11 +1,29 @@
 const Favorite = require("../models/Favorite");
+const Movie = require("../models/Movie");
+const TvShow = require("../models/TvShow");
+const WebSeries = require("../models/WebSeries");
+
+const populateContent = async (items) => {
+  return Promise.all(items.map(async (item) => {
+    const obj = item.toObject();
+    try {
+      let content = null;
+      if (obj.contentType === "Movie") content = await Movie.findById(obj.contentId).select("title slug poster genres imdbRating releaseYear duration quality language").lean();
+      else if (obj.contentType === "TvShow") content = await TvShow.findById(obj.contentId).select("title slug poster genres imdbRating releaseYear quality language").lean();
+      else if (obj.contentType === "WebSeries") content = await WebSeries.findById(obj.contentId).select("title slug poster genres imdbRating releaseYear quality language").lean();
+      obj.content = content;
+    } catch { obj.content = null; }
+    return obj;
+  }));
+};
 
 const getFavorites = async (req, res, next) => {
   try {
     const favorites = await Favorite.find({ user: req.user._id })
       .sort({ createdAt: -1 });
 
-    res.status(200).json({ success: true, data: favorites });
+    const populated = await populateContent(favorites);
+    res.status(200).json({ success: true, data: populated });
   } catch (error) {
     next(error);
   }

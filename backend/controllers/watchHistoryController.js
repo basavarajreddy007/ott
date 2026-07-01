@@ -1,4 +1,21 @@
 const WatchHistory = require("../models/WatchHistory");
+const Movie = require("../models/Movie");
+const TvShow = require("../models/TvShow");
+const WebSeries = require("../models/WebSeries");
+
+const populateContent = async (items) => {
+  return Promise.all(items.map(async (item) => {
+    const obj = item.toObject();
+    try {
+      let content = null;
+      if (obj.contentType === "Movie") content = await Movie.findById(obj.contentId).select("title slug poster genres imdbRating releaseYear duration quality language").lean();
+      else if (obj.contentType === "TvShow") content = await TvShow.findById(obj.contentId).select("title slug poster genres imdbRating releaseYear quality language").lean();
+      else if (obj.contentType === "WebSeries") content = await WebSeries.findById(obj.contentId).select("title slug poster genres imdbRating releaseYear quality language").lean();
+      obj.content = content;
+    } catch { obj.content = null; }
+    return obj;
+  }));
+};
 
 const getWatchHistory = async (req, res, next) => {
   try {
@@ -6,7 +23,8 @@ const getWatchHistory = async (req, res, next) => {
       .sort({ watchedAt: -1 })
       .limit(50);
 
-    res.status(200).json({ success: true, data: history });
+    const populated = await populateContent(history);
+    res.status(200).json({ success: true, data: populated });
   } catch (error) {
     next(error);
   }
@@ -70,7 +88,8 @@ const getContinueWatching = async (req, res, next) => {
       .sort({ watchedAt: -1 })
       .limit(20);
 
-    res.status(200).json({ success: true, data: history });
+    const populated = await populateContent(history);
+    res.status(200).json({ success: true, data: populated });
   } catch (error) {
     next(error);
   }

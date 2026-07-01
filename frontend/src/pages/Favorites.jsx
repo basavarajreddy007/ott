@@ -20,7 +20,7 @@ export default function Favorites() {
       ) : items.length === 0 ? (
         <div className="browse-empty"><h3>No favorites yet</h3><p>Start adding your favorite content</p></div>
       ) : (
-        <div className="browse-grid">{items.map((item) => (<MovieCard key={item._id} item={item} type={item.contentType} />))}</div>
+        <div className="browse-grid">{items.map((item) => item.content && (<MovieCard key={item._id} item={item.content} type={item.contentType} />))}</div>
       )}
     </div>
   );

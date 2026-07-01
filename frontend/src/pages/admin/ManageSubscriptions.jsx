@@ -17,7 +17,7 @@ export default function ManageSubscriptions() {
   const deletePlan = async (id) => {
     if (!window.confirm("Delete this plan?")) return;
     try {
-      await subscriptionAPI.cancel();
+      await subscriptionAPI.deletePlan(id);
       setPlans((prev) => prev.filter((p) => p._id !== id));
       toast.success("Plan deleted");
     } catch { toast.error("Failed"); }

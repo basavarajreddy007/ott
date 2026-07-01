@@ -13,7 +13,7 @@ export default function MovieCard({ item, type = "Movie", featured = false }) {
   const [imgError, setImgError] = useState(false);
 
   const slug = item?.slug;
-  const poster = item?.poster?.url || "";
+  const poster = item?.poster?.url || null;
   const title = item?.title || "";
   const year = item?.releaseYear || "";
   const rating = item?.imdbRating || 0;

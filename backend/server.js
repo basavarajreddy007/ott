@@ -2,7 +2,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const requiredEnvVars = [
-  "MONGODB_URI", "JWT_SECRET", "JWT_REFRESH_SECRET",
+  "MONGODB_URI", "JWT_SECRET", "JWT_REFRESH_SECRET", "OPENROUTER_API_KEY",
 ];
 for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
@@ -48,7 +48,7 @@ const app = express();
 app.set("trust proxy", 1);
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
-if (process.env.NODE_ENV === "production") app.use(morgan("dev"));
+if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
@@ -109,6 +109,7 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/brands", brandRoutes);
 app.use("/api/ratings", ratingRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "Server is running", timestamp: new Date().toISOString() });

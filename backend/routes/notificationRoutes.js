@@ -5,8 +5,8 @@ const { protect } = require("../middleware/auth");
 
 router.get("/", protect, getNotifications);
 router.get("/unread-count", protect, getUnreadCount);
-router.put("/:id/read", protect, markAsRead);
 router.put("/read-all", protect, markAllAsRead);
+router.put("/:id/read", protect, markAsRead);
 router.delete("/:id", protect, deleteNotification);
 
 module.exports = router;

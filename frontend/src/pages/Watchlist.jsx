@@ -20,7 +20,7 @@ export default function Watchlist() {
       ) : items.length === 0 ? (
         <div className="browse-empty"><h3>Your watchlist is empty</h3><p>Add movies and shows to your watchlist</p></div>
       ) : (
-        <div className="browse-grid">{items.map((item) => (<MovieCard key={item._id} item={item} type={item.contentType} />))}</div>
+        <div className="browse-grid">{items.map((item) => item.content && (<MovieCard key={item._id} item={item.content} type={item.contentType} />))}</div>
       )}
     </div>
   );

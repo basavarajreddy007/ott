@@ -153,6 +153,7 @@ export const subscriptionAPI = {
   getMySubscription: () => api.get("/subscriptions/my-subscription"),
   subscribe: (data) => api.post("/subscriptions/subscribe", data),
   cancel: () => api.post("/subscriptions/cancel"),
+  deletePlan: (id) => api.delete(`/subscriptions/${id}`),
 };
 
 export const paymentAPI = {

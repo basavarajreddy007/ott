@@ -176,4 +176,19 @@ const getRevenue = async (req, res, next) => {
   }
 };
 
-module.exports = { getDashboard, getUsers, getUserById, updateUserRole, deleteUser, getAnalytics, getRevenue };
+const getReviews = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 50 } = req.query;
+    const reviews = await Review.find()
+      .populate("user", "name email avatar")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+    const total = await Review.countDocuments();
+    res.status(200).json({ success: true, data: reviews, pagination: { page: parseInt(page), limit: parseInt(limit), total, pages: Math.ceil(total / limit) } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getDashboard, getUsers, getUserById, updateUserRole, deleteUser, getAnalytics, getRevenue, getReviews };

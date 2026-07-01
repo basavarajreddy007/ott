@@ -37,7 +37,7 @@ export default function HeroBanner({ items = [] }) {
           className={`hero-slide ${index === current ? "active" : ""}`}
         >
           <div className="hero-backdrop">
-            <img src={feat.banner?.url || feat.poster?.url} alt="" />
+            <img src={feat.banner?.url || feat.poster?.url || null} alt="" />
             <div className="hero-gradient" />
           </div>
         </div>

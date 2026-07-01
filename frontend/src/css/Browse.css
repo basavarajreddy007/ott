@@ -27,22 +27,29 @@
 .filter-select {
   padding: 10px 16px;
   background: var(--color-bg-input);
-  border: 1px solid var(--color-border-subtle);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-md);
   color: var(--color-text-primary);
   font-size: var(--font-size-xs);
   cursor: pointer;
   min-width: 130px;
-  transition: border-color var(--transition-smooth);
+  transition: border-color var(--transition-smooth), background var(--transition-smooth);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.filter-select:hover {
+  background-color: var(--color-bg-input-hover);
+  border-color: var(--color-border-subtle);
 }
 
 .filter-select:focus {
   border-color: var(--color-accent-primary);
-}
-
-.filter-select:focus-visible {
-  outline: 2px solid var(--color-accent-primary);
-  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.1);
+  outline: none;
 }
 
 .filter-select option {
@@ -58,7 +65,7 @@
 
 .browse-empty {
   text-align: center;
-  padding: 80px 20px;
+  padding: 100px 20px;
   color: var(--color-text-tertiary);
 }
 
@@ -66,6 +73,12 @@
   font-size: var(--font-size-xl);
   margin-bottom: var(--space-sm);
   color: var(--color-text-secondary);
+}
+
+.browse-empty p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-sm);
 }
 
 .pagination {
