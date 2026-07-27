@@ -460,3 +460,29 @@
   color: var(--color-text-tertiary);
   margin-top: 4px;
 }
+
+@media (max-width: 480px) {
+  .watch-page-container {
+    padding: 80px 12px 20px;
+  }
+  .watch-video-title {
+    font-size: var(--font-size-lg);
+  }
+  .watch-meta-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+  .watch-like-actions {
+    width: 100%;
+  }
+  .watch-like-actions button {
+    flex: 1;
+    justify-content: center;
+    min-height: 44px;
+  }
+  .comment-form button {
+    width: 100%;
+    min-height: 44px;
+  }
+}

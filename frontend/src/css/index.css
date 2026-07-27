@@ -245,6 +245,7 @@ select {
   justify-content: center;
   gap: var(--space-sm);
   padding: 10px 20px;
+  min-height: 44px;
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
   font-weight: 600;
@@ -254,8 +255,14 @@ select {
   overflow: hidden;
 }
 
-.btn:active {
+.btn:active:not(:disabled) {
   transform: scale(0.96);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .btn-primary {

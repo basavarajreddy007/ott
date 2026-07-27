@@ -458,3 +458,21 @@ select.um-input {
   transform: none;
   box-shadow: none;
 }
+
+@media (max-width: 480px) {
+  .um-page {
+    padding: var(--space-md) var(--space-sm);
+  }
+  .um-section {
+    padding: var(--space-md);
+  }
+  .um-submit-row {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+  .um-btn-primary, .um-btn-ghost {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}

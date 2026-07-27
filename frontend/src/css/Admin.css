@@ -284,7 +284,8 @@
 .a-table-wrap {
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border-default);
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .a-table {

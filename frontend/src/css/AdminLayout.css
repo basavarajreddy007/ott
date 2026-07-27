@@ -109,44 +109,101 @@
   min-height: 100vh;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .admin-sidebar {
-    width: 200px;
+    width: 72px;
+    padding: var(--space-md) var(--space-sm);
+    transition: width var(--transition-smooth), box-shadow var(--transition-smooth);
+    overflow-x: hidden;
+  }
+
+  .admin-sidebar:hover,
+  .admin-sidebar:focus-within {
+    width: 260px;
+    box-shadow: 0 10px 45px rgba(0, 0, 0, 0.7), 0 1px 3px rgba(255, 255, 255, 0.05);
   }
 
   .admin-main {
-    margin-left: 200px;
+    margin-left: 72px;
     padding: var(--space-md);
-  }
-}
-
-@media (max-width: 640px) {
-  .admin-layout {
-    flex-direction: column;
+    transition: margin-left var(--transition-smooth);
   }
 
-  .admin-sidebar {
+  .admin-logo {
+    width: 38px;
+    transition: width var(--transition-smooth);
+    overflow: hidden;
+  }
+
+  .admin-sidebar:hover .admin-logo,
+  .admin-sidebar:focus-within .admin-logo {
     width: 100%;
-    position: static;
-    padding: var(--space-md);
-    border-right: none;
-    border-bottom: 1px solid var(--color-border-default);
   }
 
-  .admin-nav {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: var(--space-sm);
+  .admin-subtitle {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .admin-sidebar:hover .admin-subtitle,
+  .admin-sidebar:focus-within .admin-subtitle {
+    opacity: 1;
+  }
+
+  .admin-back-link {
+    width: 20px;
+    overflow: hidden;
+    transition: width var(--transition-smooth);
+  }
+
+  .admin-sidebar:hover .admin-back-link,
+  .admin-sidebar:focus-within .admin-back-link {
+    width: 100%;
   }
 
   .admin-nav-link {
+    padding: 12px 14px;
+  }
+
+  .admin-nav-link span {
+    opacity: 0;
+    transition: opacity 0.25s ease;
     white-space: nowrap;
-    font-size: var(--font-size-xs);
-    padding: 8px 12px;
+  }
+
+  .admin-sidebar:hover .admin-nav-link span,
+  .admin-sidebar:focus-within .admin-nav-link span {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-sidebar {
+    width: 60px;
+    padding: var(--space-sm) 6px;
+  }
+
+  .admin-sidebar:hover,
+  .admin-sidebar:focus-within {
+    width: 220px;
   }
 
   .admin-main {
-    margin-left: 0;
-    padding: var(--space-md);
+    margin-left: 60px;
+    padding: var(--space-sm);
+  }
+
+  .admin-logo {
+    width: 30px;
+  }
+
+  .admin-nav-link {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .admin-nav-link svg {
+    font-size: 18px;
   }
 }

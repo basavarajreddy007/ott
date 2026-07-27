@@ -27,6 +27,27 @@
   display: none;
 }
 
+.content-row-track .movie-card {
+  flex: 0 0 200px;
+  width: 200px;
+}
+
+.content-row-track .movie-card.featured {
+  flex: 0 0 280px;
+  width: 280px;
+}
+
+@media (max-width: 768px) {
+  .content-row-track .movie-card {
+    flex: 0 0 150px;
+    width: 150px;
+  }
+  .content-row-track .movie-card.featured {
+    flex: 0 0 200px;
+    width: 200px;
+  }
+}
+
 .scroll-btn {
   position: absolute;
   top: calc(50% - 10px);

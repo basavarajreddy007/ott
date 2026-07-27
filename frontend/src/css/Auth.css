@@ -310,7 +310,8 @@
 }
 
 .otp-box {
-  width: 48px;
+  width: 100%;
+  max-width: 48px;
   height: 52px;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border-default);
@@ -383,4 +384,20 @@
 
 @keyframes authSpin {
   to { transform: rotate(360deg); }
+}
+
+@media (max-width: 400px) {
+  .auth-card {
+    padding: var(--space-xl) var(--space-md);
+  }
+  .otp-inputs {
+    gap: 4px;
+  }
+  .otp-box {
+    height: 46px;
+    font-size: 16px;
+  }
+  .social-auth-grid {
+    grid-template-columns: 1fr;
+  }
 }

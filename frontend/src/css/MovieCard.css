@@ -1,16 +1,10 @@
 .movie-card {
   display: block;
-  min-width: 200px;
-  max-width: 200px;
+  width: 100%;
   position: relative;
   border-radius: var(--radius-lg);
   overflow: visible;
   transition: transform var(--transition-bounce), box-shadow var(--transition-bounce);
-}
-
-.movie-card.featured {
-  min-width: 280px;
-  max-width: 280px;
 }
 
 .movie-card:hover {
@@ -217,16 +211,6 @@
 }
 
 @media (max-width: 768px) {
-  .movie-card {
-    min-width: 150px;
-    max-width: 150px;
-  }
-
-  .movie-card.featured {
-    min-width: 200px;
-    max-width: 200px;
-  }
-
   .movie-card-title {
     font-size: var(--font-size-xs);
   }
