@@ -81,28 +81,24 @@ export default function Home() {
   return (
     <div className="home-page">
       <HeroBanner items={featured} />
-      <div style={{ marginTop: "32px", position: "relative", zIndex: 3 }}>
-        <div style={{ padding: "0 4% 32px" }}>
-          <MoodSection />
-        </div>
-        <ContentRow title="Trending Now" link="/movies?sort=trending" items={trending} type="Movie" />
-        <ContentRow title="Top Rated" link="/movies?sort=rating" items={topRated} type="Movie" />
-        <ContentRow title="New Releases" link="/movies?sort=new" items={newReleases} type="Movie" />
+      <MoodSection />
+      <ContentRow title="Trending Now" link="/movies?sort=trending" items={trending} type="Movie" />
+      <ContentRow title="Top Rated" link="/movies?sort=rating" items={topRated} type="Movie" />
+      <ContentRow title="New Releases" link="/movies?sort=new" items={newReleases} type="Movie" />
 
-        {aiRecs && (
-          <section className="section ai-recs" style={{ padding: "0 4%" }}>
-            <div className="section-header">
-              <h2 className="section-title">AI Picks For You</h2>
-              <Link to="/ai/script" className="section-link">AI Studio &rarr;</Link>
-            </div>
-            <div className="ai-recs-content">
-              {aiRecs.split("\n").filter(l => l.trim()).slice(0, 6).map((line, i) => (
-                <p key={i} className="ai-recs-line">{line}</p>
-              ))}
-            </div>
-          </section>
-        )}
-      </div>
+      {aiRecs && (
+        <section className="section ai-recs" style={{ padding: "0 4%" }}>
+          <div className="section-header">
+            <h2 className="section-title">AI Picks For You</h2>
+            <Link to="/ai/script" className="section-link">AI Studio &rarr;</Link>
+          </div>
+          <div className="ai-recs-content">
+            {aiRecs.split("\n").filter(l => l.trim()).slice(0, 6).map((line, i) => (
+              <p key={i} className="ai-recs-line">{line}</p>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

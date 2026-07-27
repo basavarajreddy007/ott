@@ -162,12 +162,12 @@
 
 @media (max-width: 768px) {
   .hero-banner {
-    height: 60vh;
-    min-height: 400px;
+    height: auto;
+    min-height: 480px;
   }
 
   .hero-content {
-    padding: 80px 20px 20px;
+    padding: 100px 20px 48px;
   }
 
   .hero-title {
@@ -182,8 +182,12 @@
 
 @media (max-width: 480px) {
   .hero-banner {
-    height: 55vh;
-    min-height: 320px;
+    height: auto;
+    min-height: 400px;
+  }
+
+  .hero-content {
+    padding: 80px 16px 48px;
   }
 
   .hero-title {
