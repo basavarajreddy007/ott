@@ -36,8 +36,6 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          VITE_API_URL: https://your-backend-url.com/api
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
