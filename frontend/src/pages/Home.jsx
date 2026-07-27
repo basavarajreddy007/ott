@@ -11,7 +11,6 @@ export default function Home() {
   const { user } = useAuth();
   const [featured, setFeatured] = useState([]);
   const [trending, setTrending] = useState([]);
-  const [topRated, setTopRated] = useState([]);
   const [newReleases, setNewReleases] = useState([]);
   const [aiRecs, setAiRecs] = useState(null);
   const [continueWatching, setContinueWatching] = useState([]);
@@ -20,10 +19,9 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [featuredRes, trendingRes, topRatedRes, newReleasesRes, uploadsRes] = await Promise.all([
+        const [featuredRes, trendingRes, newReleasesRes, uploadsRes] = await Promise.all([
           movieAPI.getFeatured(),
           movieAPI.getTrending(),
-          movieAPI.getTopRated(),
           movieAPI.getNewReleases(),
           movieAPI.getUserUploads().catch(() => ({ data: { data: [] } })),
         ]);
@@ -39,7 +37,6 @@ export default function Home() {
         }
         setFeatured(heroItems);
         setTrending(trendingRes.data.data);
-        setTopRated(topRatedRes.data.data);
         setNewReleases(newReleasesRes.data.data);
       } catch (err) {
         console.error(err);
@@ -99,7 +96,6 @@ export default function Home() {
         />
       )}
       <ContentRow title="Trending Now" link="/movies?sort=trending" items={trending} type="Movie" />
-      <ContentRow title="Top Rated" link="/movies?sort=rating" items={topRated} type="Movie" />
       <ContentRow title="New Releases" link="/movies?sort=new" items={newReleases} type="Movie" />
 
       {aiRecs && (

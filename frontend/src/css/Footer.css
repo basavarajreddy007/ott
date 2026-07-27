@@ -17,11 +17,8 @@
 }
 
 .footer-logo {
-  font-size: var(--font-size-2xl);
-  font-weight: 900;
-  color: var(--color-accent-primary);
-  letter-spacing: 3px;
-  display: block;
+  display: inline-flex;
+  align-items: center;
   margin-bottom: var(--space-md);
 }
 

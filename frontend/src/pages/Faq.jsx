@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { HiChevronDown } from "react-icons/hi";
+import AnimatedTitle from "../components/common/AnimatedTitle";
 
 const faqs = [
   { q: "What is MOVIEMAX?", a: "MOVIEMAX is a premium OTT streaming platform offering unlimited access to movies, TV shows, and web series." },
@@ -16,7 +17,9 @@ export default function Faq() {
 
   return (
     <div className="browse-page" style={{ maxWidth: 700, margin: "0 auto" }}>
-      <h1 className="browse-title" style={{ marginBottom: 32 }}>Frequently Asked Questions</h1>
+      <h1 className="browse-title" style={{ marginBottom: 32 }}>
+        <AnimatedTitle text="Frequently Asked Questions" />
+      </h1>
       <div className="faq-list">
         {faqs.map((faq, i) => (
           <div key={i} className="faq-item" onClick={() => setOpen(open === i ? null : i)}>

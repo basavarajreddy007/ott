@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 import PasswordInput from "../components/common/PasswordInput";
 import toast from "react-hot-toast";
 import "../css/Settings.css";
+import AnimatedTitle from "../components/common/AnimatedTitle";
 
 export default function Settings() {
   const { user, logout } = useAuth();
@@ -45,7 +46,9 @@ export default function Settings() {
 
   return (
     <div className="settings-page">
-      <h1 className="settings-title">Settings</h1>
+      <h1 className="settings-title">
+        <AnimatedTitle text="Settings" />
+      </h1>
       <p className="settings-subtitle">Manage your account settings and security</p>
 
       <div className="settings-info">

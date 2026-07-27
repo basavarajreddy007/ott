@@ -1,7 +1,11 @@
+import AnimatedTitle from "../components/common/AnimatedTitle";
+
 export default function About() {
   return (
     <div className="browse-page" style={{ maxWidth: 800, margin: "0 auto" }}>
-      <h1 className="browse-title" style={{ marginBottom: 24 }}>About MOVIEMAX</h1>
+      <h1 className="browse-title" style={{ marginBottom: 24 }}>
+        <AnimatedTitle text="About MOVIEMAX" />
+      </h1>
       <div className="auth-card glass" style={{ padding: 40, lineHeight: 1.8 }}>
         <p style={{ color: "#B3B3B3", marginBottom: 20 }}>
           MOVIEMAX is a premium OTT streaming platform that brings you unlimited access to thousands of movies, TV shows, and web series from around the world.

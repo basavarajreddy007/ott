@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../hooks/useAuth";
 import { authAPI } from "../services/api";
 import PasswordInput from "../components/common/PasswordInput";
+import Logo from "../components/common/Logo";
 import "../css/Auth.css";
 
 export default function Register() {
@@ -132,7 +133,7 @@ export default function Register() {
           initial={{ opacity: 0, y: 35 }}
           style={{ transformOrigin: "center" }}
         >
-          <Link to="/" className="auth-logo">MOVIEMAX</Link>
+          <Link to="/" className="auth-logo"><Logo size={32} gap={6} /></Link>
           <h2 className="auth-title">Create Account</h2>
           <p className="auth-subtitle">Start your premium entertainment journey.</p>
 

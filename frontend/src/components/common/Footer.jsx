@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Reveal } from "../../animations";
 import { genreAPI } from "../../services/api";
 import "../../css/Footer.css";
+import Logo from "./Logo";
 
 export default function Footer() {
   const [genres, setGenres] = useState([]);
@@ -23,7 +24,7 @@ export default function Footer() {
         <div className="footer-container">
           <div className="footer-grid">
             <div className="footer-section">
-              <Link to="/" className="footer-logo">MOVIEMAX</Link>
+              <Link to="/" className="footer-logo"><Logo size={28} gap={5} /></Link>
               <p className="footer-desc">
                 Your premium destination for unlimited movies, TV shows, and web series. Experience entertainment like never before.
               </p>

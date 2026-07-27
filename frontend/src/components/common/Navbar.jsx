@@ -11,6 +11,7 @@ import {
   navActionIconVariants
 } from "../../animations";
 import "../../css/Navbar.css";
+import Logo from "./Logo";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -197,7 +198,9 @@ export default function Navbar() {
     >
       <div className="navbar-container">
         <div className="navbar-left">
-          <Link to="/" className="navbar-logo">MOVIEMAX</Link>
+          <Link to="/" className="navbar-logo">
+            <Logo size={24} gap={4} />
+          </Link>
         </div>
 
         {!isMobile && (

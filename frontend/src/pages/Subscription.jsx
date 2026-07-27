@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { subscriptionAPI } from "../services/api";
 import toast from "react-hot-toast";
 import "../css/Subscription.css";
+import AnimatedTitle from "../components/common/AnimatedTitle";
 
 const PLAN_STYLE = {
   Free: { css: "free", color: "#10b981", iconBg: "rgba(16, 185, 129, 0.1)" },
@@ -83,7 +84,9 @@ export default function Subscription() {
   return (
     <div className="browse-page sub-page">
       <div className="sub-header">
-        <h1 className="sub-title">Subscription Plans</h1>
+        <h1 className="sub-title">
+          <AnimatedTitle text="Subscription Plans" />
+        </h1>
         <p className="sub-subtitle">Choose the plan that fits your entertainment needs</p>
       </div>
 

@@ -10,6 +10,14 @@ import {
   heroButtonVariants
 } from "../../animations";
 import "../../css/HeroBanner.css";
+import AnimatedTitle from "../common/AnimatedTitle";
+
+const getYouTubeId = (url) => {
+  if (!url || typeof url !== "string") return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
 
 export default function HeroBanner({ items = [] }) {
   const [current, setCurrent] = useState(0);
@@ -30,7 +38,7 @@ export default function HeroBanner({ items = [] }) {
     return (
       <div className="hero-banner">
         <div className="hero-placeholder">
-          <h1>Welcome to MOVIEMAX</h1>
+          <h1><AnimatedTitle text="Welcome to MOVIEMAX" /></h1>
           <p>Unlimited movies, TV shows, and more.</p>
         </div>
       </div>
@@ -38,6 +46,10 @@ export default function HeroBanner({ items = [] }) {
   }
 
   const item = items[current];
+  const videoUrlRaw = item.video?.url || item.video || item.trailer?.url || item.trailer || "";
+  const videoUrl = typeof videoUrlRaw === "string" ? videoUrlRaw : (videoUrlRaw?.url || "");
+  const ytId = getYouTubeId(videoUrl);
+  const hasBanner = !!(item.banner?.url);
 
   return (
     <div className="hero-banner" style={{ overflow: "hidden", position: "relative" }}>
@@ -51,16 +63,51 @@ export default function HeroBanner({ items = [] }) {
           transition={{ duration: 0.8 }}
           style={{ position: "absolute", inset: 0, zIndex: 1 }}
         >
-          <div className="hero-backdrop" style={{ height: "100%", width: "100%" }}>
-            <motion.img
-              src={item.banner?.url || item.poster?.url || null}
-              alt=""
-              variants={heroBackdropVariants}
-              animate="active"
-              initial="inactive"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-            <div className="hero-gradient" />
+          <div className="hero-backdrop" style={{ height: "100%", width: "100%", position: "relative", overflow: "hidden" }}>
+            {!hasBanner && ytId ? (
+              <iframe
+                src={`https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&autoplay=1`}
+                title="banner-video"
+                allow="autoplay; encrypted-media"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  position: "absolute",
+                  top: "0",
+                  left: "0",
+                  transform: "scale(1.35)",
+                  pointerEvents: "none",
+                  border: "none",
+                  zIndex: 0
+                }}
+              />
+            ) : !hasBanner && videoUrl ? (
+              <video
+                src={videoUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  position: "absolute",
+                  inset: 0,
+                  zIndex: 0
+                }}
+              />
+            ) : (
+              <motion.img
+                src={item.banner?.url || item.poster?.url || null}
+                alt=""
+                variants={heroBackdropVariants}
+                animate="active"
+                initial="inactive"
+                style={{ width: "100%", height: "100%", objectFit: "cover", zIndex: 0 }}
+              />
+            )}
+            <div className="hero-gradient" style={{ zIndex: 1 }} />
           </div>
         </motion.div>
       </AnimatePresence>
@@ -78,7 +125,7 @@ export default function HeroBanner({ items = [] }) {
             {item.quality}
           </motion.div>
           <motion.h1 className="hero-title" variants={heroTitleVariants}>
-            {item.title}
+            <AnimatedTitle text={item.title} />
           </motion.h1>
           <motion.div className="hero-meta" variants={heroFadeUpVariants}>
             <span className="hero-year">{item.releaseYear}</span>

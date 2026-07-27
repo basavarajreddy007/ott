@@ -1,7 +1,11 @@
+import AnimatedTitle from "../components/common/AnimatedTitle";
+
 export default function PrivacyPolicy() {
   return (
     <div className="browse-page" style={{ maxWidth: 800, margin: "0 auto" }}>
-      <h1 className="browse-title" style={{ marginBottom: 24 }}>Privacy Policy</h1>
+      <h1 className="browse-title" style={{ marginBottom: 24 }}>
+        <AnimatedTitle text="Privacy Policy" />
+      </h1>
       <div className="auth-card glass" style={{ padding: 40, lineHeight: 1.8, color: "#B3B3B3" }}>
         <p style={{ marginBottom: 16 }}>Your privacy is important to us. This policy outlines how we collect, use, and protect your personal information.</p>
         <h3 style={{ color: "#FFFFFF", marginTop: 24, marginBottom: 8 }}>Information We Collect</h3>

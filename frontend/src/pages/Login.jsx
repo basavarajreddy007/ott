@@ -7,6 +7,7 @@ import { HiEye, HiEyeOff, HiOutlineSun, HiOutlineMoon } from "react-icons/hi";
 import toast from "react-hot-toast";
 import { useAuth } from "../hooks/useAuth";
 import { authAPI } from "../services/api";
+import Logo from "../components/common/Logo";
 import "../css/Auth.css";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -315,7 +316,7 @@ export default function Login() {
               <rect width="48" height="48" rx="12" fill="var(--color-accent-primary)" />
               <polygon points="32,24 18,14 18,34" fill="white" />
             </svg>
-            <Link to="/" className="auth-logo" style={{ margin: 0 }}>MOVIEMAX</Link>
+            <Link to="/" className="auth-logo" style={{ margin: 0 }}><Logo size={28} gap={4} /></Link>
           </div>
 
           {step === "otp" ? (

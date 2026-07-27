@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { aiAPI } from "../services/ai";
 import toast from "react-hot-toast";
 import "../css/ScriptGenerator.css";
+import AnimatedTitle from "../components/common/AnimatedTitle";
 
 const SAVED_SCRIPTS_KEY = "cinemax_saved_scripts";
 
@@ -178,7 +179,9 @@ export default function ScriptGenerator() {
       <div className="sg-container">
         <div className="sg-header">
           <div className="sg-header-left">
-            <h1 className="sg-title">Script Studio</h1>
+            <h1 className="sg-title">
+              <AnimatedTitle text="Script Studio" />
+            </h1>
             <p className="sg-subtitle">AI-powered script writing assistant</p>
           </div>
           <div className="sg-header-actions">

@@ -28,6 +28,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const brandRoutes = require("./routes/brandRoutes");
 const ratingRoutes = require("./routes/ratingRoutes");
 const aiRoutes = require("./routes/aiRoutes");
+const channelRoutes = require("./routes/channelRoutes");
 const errorHandler = require("./middleware/errorHandler");
 const { verifySmtpConnection } = require("./services/emailService");
 const seedPlans = require("./scripts/seedPlans");
@@ -193,6 +194,7 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/brands", brandRoutes);
 app.use("/api/ratings", ratingRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/channels", channelRoutes);
 
 if (config.AI_ENABLED) {
   app.use("/api/ai", aiRoutes);

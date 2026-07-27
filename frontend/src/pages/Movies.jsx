@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { movieAPI, genreAPI } from "../services/api";
 import MovieCard from "../components/common/MovieCard";
+import AnimatedTitle from "../components/common/AnimatedTitle";
 import "../css/Browse.css";
 
 export default function Movies() {
@@ -57,7 +58,9 @@ export default function Movies() {
   return (
     <div className="browse-page">
       <div className="browse-header">
-        <h1 className="browse-title">Movies</h1>
+        <h1 className="browse-title">
+          <AnimatedTitle text="Movies" />
+        </h1>
         <div className="browse-filters">
           <select className="filter-select" value={filters.genre} onChange={(e) => updateFilter("genre", e.target.value)}>
             <option value="">All Genres</option>

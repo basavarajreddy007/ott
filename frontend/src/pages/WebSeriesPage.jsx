@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { webSeriesAPI, genreAPI, categoryAPI, movieAPI } from "../services/api";
 import MovieCard from "../components/common/MovieCard";
+import AnimatedTitle from "../components/common/AnimatedTitle";
 
 export default function WebSeriesPage() {
   const [series, setSeries] = useState([]);
@@ -49,7 +50,9 @@ export default function WebSeriesPage() {
   return (
     <div className="browse-page">
       <div className="browse-header">
-        <h1 className="browse-title">Web Series</h1>
+        <h1 className="browse-title">
+          <AnimatedTitle text="Web Series" />
+        </h1>
         <div className="browse-filters">
           <select className="filter-select" value={filters.genre} onChange={(e) => setFilters({ ...filters, genre: e.target.value })}>
             <option value="">All Genres</option>

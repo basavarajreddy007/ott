@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../hooks/useAuth";
 import { authAPI } from "../services/api";
+import Logo from "../components/common/Logo";
 
 export default function VerifyOtp() {
   const { verifyOtp } = useAuth();
@@ -40,7 +41,7 @@ export default function VerifyOtp() {
     <div className="auth-page">
       <div className="auth-container">
         <div className="auth-card glass">
-          <Link to="/" className="auth-logo">MOVIEMAX</Link>
+          <Link to="/" className="auth-logo"><Logo size={32} gap={6} /></Link>
           <h2 className="auth-title">Verify Email</h2>
           <p className="auth-subtitle">Enter the 6-digit OTP sent to {email}</p>
 

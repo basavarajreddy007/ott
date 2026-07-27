@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { notificationAPI } from "../services/api";
 import toast from "react-hot-toast";
+import AnimatedTitle from "../components/common/AnimatedTitle";
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
@@ -28,7 +29,9 @@ export default function Notifications() {
   return (
     <div className="browse-page" style={{ maxWidth: 700, margin: "0 auto" }}>
       <div className="browse-header">
-        <h1 className="browse-title">Notifications</h1>
+        <h1 className="browse-title">
+          <AnimatedTitle text="Notifications" />
+        </h1>
         {notifications.some((n) => !n.isRead) && (
           <button onClick={markAllRead} className="btn btn-secondary">Mark All Read</button>
         )}

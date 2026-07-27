@@ -4,6 +4,8 @@ import { AnimatePresence } from "framer-motion";
 import AnimatedPage from "../animations/AnimatedPage";
 import "../css/AdminLayout.css";
 
+import Logo from "../components/common/Logo";
+
 const sidebarLinks = [
   { path: "/admin", icon: HiViewGrid, label: "Dashboard" },
   { path: "/admin/upload-movie", icon: HiFilm, label: "Add Movie" },
@@ -23,7 +25,9 @@ export default function AdminLayout() {
       <aside className="admin-sidebar">
         <div className="admin-sidebar-header">
           <Link to="/" className="admin-back-link"><HiArrowLeft /> Back to Site</Link>
-          <h2 className="admin-logo">MOVIEMAX</h2>
+          <h2 className="admin-logo" style={{ display: "inline-flex", alignItems: "center" }}>
+            <Logo size={22} gap={3} />
+          </h2>
           <p className="admin-subtitle">Admin Panel</p>
         </div>
         <nav className="admin-nav">

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
+import AnimatedTitle from "../components/common/AnimatedTitle";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -12,7 +13,9 @@ export default function Contact() {
 
   return (
     <div className="browse-page" style={{ maxWidth: 600, margin: "0 auto" }}>
-      <h1 className="browse-title" style={{ marginBottom: 24 }}>Contact Us</h1>
+      <h1 className="browse-title" style={{ marginBottom: 24 }}>
+        <AnimatedTitle text="Contact Us" />
+      </h1>
       <div className="auth-card glass" style={{ padding: 32 }}>
         <form onSubmit={handleSubmit}>
           <div className="form-group">

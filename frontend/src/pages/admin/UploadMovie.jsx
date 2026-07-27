@@ -5,6 +5,7 @@ import api from "../../services/api";
 import { useAuth } from "../../hooks/useAuth";
 import toast from "react-hot-toast";
 import "../../css/UploadMovie.css";
+import AnimatedTitle from "../../components/common/AnimatedTitle";
 
 const LANGUAGES = ["English", "Hindi", "Spanish", "French", "Korean", "Japanese"];
 const QUALITIES = ["SD", "HD", "Full HD", "4K"];
@@ -138,7 +139,9 @@ export default function UploadMovie() {
     <div className="um-page">
       <div className="um-header">
         <div className="um-header-glow" />
-        <h1 className="um-title">Upload Movie</h1>
+        <h1 className="um-title">
+          <AnimatedTitle text="Upload Movie" />
+        </h1>
         <p className="um-subtitle">Fill in the details below to publish a new movie</p>
       </div>
 

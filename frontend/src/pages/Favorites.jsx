@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { favoriteAPI } from "../services/api";
 import MovieCard from "../components/common/MovieCard";
 import toast from "react-hot-toast";
+import AnimatedTitle from "../components/common/AnimatedTitle";
 
 export default function Favorites() {
   const [items, setItems] = useState([]);
@@ -19,7 +20,9 @@ export default function Favorites() {
 
   return (
     <div className="browse-page">
-      <h1 className="browse-title" style={{ marginBottom: 32 }}>My Favorites</h1>
+      <h1 className="browse-title" style={{ marginBottom: 32 }}>
+        <AnimatedTitle text="My Favorites" />
+      </h1>
       {loading ? (
         <div className="browse-grid">
           {Array.from({ length: 8 }).map((_, i) => (<div key={i} className="skeleton" style={{ aspectRatio: "2/3", borderRadius: 12 }} />))}

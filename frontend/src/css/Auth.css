@@ -87,12 +87,10 @@
 }
 
 .auth-logo {
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: var(--color-accent-primary);
-  letter-spacing: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: var(--space-md);
-  display: block;
 }
 
 .auth-title {

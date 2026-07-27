@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { historyAPI } from "../services/api";
 import toast from "react-hot-toast";
 import MovieCard from "../components/common/MovieCard";
+import AnimatedTitle from "../components/common/AnimatedTitle";
 
 export default function History() {
   const [items, setItems] = useState([]);
@@ -30,7 +31,9 @@ export default function History() {
   return (
     <div className="browse-page">
       <div className="browse-header">
-        <h1 className="browse-title">Watch History</h1>
+        <h1 className="browse-title">
+          <AnimatedTitle text="Watch History" />
+        </h1>
         {items.length > 0 && <button onClick={clearHistory} className="btn btn-secondary">Clear History</button>}
       </div>
       {loading ? (

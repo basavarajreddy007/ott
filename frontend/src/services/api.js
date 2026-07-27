@@ -267,4 +267,28 @@ export const adminAPI = {
   deleteReview: (id) => api.delete(`/admin/reviews/${id}`),
 };
 
+export const channelAPI = {
+  getMyChannel: () => api.get("/channels/me"),
+  getBySlug: (slug) => api.get(`/channels/${slug}`),
+  update: (id, data) => api.put(`/channels/${id}`, data),
+  subscribe: (id, data = {}) => api.post(`/channels/${id}/subscribe`, data),
+  unsubscribe: (id) => api.delete(`/channels/${id}/subscribe`),
+  getMySubscriptions: () => api.get("/channels/my-subscriptions"),
+  getVideos: (id, params) => api.get(`/channels/${id}/videos`, { params }),
+  getPlaylists: (id) => api.get(`/channels/${id}/playlists`),
+  getPlaylistDetails: (id) => api.get(`/channels/playlists/${id}`),
+  createPlaylist: (data) => api.post("/channels/playlists", data),
+  updatePlaylist: (id, data) => api.put(`/channels/playlists/${id}`, data),
+  deletePlaylist: (id) => api.delete(`/channels/playlists/${id}`),
+  getCommunityPosts: (channelId, params) => api.get(`/channels/${channelId}/community`, { params }),
+  createCommunityPost: (channelId, data) => api.post(`/channels/${channelId}/community`, data),
+  votePoll: (postId, optionIndex) => api.post(`/channels/posts/${postId}/vote`, { optionIndex }),
+  likePost: (postId) => api.post(`/channels/posts/${postId}/like`),
+  deletePost: (postId) => api.delete(`/channels/posts/${postId}`),
+  getAnalytics: (id) => api.get(`/channels/${id}/analytics`),
+  getSubscriptionsFeed: () => api.get("/channels/feed/subs"),
+  getRecommendedChannels: () => api.get("/channels/discovery/recommended"),
+  searchChannels: (q) => api.get(`/channels/search?q=${q}`),
+};
+
 export default api;

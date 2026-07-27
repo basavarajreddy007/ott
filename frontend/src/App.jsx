@@ -49,6 +49,9 @@ const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
 const ManageReviews = lazy(() => import("./pages/admin/ManageReviews"));
 const ManageSubscriptions = lazy(() => import("./pages/admin/ManageSubscriptions"));
 const ManageBrands = lazy(() => import("./pages/admin/ManageBrands"));
+const ChannelPage = lazy(() => import("./pages/ChannelPage"));
+const CreatorDashboard = lazy(() => import("./pages/CreatorDashboard"));
+const SubscriptionsFeed = lazy(() => import("./pages/SubscriptionsFeed"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 export default function App() {
@@ -83,6 +86,7 @@ export default function App() {
               <Route path="/faq" element={<Faq />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<Terms />} />
+              <Route path="/channel/:slug" element={<ChannelPage />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="/watch/:type/:slug" element={<Watch />} />
                 <Route path="/upload-movie" element={<UploadMovie />} />
@@ -97,6 +101,8 @@ export default function App() {
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/ai/script" element={<ScriptGenerator />} />
+                <Route path="/creator-studio" element={<CreatorDashboard />} />
+                <Route path="/subscriptions-feed" element={<SubscriptionsFeed />} />
               </Route>
             </Route>
             <Route element={<AdminRoute />}>

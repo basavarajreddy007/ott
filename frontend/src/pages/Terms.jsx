@@ -1,7 +1,11 @@
+import AnimatedTitle from "../components/common/AnimatedTitle";
+
 export default function Terms() {
   return (
     <div className="browse-page" style={{ maxWidth: 800, margin: "0 auto" }}>
-      <h1 className="browse-title" style={{ marginBottom: 24 }}>Terms of Service</h1>
+      <h1 className="browse-title" style={{ marginBottom: 24 }}>
+        <AnimatedTitle text="Terms of Service" />
+      </h1>
       <div className="auth-card glass" style={{ padding: 40, lineHeight: 1.8, color: "#B3B3B3" }}>
         <p style={{ marginBottom: 16 }}>By using MOVIEMAX, you agree to these terms. Please read them carefully.</p>
         <h3 style={{ color: "#FFFFFF", marginTop: 24, marginBottom: 8 }}>Account Registration</h3>
