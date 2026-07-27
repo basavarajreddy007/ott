@@ -2,7 +2,7 @@ const axios = require("axios");
 const { OPENROUTER_API_KEY, TINYFISH_API_KEY } = require("../config/env");
 
 const OPENROUTER_API = "https://openrouter.ai/api/v1/chat/completions";
-const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "google/gemini-2.0-flash-exp";
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "google/gemini-2.5-flash";
 const TINYFISH_API = process.env.TINYFISH_API_URL || "https://api.tinyfish.io/v1/chat/completions";
 const TINYFISH_MODEL = process.env.TINYFISH_MODEL || "gpt-4";
 const systemPrompts = {
@@ -152,8 +152,8 @@ async function aiChat({ messages, system = "chat", temperature = 0.7, fallbackTy
   const providers = [];
   if (OPENROUTER_API_KEY) {
     providers.push({ type: "openrouter", key: OPENROUTER_API_KEY, model: OPENROUTER_MODEL });
-    providers.push({ type: "openrouter", key: OPENROUTER_API_KEY, model: "google/gemini-2.0-flash-exp" });
-    providers.push({ type: "openrouter", key: OPENROUTER_API_KEY, model: "meta-llama/llama-3-8b-instruct:free" });
+    providers.push({ type: "openrouter", key: OPENROUTER_API_KEY, model: "google/gemini-2.5-flash" });
+    providers.push({ type: "openrouter", key: OPENROUTER_API_KEY, model: "meta-llama/llama-3.1-8b-instruct:free" });
   }
   if (TINYFISH_API_KEY) {
     providers.push({ type: "tinyfish", key: TINYFISH_API_KEY, model: TINYFISH_MODEL });
