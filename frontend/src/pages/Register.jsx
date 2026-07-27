@@ -156,7 +156,7 @@ export default function Register() {
                 type="email"
                 className={`form-input ${errors.email ? "error" : ""}`}
                 placeholder="your@email.com"
-                {...register("email", { required: "Email is required", pattern: /^\S+@\S+$/i })}
+                {...register("email", { required: "Email is required", pattern: { value: /^\S+@\S+$/i, message: "Please enter a valid email address" } })}
                 whileFocus={{ scale: 1.015, borderColor: "var(--color-accent-primary)" }}
                 transition={{ duration: 0.2 }}
               />

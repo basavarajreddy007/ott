@@ -369,10 +369,11 @@ export default function Watch() {
     }
     setSubmittingComment(true);
     try {
-      const { data } = await reviewAPI.add({
+      const { data } = await reviewAPI.create({
         contentId: content._id,
         contentType: type,
-        review: newCommentText.trim()
+        review: newCommentText.trim(),
+        rating: userRating || 5
       });
       setComments((prev) => [data.data, ...prev]);
       setNewCommentText("");

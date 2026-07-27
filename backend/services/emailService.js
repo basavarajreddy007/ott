@@ -142,7 +142,7 @@ body{margin:0;padding:0;background:#0B0B0B;font-family:'Segoe UI',sans-serif}
   <div class="content">
     <h2 style="color:#fff">Welcome, ${name}!</h2>
     <p style="color:#B3B3B3;font-size:16px;line-height:1.8">Your account has been created. Start exploring thousands of movies, TV shows, and web series.</p>
-    <a href="${config.CLIENT_URL}/browse" class="btn">Start Watching</a>
+    <a href="${config.CLIENT_URL}/" class="btn">Start Watching</a>
   </div>
   <div class="footer">&copy; 2026 MOVIEMAX. All rights reserved.</div>
 </div></body></html>`,
@@ -195,7 +195,7 @@ body{margin:0;padding:0;background:#0B0B0B;font-family:'Segoe UI',sans-serif}
     <div class="plan-name">${planName}</div>
     <p style="color:#B3B3B3;font-size:16px">Amount: ${amount}</p>
     <p style="color:#B3B3B3">Thank you for subscribing! Enjoy unlimited access to premium content.</p>
-    <a href="${config.CLIENT_URL}/watch" class="btn">Start Watching</a>
+    <a href="${config.CLIENT_URL}/" class="btn">Start Watching</a>
   </div>
   <div class="footer">&copy; 2026 MOVIEMAX. All rights reserved.</div>
 </div></body></html>`,

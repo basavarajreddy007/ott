@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { movieAPI } from "../services/api";
+import { movieAPI, historyAPI } from "../services/api";
 import { aiAPI } from "../services/ai";
 import { useAuth } from "../hooks/useAuth";
 import HeroBanner from "../components/home/HeroBanner";
@@ -14,6 +14,7 @@ export default function Home() {
   const [topRated, setTopRated] = useState([]);
   const [newReleases, setNewReleases] = useState([]);
   const [aiRecs, setAiRecs] = useState(null);
+  const [continueWatching, setContinueWatching] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,11 +51,19 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setContinueWatching([]);
+      setAiRecs(null);
+      return;
+    }
     const genres = user?.preferences?.genres || [];
-    if (genres.length === 0) return;
-    aiAPI.recommend({ genres }).then(({ data }) => {
-      setAiRecs(data.data.content);
+    if (genres.length > 0) {
+      aiAPI.recommend({ genres }).then(({ data }) => {
+        setAiRecs(data.data.content);
+      }).catch(() => {});
+    }
+    historyAPI.getContinueWatching().then(({ data }) => {
+      setContinueWatching(data.data || []);
     }).catch(() => {});
   }, [user]);
 
@@ -82,6 +91,13 @@ export default function Home() {
     <div className="home-page">
       <HeroBanner items={featured} />
       <MoodSection />
+      {continueWatching.length > 0 && (
+        <ContentRow
+          title="Continue Watching"
+          link="/continue-watching"
+          items={continueWatching.map((item) => ({ ...item.content, progress: item.progress, type: item.contentType }))}
+        />
+      )}
       <ContentRow title="Trending Now" link="/movies?sort=trending" items={trending} type="Movie" />
       <ContentRow title="Top Rated" link="/movies?sort=rating" items={topRated} type="Movie" />
       <ContentRow title="New Releases" link="/movies?sort=new" items={newReleases} type="Movie" />

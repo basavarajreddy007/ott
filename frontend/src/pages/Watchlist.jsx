@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { favoriteAPI } from "../services/api";
+import { watchlistAPI } from "../services/api";
 import MovieCard from "../components/common/MovieCard";
 import toast from "react-hot-toast";
 
@@ -8,10 +8,9 @@ export default function Watchlist() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    favoriteAPI.getAll()
+    watchlistAPI.getAll()
       .then(({ data }) => setItems(data.data))
       .catch((err) => {
-        console.error("Failed to load watchlist:", err);
         toast.error("Failed to load watchlist. Please try again.");
       })
       .finally(() => setLoading(false));

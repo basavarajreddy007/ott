@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { HiPlay, HiHeart, HiPlus } from "react-icons/hi";
+import { HiPlay, HiHeart, HiPlus, HiCheck } from "react-icons/hi";
 import { motion } from "framer-motion";
-import { favoriteAPI } from "../../services/api";
+import { favoriteAPI, watchlistAPI } from "../../services/api";
+import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
 import {
   cardVariants,
@@ -18,6 +19,7 @@ export default function MovieCard({ item, type = "Movie", featured = false, prog
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isInWatchlist, setIsInWatchlist] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
 
@@ -34,18 +36,22 @@ export default function MovieCard({ item, type = "Movie", featured = false, prog
   useEffect(() => {
     if (!user || !item?._id) {
       setIsFavorite(false);
+      setIsInWatchlist(false);
       return;
     }
     favoriteAPI.check(item._id, finalType)
       .then(({ data }) => setIsFavorite(Boolean(data?.data?.isFavorite)))
       .catch(() => setIsFavorite(false));
+
+    watchlistAPI.check(item._id, finalType)
+      .then(({ data }) => setIsInWatchlist(Boolean(data?.data?.isInWatchlist)))
+      .catch(() => setIsInWatchlist(false));
   }, [user, item?._id, finalType]);
 
   const toggleFavorite = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (!user) return navigate("/login");
-
     try {
       if (isFavorite) {
         await favoriteAPI.remove(item._id, finalType);
@@ -55,6 +61,25 @@ export default function MovieCard({ item, type = "Movie", featured = false, prog
         setIsFavorite(true);
       }
     } catch {}
+  };
+
+  const toggleWatchlist = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) return navigate("/login");
+    try {
+      if (isInWatchlist) {
+        await watchlistAPI.remove(item._id, finalType);
+        setIsInWatchlist(false);
+        toast.success("Removed from watchlist");
+      } else {
+        await watchlistAPI.add({ contentId: item._id, contentType: finalType });
+        setIsInWatchlist(true);
+        toast.success("Added to watchlist");
+      }
+    } catch {
+      toast.error("Failed to update watchlist");
+    }
   };
 
   const detailPath = finalType === "Movie" ? `/movies/${slug}` : finalType === "TvShow" ? `/tv-shows/${slug}` : `/web-series/${slug}`;
@@ -123,9 +148,20 @@ export default function MovieCard({ item, type = "Movie", featured = false, prog
                     <HiHeart />
                   </motion.div>
                 </motion.button>
-                <button className="card-action-btn" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-                  <HiPlus />
-                </button>
+                <motion.button
+                  className={`card-action-btn ${isInWatchlist ? "favorited" : ""}`}
+                  onClick={toggleWatchlist}
+                  whileTap={{ scale: 0.8 }}
+                >
+                  <motion.div
+                    key={isInWatchlist}
+                    initial={{ scale: 0.7 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 350, damping: 12 }}
+                  >
+                    {isInWatchlist ? <HiCheck /> : <HiPlus />}
+                  </motion.div>
+                </motion.button>
               </>
             )}
           </div>

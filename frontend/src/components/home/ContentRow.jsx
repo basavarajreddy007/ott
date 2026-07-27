@@ -59,7 +59,7 @@ export default function ContentRow({ title, link, items = [], type = "Movie", lo
                 <div key={i} className="skeleton" style={{ minWidth: 200, aspectRatio: "2/3", borderRadius: 12 }} />
               ))
             : items.map((item) => (
-                <MovieCard key={item._id} item={item} type={type} />
+                <MovieCard key={item._id} item={item} type={type} progress={item.progress} />
               ))}
         </motion.div>
 

@@ -206,6 +206,14 @@ export const favoriteAPI = {
   remove: (contentId, contentType) => api.delete(`/favorites/${contentId}/${contentType}`),
 };
 
+export const watchlistAPI = {
+  getAll: () => api.get("/watchlist"),
+  add: (data) => api.post("/watchlist", data),
+  check: (contentId, contentType) => api.get(`/watchlist/check/${contentId}/${contentType}`),
+  checkMany: (items) => api.post("/watchlist/check-many", { items }),
+  remove: (contentId, contentType) => api.delete(`/watchlist/${contentId}/${contentType}`),
+};
+
 export const reviewAPI = {
   getByContent: (contentType, contentId) => api.get(`/reviews/${contentType}/${contentId}`),
   create: (data) => api.post("/reviews", data),
