@@ -81,7 +81,7 @@ export default function Home() {
   return (
     <div className="home-page">
       <HeroBanner items={featured} />
-      <div style={{ marginTop: "-90px", position: "relative", zIndex: 3 }}>
+      <div style={{ marginTop: "32px", position: "relative", zIndex: 3 }}>
         <div style={{ padding: "0 4% 32px" }}>
           <MoodSection />
         </div>
