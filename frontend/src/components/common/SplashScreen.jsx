@@ -7,15 +7,6 @@ const playAmbientSound = () => {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (!AudioContextClass) return;
     const ctx = new AudioContextClass();
-    if (ctx.state === "suspended") {
-      const resume = () => {
-        ctx.resume();
-        window.removeEventListener("click", resume);
-        window.removeEventListener("keydown", resume);
-      };
-      window.addEventListener("click", resume);
-      window.addEventListener("keydown", resume);
-    }
 
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -67,8 +58,22 @@ export default function SplashScreen({ onFinish }) {
   const [complete, setComplete] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
   const audioTriggered = useRef(false);
+  const userInteracted = useRef(false);
+  const playPendingRef = useRef(false);
 
   useEffect(() => {
+    const handleGesture = () => {
+      userInteracted.current = true;
+      if (playPendingRef.current && !audioTriggered.current) {
+        playAmbientSound();
+        audioTriggered.current = true;
+      }
+      window.removeEventListener("click", handleGesture);
+      window.removeEventListener("keydown", handleGesture);
+    };
+    window.addEventListener("click", handleGesture);
+    window.addEventListener("keydown", handleGesture);
+
     const startSequence = setTimeout(() => {
       letters.forEach((_, idx) => {
         setTimeout(() => {
@@ -79,9 +84,13 @@ export default function SplashScreen({ onFinish }) {
 
     const completionTimer = setTimeout(() => {
       setComplete(true);
-      if (!audioTriggered.current) {
-        playAmbientSound();
-        audioTriggered.current = true;
+      if (userInteracted.current) {
+        if (!audioTriggered.current) {
+          playAmbientSound();
+          audioTriggered.current = true;
+        }
+      } else {
+        playPendingRef.current = true;
       }
     }, 800 + letters.length * 300 + 400);
 
@@ -94,6 +103,8 @@ export default function SplashScreen({ onFinish }) {
     }, 800 + letters.length * 300 + 2450);
 
     return () => {
+      window.removeEventListener("click", handleGesture);
+      window.removeEventListener("keydown", handleGesture);
       clearTimeout(startSequence);
       clearTimeout(completionTimer);
       clearTimeout(exitTimer);
