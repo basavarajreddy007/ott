@@ -6,7 +6,6 @@ import { channelAPI } from "../services/api";
 import { useAuth } from "../hooks/useAuth";
 import { useSubscription } from "../hooks/useSubscription";
 import SubscribeButton from "../components/common/SubscribeButton";
-import JoinMembershipModal from "../components/common/JoinMembershipModal";
 import MovieCard from "../components/common/MovieCard";
 import AnimatedTitle from "../components/common/AnimatedTitle";
 import toast from "react-hot-toast";
@@ -60,7 +59,6 @@ export default function ChannelPage() {
         const { data } = await channelAPI.getBySlug(slug);
         setChannel(data.data);
 
-        // Check subscription status
         if (user) {
           try {
             const subsRes = await channelAPI.getMySubscriptions();
@@ -73,17 +71,14 @@ export default function ChannelPage() {
           } catch {}
         }
 
-        // Load videos
         const videosRes = await channelAPI.getVideos(data.data._id);
         setVideos(videosRes.data.data || []);
 
-        // Load playlists
         try {
           const playlistRes = await channelAPI.getPlaylists(data.data._id);
           setPlaylists(playlistRes.data.data || []);
         } catch {}
 
-        // Load community posts
         try {
           const postsRes = await channelAPI.getCommunityPosts(data.data._id);
           setCommunityPosts(postsRes.data.data || []);
@@ -152,7 +147,7 @@ export default function ChannelPage() {
 
   return (
     <div className="channel-page">
-      {/* Banner */}
+      {}
       <div className="channel-banner">
         {channel.banner?.desktop ? (
           <img src={channel.banner.desktop} alt="" className="channel-banner-img" />
@@ -162,7 +157,7 @@ export default function ChannelPage() {
         <div className="channel-banner-overlay" />
       </div>
 
-      {/* Profile Section */}
+      {}
       <div className="channel-profile">
         <motion.div
           className="channel-avatar-wrap"
@@ -226,7 +221,7 @@ export default function ChannelPage() {
                 onClick={handleJoinClick}
                 style={{ padding: "10px 22px", borderRadius: "24px", fontSize: "14px", fontWeight: "600" }}
               >
-                {isSubscribed || globalSubscribed ? "Joined ✓" : "Join"}
+                {isSubscribed || globalSubscribed ? "Joined " : "Join"}
               </button>
               <SubscribeButton
                 channelId={channel._id}
@@ -240,14 +235,7 @@ export default function ChannelPage() {
         </div>
       </div>
 
-      <JoinMembershipModal
-        channelId={channel?._id}
-        channelName={channel?.name}
-        isOpen={showJoinModal}
-        onClose={() => setShowJoinModal(false)}
-      />
-
-      {/* Tabs */}
+      {}
       <div className="channel-tabs">
         {tabs.map((tab) => (
           <button
@@ -262,7 +250,7 @@ export default function ChannelPage() {
         ))}
       </div>
 
-      {/* Tab Content */}
+      {}
       <div className="channel-content">
         {activeTab === "videos" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
@@ -352,7 +340,7 @@ export default function ChannelPage() {
                         className="community-like-btn"
                         onClick={() => channelAPI.likePost(post._id).then(() => toast.success("Liked")).catch(() => toast.error("Failed"))}
                       >
-                        ❤️ {post.likes?.length || 0}
+                         {post.likes?.length || 0}
                       </button>
                     </div>
                   </div>

@@ -28,7 +28,6 @@ export default function SubscribeButton({
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Handle dropdown close on outside click
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -103,26 +102,29 @@ export default function SubscribeButton({
     <div style={{ position: "relative", display: "inline-block" }} ref={dropdownRef}>
       <motion.button
         onClick={handleSubscribeClick}
+        className={isSubscribed ? "" : "uiverse-glow-button"}
         whileTap={{ scale: 0.95 }}
         whileHover={{ scale: 1.02 }}
         aria-label={isSubscribed ? "Subscription options" : "Subscribe to channel"}
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 8,
-          padding: "10px 22px",
-          borderRadius: 24,
-          fontSize: 14,
-          fontWeight: 600,
-          border: "none",
-          cursor: "pointer",
-          backgroundColor: isSubscribed ? "rgba(255, 255, 255, 0.15)" : "#E50914",
-          color: "#FFFFFF",
-          transition: "background-color 0.2s ease",
-          boxShadow: isSubscribed ? "none" : "0 4px 14px rgba(229, 9, 20, 0.4)",
-          backdropFilter: isSubscribed ? "blur(8px)" : "none",
-          outline: "none"
-        }}
+        style={
+          isSubscribed
+            ? {
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "10px 22px",
+                borderRadius: 24,
+                fontSize: 14,
+                fontWeight: 600,
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                cursor: "pointer",
+                backgroundColor: "rgba(255, 255, 255, 0.12)",
+                color: "#FFFFFF",
+                backdropFilter: "blur(12px)",
+                outline: "none"
+              }
+            : {}
+        }
       >
         {isSubscribed ? (
           <>

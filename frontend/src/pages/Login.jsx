@@ -300,7 +300,7 @@ export default function Login() {
 
               {devOtp && (
                 <div className="dev-otp-badge" onClick={fillDevOtp} style={{ cursor: "pointer" }}>
-                  <span className="dev-otp-title">🔧 Developer Mode Helper</span>
+                  <span className="dev-otp-title"> Developer Mode Helper</span>
                   <span className="dev-otp-code">Click to Autofill Code: <strong>{devOtp}</strong></span>
                 </div>
               )}

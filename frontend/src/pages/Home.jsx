@@ -90,9 +90,6 @@ export default function Home() {
   const [continueWatching, setContinueWatching] = useState([]);
   const [loading, setLoading] = useState(true);
   const [quickViewItem, setQuickViewItem] = useState(null);
-  const [activeCategory, setActiveCategory] = useState("All");
-
-  const categories = ["All", "Action", "Sci-Fi", "Drama", "4K Ultra HD", "Award Winners"];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -152,17 +149,11 @@ export default function Home() {
     setQuickViewItem(item);
   };
 
-  const filterByCat = (list) => {
-    if (activeCategory === "All") return list;
-    if (activeCategory === "4K Ultra HD") return list.filter(i => (i.quality || "").includes("4K"));
-    return list.filter(i => (i.genres || []).some(g => (g.name || g).toLowerCase().includes(activeCategory.toLowerCase())));
-  };
-
   if (loading) {
     return (
       <div>
         <div className="skeleton" style={{ height: "90vh", borderRadius: 0 }} />
-        <div className="container" style={{ padding: "48px 20px" }}>
+        <div style={{ padding: "48px 20px" }}>
           {Array.from({ length: 2 }).map((_, i) => (
             <div key={i} style={{ marginBottom: 48 }}>
               <div className="skeleton" style={{ width: 220, height: 26, marginBottom: 20, borderRadius: "10px" }} />
@@ -182,46 +173,6 @@ export default function Home() {
     <div className="home-page" style={{ position: "relative" }}>
       <HeroBanner items={featured} onQuickView={handleQuickView} />
 
-      <div className="container" style={{ marginTop: "-30px", marginBottom: "40px", position: "relative", zIndex: 10 }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            overflowX: "auto",
-            padding: "12px 20px",
-            background: "rgba(16, 18, 23, 0.8)",
-            backdropFilter: "blur(28px) saturate(180%)",
-            WebkitBackdropFilter: "blur(28px) saturate(180%)",
-            border: "1px solid rgba(255, 255, 255, 0.12)",
-            borderRadius: "999px",
-            boxShadow: "0 20px 50px rgba(0, 0, 0, 0.8)"
-          }}
-        >
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              style={{
-                padding: "8px 20px",
-                borderRadius: "999px",
-                fontSize: "13px",
-                fontWeight: 700,
-                color: activeCategory === cat ? "#ffffff" : "#A8B0C0",
-                background: activeCategory === cat ? "var(--color-accent-primary)" : "transparent",
-                border: activeCategory === cat ? "1px solid var(--color-accent-primary)" : "1px solid transparent",
-                cursor: "pointer",
-                transition: "all 0.25s ease",
-                whiteSpace: "nowrap",
-                boxShadow: activeCategory === cat ? "var(--shadow-glow-accent)" : "none"
-              }}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <MoodSection />
 
       {continueWatching.length > 0 && (
@@ -236,13 +187,13 @@ export default function Home() {
       <ContentRow
         title="Top 10 Blockbusters"
         link="/movies?sort=trending"
-        items={filterByCat(trending)}
+        items={trending}
         type="Movie"
         onQuickView={handleQuickView}
       />
 
       {aiRecs && (
-        <section className="section ai-recs container">
+        <section className="section ai-recs">
           <div className="section-header">
             <h2 className="section-title">
               <span className="section-title-tag" />

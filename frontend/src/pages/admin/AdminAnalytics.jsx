@@ -38,7 +38,7 @@ export default function AdminAnalytics() {
 
       <div className="a-stats">
         <div className="a-stat-card" style={{ "--accent": "var(--color-info)" }}>
-          <div className="a-stat-icon">👁️</div>
+          <div className="a-stat-icon"></div>
           <div className="a-stat-info">
             <span className="a-stat-value">{data.totalViews || 0}</span>
             <span className="a-stat-label">Total Movie Views</span>
@@ -49,18 +49,18 @@ export default function AdminAnalytics() {
       <div className="a-grid-2">
         <ListCard
           title="Top Rated"
-          icon="⭐"
+          icon=""
           items={data.topRatedMovies}
           renderItem={(m) => (
             <div key={m._id} className="a-list-item">
               <span className="a-list-name">{m.title}</span>
-              <span className="a-badge a-badge--gold">★ {m.averageRating?.toFixed(1) || "N/A"}</span>
+              <span className="a-badge a-badge--gold"> {m.averageRating?.toFixed(1) || "N/A"}</span>
             </div>
           )}
         />
         <ListCard
           title="Most Viewed"
-          icon="🔥"
+          icon=""
           items={data.mostViewed}
           renderItem={(m) => (
             <div key={m._id} className="a-list-item">
@@ -71,7 +71,7 @@ export default function AdminAnalytics() {
         />
         <ListCard
           title="Users by Month"
-          icon="📈"
+          icon=""
           items={data.monthlyUsers}
           renderItem={(m) => (
             <div key={m._id} className="a-list-item">
@@ -82,7 +82,7 @@ export default function AdminAnalytics() {
         />
         <ListCard
           title="Revenue by Month"
-          icon="💰"
+          icon=""
           items={data.revenueByMonth}
           renderItem={(r) => (
             <div key={r._id} className="a-list-item">

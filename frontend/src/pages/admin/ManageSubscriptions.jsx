@@ -27,9 +27,9 @@ export default function ManageSubscriptions() {
   if (loading) return <div className="a-loading"><span className="a-spinner" /></div>;
 
   const revenueCards = revenueData ? [
-    { label: "Total Revenue",    value: `$${revenueData.totalRevenue}`,    icon: "💰", color: "var(--color-success)" },
-    { label: "This Month",       value: `$${revenueData.monthlyRevenue}`,  icon: "📅", color: "var(--color-info)" },
-    { label: "Transactions",     value: revenueData.totalTransactions,     icon: "🧾", color: "var(--color-warning)" },
+    { label: "Total Revenue",    value: `$${revenueData.totalRevenue}`,    icon: "", color: "var(--color-success)" },
+    { label: "This Month",       value: `$${revenueData.monthlyRevenue}`,  icon: "", color: "var(--color-info)" },
+    { label: "Transactions",     value: revenueData.totalTransactions,     icon: "", color: "var(--color-warning)" },
   ] : [];
 
   return (
@@ -55,7 +55,7 @@ export default function ManageSubscriptions() {
 
       <div className="a-card">
         <div className="a-card-header">
-          <span className="a-card-icon">📋</span>
+          <span className="a-card-icon"></span>
           <h3 className="a-card-title">Plans</h3>
         </div>
         <div className="a-table-wrap">

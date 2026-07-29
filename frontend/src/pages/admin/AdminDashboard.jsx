@@ -20,10 +20,10 @@ export default function AdminDashboard() {
   }, []);
 
   const statCards = [
-    { label: "Total Movies", value: stats?.stats?.totalMovies ?? 0, icon: "🎬", color: "var(--color-accent-primary)" },
-    { label: "Total Users",  value: stats?.stats?.totalUsers  ?? 0, icon: "👥", color: "var(--color-success)" },
-    { label: "Total Reviews",value: stats?.stats?.totalReviews?? 0, icon: "⭐", color: "var(--color-rating)" },
-    { label: "Revenue",      value: `$${stats?.stats?.totalRevenue ?? 0}`, icon: "💰", color: "var(--color-info)" },
+    { label: "Total Movies", value: stats?.stats?.totalMovies ?? 0, icon: "", color: "var(--color-accent-primary)" },
+    { label: "Total Users",  value: stats?.stats?.totalUsers  ?? 0, icon: "", color: "var(--color-success)" },
+    { label: "Total Reviews",value: stats?.stats?.totalReviews?? 0, icon: "", color: "var(--color-rating)" },
+    { label: "Revenue",      value: `$${stats?.stats?.totalRevenue ?? 0}`, icon: "", color: "var(--color-info)" },
   ];
 
   if (loading) return <div className="a-loading"><span className="a-spinner" /></div>;
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
           <p className="a-page-sub">Welcome back — here's what's happening</p>
         </div>
         <Link to="/admin/upload-movie" className="um-btn-primary">
-          🚀 Upload Movie
+           Upload Movie
         </Link>
       </div>
 

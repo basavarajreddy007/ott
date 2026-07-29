@@ -5,14 +5,14 @@ import ErrorBanner from "../common/ErrorBanner";
 import "../../css/MoodSection.css";
 
 const moods = [
-  { id: "happy", label: "Happy", emoji: "😊", color: "#FFD54F", bg: "rgba(255,213,79,0.12)" },
-  { id: "sad", label: "Sad", emoji: "😢", color: "#64B5F6", bg: "rgba(100,181,246,0.12)" },
-  { id: "excited", label: "Excited", emoji: "🤩", color: "#FF8A65", bg: "rgba(255,138,101,0.12)" },
-  { id: "romantic", label: "Romantic", emoji: "❤️", color: "#F48FB1", bg: "rgba(244,143,177,0.12)" },
-  { id: "thriller", label: "Thriller", emoji: "😱", color: "#CE93D8", bg: "rgba(206,147,216,0.12)" },
-  { id: "chill", label: "Chill", emoji: "😌", color: "#81C784", bg: "rgba(129,199,132,0.12)" },
-  { id: "nostalgic", label: "Nostalgic", emoji: "📼", color: "#FFAB91", bg: "rgba(255,171,145,0.12)" },
-  { id: "adventurous", label: "Adventurous", emoji: "🗺️", color: "#AED581", bg: "rgba(174,213,129,0.12)" },
+  { id: "happy", label: "Happy", emoji: "", color: "#FFD54F", bg: "rgba(255,213,79,0.12)" },
+  { id: "sad", label: "Sad", emoji: "", color: "#64B5F6", bg: "rgba(100,181,246,0.12)" },
+  { id: "excited", label: "Excited", emoji: "", color: "#FF8A65", bg: "rgba(255,138,101,0.12)" },
+  { id: "romantic", label: "Romantic", emoji: "", color: "#F48FB1", bg: "rgba(244,143,177,0.12)" },
+  { id: "thriller", label: "Thriller", emoji: "", color: "#CE93D8", bg: "rgba(206,147,216,0.12)" },
+  { id: "chill", label: "Chill", emoji: "", color: "#81C784", bg: "rgba(129,199,132,0.12)" },
+  { id: "nostalgic", label: "Nostalgic", emoji: "", color: "#FFAB91", bg: "rgba(255,171,145,0.12)" },
+  { id: "adventurous", label: "Adventurous", emoji: "", color: "#AED581", bg: "rgba(174,213,129,0.12)" },
 ];
 
 const moodHeadlines = {
@@ -308,7 +308,7 @@ export default function MoodSection({ onMoodSelect }) {
               <div className="mood-recs-actions">
                 <span className="mood-recs-count">{recommendations.length} picks</span>
                 <button className="mood-shuffle-btn" onClick={handleSurprisePick}>
-                  🎲 Surprise Pick
+                   Surprise Pick
                 </button>
               </div>
             </div>
@@ -348,7 +348,7 @@ export default function MoodSection({ onMoodSelect }) {
         </div>
       )}
 
-      {/* Spotlight modal overlay */}
+      {}
       <AnimatePresence>
         {surpriseMovie && (
           <motion.div
@@ -371,7 +371,7 @@ export default function MoodSection({ onMoodSelect }) {
                 onClick={() => setSurpriseMovie(null)}
                 aria-label="Close Spotlight"
               >
-                ✕
+                
               </button>
               <div className="mood-spotlight-body">
                 <div className="mood-spotlight-poster-wrap">
@@ -382,7 +382,7 @@ export default function MoodSection({ onMoodSelect }) {
                   <div className="mood-spotlight-glow" />
                 </div>
                 <div className="mood-spotlight-info">
-                  <span className="mood-spotlight-badge">🎲 Surprise Spotlight</span>
+                  <span className="mood-spotlight-badge"> Surprise Spotlight</span>
                   <h2>{surpriseMovie.title} ({surpriseMovie.year})</h2>
                   <div className="mood-spotlight-genre-wrap">
                     <span className="mood-spotlight-genre">{surpriseMovie.genre}</span>

@@ -1,6 +1,4 @@
-/* ===========================
-   Subscriptions Feed Styles
-   =========================== */
+
 
 .subs-feed-page {
   min-height: 100vh;
@@ -12,7 +10,6 @@
   margin-bottom: 24px;
 }
 
-/* Subscribed Channels Strip */
 .subs-channels-bar {
   padding: 14px 20px;
   margin-bottom: 24px;
@@ -83,7 +80,6 @@
   text-align: center;
 }
 
-/* Filter Chips & Search */
 .subs-filter-bar {
   display: flex;
   align-items: center;
@@ -165,7 +161,6 @@
   max-width: 400px;
 }
 
-/* Feed List */
 .subs-feed-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -173,7 +168,6 @@
   margin-bottom: 48px;
 }
 
-/* Feed Post Card */
 .subs-feed-post {
   grid-column: 1 / -1;
   max-width: 640px;
@@ -247,7 +241,6 @@
   white-space: pre-wrap;
 }
 
-/* Feed Poll */
 .subs-feed-poll {
   margin-top: 16px;
 }
@@ -268,7 +261,6 @@
   font-size: 13px;
 }
 
-/* Discover Creators */
 .subs-feed-discover {
   margin-top: 48px;
   padding-top: 32px;
@@ -347,7 +339,6 @@
   margin: 0;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .subs-feed-list {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));

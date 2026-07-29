@@ -17,7 +17,6 @@ export function useSubscription(channelId, initialData = {}) {
   const subscriptionState = useSelector(selectChannelSubscription(channelId));
   const mySubscriptions = useSelector(selectMySubscriptions);
 
-  // Initialize state if initialData is provided
   useEffect(() => {
     if (channelId && initialData && (initialData.subscribersCount !== undefined || initialData.isSubscribed !== undefined)) {
       dispatch(setChannelState({

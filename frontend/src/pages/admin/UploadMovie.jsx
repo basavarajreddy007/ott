@@ -148,7 +148,7 @@ export default function UploadMovie() {
       <form onSubmit={handleSubmit} className="um-form">
 
         {}
-        <Section title="Basic Info" icon="🎬">
+        <Section title="Basic Info" icon="">
           <div className="um-grid-2">
             <Field label="Title *">
               <input name="title" className="um-input" placeholder="Movie title" value={form.title} onChange={handleChange} required />
@@ -160,7 +160,7 @@ export default function UploadMovie() {
         </Section>
 
         {}
-        <Section title="Classification" icon="🏷️">
+        <Section title="Classification" icon="">
           <div className="um-grid-3">
             <Field label="Language">
               <select name="language" className="um-input" value={form.language} onChange={handleChange}>
@@ -188,7 +188,7 @@ export default function UploadMovie() {
         </Section>
 
         {}
-        <Section title="Description" icon="📝">
+        <Section title="Description" icon="">
           <Field>
             <textarea
               name="description"
@@ -208,13 +208,13 @@ export default function UploadMovie() {
             {aiLoading ? (
               <><span className="um-ai-spinner" /> Generating…</>
             ) : (
-              <><span className="um-ai-star">✦</span> AI Generate Description</>
+              <><span className="um-ai-star"></span> AI Generate Description</>
             )}
           </button>
         </Section>
 
         {}
-        <Section title="Genres" icon="🎭">
+        <Section title="Genres" icon="">
           <Field label="Select Genres">
             <select
               className="um-input"
@@ -253,7 +253,7 @@ export default function UploadMovie() {
         </Section>
 
         {}
-        <Section title="Media" icon="🖼️">
+        <Section title="Media" icon="">
           <div className="um-grid-2">
             <Field label="Poster URL">
               <input name="poster" className="um-input" placeholder="https://…" value={form.poster} onChange={handleChange} />
@@ -269,7 +269,7 @@ export default function UploadMovie() {
                   style={{ flex: 1 }}
                 />
                 <label className="um-btn-primary" style={{ padding: "10px 18px", margin: 0, fontSize: 13, cursor: "pointer", display: "inline-flex", alignItems: "center", minHeight: "unset" }}>
-                  {uploadingVideo ? <span className="um-ai-spinner" /> : "📁 Choose File"}
+                  {uploadingVideo ? <span className="um-ai-spinner" /> : " Choose File"}
                   <input
                     type="file"
                     accept="video/*"
@@ -284,9 +284,9 @@ export default function UploadMovie() {
         </Section>
 
         {}
-        <Section title="Visibility" icon="👁️">
+        <Section title="Visibility" icon="">
           <div className="um-toggles">
-            {[["isFeatured", "⭐", "Featured"], ["isTrending", "🔥", "Trending"], ["isNewRelease", "🆕", "New Release"]].map(([name, icon, label]) => (
+            {[["isFeatured", "", "Featured"], ["isTrending", "", "Trending"], ["isNewRelease", "", "New Release"]].map(([name, icon, label]) => (
               <label key={name} className={`um-toggle ${form[name] ? "um-toggle--on" : ""}`}>
                 <input type="checkbox" name={name} checked={form[name]} onChange={handleChange} className="um-toggle-input" />
                 <span className="um-toggle-icon">{icon}</span>
@@ -308,7 +308,7 @@ export default function UploadMovie() {
             {loading ? (
               <><span className="um-ai-spinner um-spinner-white" /> Publishing…</>
             ) : (
-              <><span>🚀</span> Publish Movie</>
+              <><span></span> Publish Movie</>
             )}
           </button>
         </div>

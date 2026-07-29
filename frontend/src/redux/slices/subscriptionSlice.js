@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { channelAPI } from "../../services/api";
 import toast from "react-hot-toast";
 
-// Fetch user's active subscriptions
 export const fetchMySubscriptions = createAsyncThunk(
   "subscription/fetchMySubscriptions",
   async (_, { rejectWithValue }) => {
@@ -15,7 +14,6 @@ export const fetchMySubscriptions = createAsyncThunk(
   }
 );
 
-// Check single channel subscription status
 export const checkSubscriptionStatus = createAsyncThunk(
   "subscription/checkSubscriptionStatus",
   async (channelId, { rejectWithValue }) => {
@@ -28,7 +26,6 @@ export const checkSubscriptionStatus = createAsyncThunk(
   }
 );
 
-// Subscribe to channel
 export const subscribeChannel = createAsyncThunk(
   "subscription/subscribeChannel",
   async ({ channelId, preference = "all" }, { rejectWithValue }) => {
@@ -41,7 +38,6 @@ export const subscribeChannel = createAsyncThunk(
   }
 );
 
-// Unsubscribe from channel
 export const unsubscribeChannel = createAsyncThunk(
   "subscription/unsubscribeChannel",
   async (channelId, { rejectWithValue }) => {
@@ -54,7 +50,6 @@ export const unsubscribeChannel = createAsyncThunk(
   }
 );
 
-// Update notification preference
 export const updateNotificationPreference = createAsyncThunk(
   "subscription/updateNotificationPreference",
   async ({ channelId, preference }, { rejectWithValue }) => {
@@ -68,7 +63,7 @@ export const updateNotificationPreference = createAsyncThunk(
 );
 
 const initialState = {
-  // Map of channelId -> { isSubscribed, notificationPreference, subscribersCount }
+
   channelsMap: {},
   mySubscriptionsList: [],
   loading: false,
@@ -117,7 +112,7 @@ const subscriptionSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // My Subscriptions
+
       .addCase(fetchMySubscriptions.fulfilled, (state, action) => {
         state.mySubscriptionsList = action.payload;
         action.payload.forEach((sub) => {
@@ -131,7 +126,6 @@ const subscriptionSlice = createSlice({
         });
       })
 
-      // Check Status
       .addCase(checkSubscriptionStatus.fulfilled, (state, action) => {
         const { channelId, data } = action.payload;
         state.channelsMap[channelId] = {
@@ -142,7 +136,6 @@ const subscriptionSlice = createSlice({
         };
       })
 
-      // Subscribe Fulfilled
       .addCase(subscribeChannel.fulfilled, (state, action) => {
         const { channelId, data } = action.payload;
         state.channelsMap[channelId] = {
@@ -161,7 +154,6 @@ const subscriptionSlice = createSlice({
         toast.error(message || "Failed to subscribe");
       })
 
-      // Unsubscribe Fulfilled
       .addCase(unsubscribeChannel.fulfilled, (state, action) => {
         const { channelId, data } = action.payload;
         state.channelsMap[channelId] = {
@@ -181,7 +173,6 @@ const subscriptionSlice = createSlice({
         toast.error(message || "Failed to unsubscribe");
       })
 
-      // Update Notification Preference
       .addCase(updateNotificationPreference.fulfilled, (state, action) => {
         const { channelId, preference } = action.payload;
         if (state.channelsMap[channelId]) {

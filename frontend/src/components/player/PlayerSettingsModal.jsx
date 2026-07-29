@@ -1,40 +1,61 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { HiX, HiCheck, HiChevronRight, HiCog, HiGlobe, HiFilm, HiFastForward } from "react-icons/hi";
+import {
+  HiXMark,
+  HiChevronRight,
+  HiChevronLeft,
+  HiCheck,
+  HiCog,
+  HiSparkles,
+  HiSpeakerWave,
+  HiLanguage,
+  HiBackward
+} from "react-icons/hi2";
 
-const QUALITY_OPTIONS = [
-  { id: "auto", label: "Auto (4K Ultra HD)", sub: "Best available quality" },
-  { id: "2160p", label: "2160p (4K HDR)", sub: "3840 x 2160 • High Bitrate" },
-  { id: "1080p", label: "1080p (Full HD)", sub: "1920 x 1080 • Standard" },
-  { id: "720p", label: "720p (HD)", sub: "1280 x 720 • Data Saver" },
-  { id: "480p", label: "480p (SD)", sub: "854 x 480 • Low Data" },
+const qualityOptions = [
+  { id: "auto", label: "Auto (1080p HD - 8 Mbps)" },
+  { id: "2160p", label: "4K Ultra HD (2160p)" },
+  { id: "1440p", label: "1440p QHD" },
+  { id: "1080p", label: "1080p Full HD" },
+  { id: "720p", label: "720p HD" },
+  { id: "480p", label: "480p SD" },
+  { id: "360p", label: "360p Low" }
 ];
 
-const AUDIO_OPTIONS = [
-  { id: "en-atmos", label: "English [Original]", sub: "Dolby Atmos 7.1" },
-  { id: "es-51", label: "Spanish (Español)", sub: "5.1 Surround" },
-  { id: "fr-51", label: "French (Français)", sub: "5.1 Surround" },
-  { id: "hi-51", label: "Hindi (हिन्दी)", sub: "5.1 Surround" },
-  { id: "de-20", label: "German (Deutsch)", sub: "Stereo 2.0" },
+const speedOptions = [
+  { id: 0.25, label: "0.25x (Quarter Speed)" },
+  { id: 0.5, label: "0.5x (Half Speed)" },
+  { id: 0.75, label: "0.75x" },
+  { id: 1.0, label: "1.0x (Normal)" },
+  { id: 1.25, label: "1.25x" },
+  { id: 1.5, label: "1.5x" },
+  { id: 1.75, label: "1.75x" },
+  { id: 2.0, label: "2.0x (Double Speed)" }
 ];
 
-const SUBTITLE_OPTIONS = [
+const audioOptions = [
+  { id: "en-atmos", label: "English [Dolby Atmos 5.1]" },
+  { id: "en-orig", label: "English [Original]" },
+  { id: "en-ad", label: "English [Audio Description]" },
+  { id: "es", label: "Spanish (Español) 5.1" },
+  { id: "fr", label: "French (Français) 5.1" },
+  { id: "de", label: "German (Deutsch)" },
+  { id: "hi", label: "Hindi (हिंदी) 5.1" },
+  { id: "ja", label: "Japanese (日本語)" }
+];
+
+const subtitleOptions = [
   { id: "off", label: "Off" },
-  { id: "en", label: "English [CC]" },
+  { id: "en-cc", label: "English [CC]" },
+  { id: "en", label: "English Subtitles" },
   { id: "es", label: "Spanish (Español)" },
   { id: "fr", label: "French (Français)" },
   { id: "de", label: "German (Deutsch)" },
-  { id: "hi", label: "Hindi (हिन्दी)" },
+  { id: "ja", label: "Japanese (日本語)" }
 ];
 
-const SPEED_OPTIONS = [
-  { value: 0.5, label: "0.5x" },
-  { value: 0.75, label: "0.75x" },
-  { value: 1.0, label: "1.0x (Normal)" },
-  { value: 1.25, label: "1.25x" },
-  { value: 1.5, label: "1.5x" },
-  { value: 2.0, label: "2.0x" },
-];
+const subtitleFontSizeOptions = ["Small (75%)", "Normal (100%)", "Large (125%)", "Huge (150%)"];
+const subtitleColorOptions = ["White", "Yellow", "Cyan", "Green"];
 
 export default function PlayerSettingsModal({
   isOpen,
@@ -48,114 +69,204 @@ export default function PlayerSettingsModal({
   playbackSpeed = 1.0,
   onSpeedChange
 }) {
-  const [activeTab, setActiveTab] = useState("main");
+  const [activeMenu, setActiveMenu] = useState("main");
+  const [subSize, setSubSize] = useState("Normal (100%)");
+  const [subColor, setSubColor] = useState("White");
 
   if (!isOpen) return null;
 
-  const renderMainMenu = () => (
-    <div>
-      <div className="settings-header">
-        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <HiCog style={{ color: "#00A8FF" }} /> Player Settings
-        </span>
-        <button className="player-btn" onClick={onClose} style={{ width: 28, height: 28, fontSize: 16 }}>
-          <HiX />
-        </button>
-      </div>
-
-      <div className="settings-option-item" onClick={() => setActiveTab("quality")}>
-        <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <HiFilm /> Quality
-        </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 4, color: "#00A8FF", fontSize: "0.8rem" }}>
-          {QUALITY_OPTIONS.find(q => q.id === currentQuality)?.label || "Auto"} <HiChevronRight />
-        </span>
-      </div>
-
-      <div className="settings-option-item" onClick={() => setActiveTab("audio")}>
-        <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <HiGlobe /> Audio Language
-        </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 4, color: "#00A8FF", fontSize: "0.8rem" }}>
-          {AUDIO_OPTIONS.find(a => a.id === currentAudio)?.label || "English"} <HiChevronRight />
-        </span>
-      </div>
-
-      <div className="settings-option-item" onClick={() => setActiveTab("subtitles")}>
-        <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <HiGlobe /> Subtitles
-        </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 4, color: "#00A8FF", fontSize: "0.8rem" }}>
-          {SUBTITLE_OPTIONS.find(s => s.id === currentSubtitle)?.label || "Off"} <HiChevronRight />
-        </span>
-      </div>
-
-      <div className="settings-option-item" onClick={() => setActiveTab("speed")}>
-        <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <HiFastForward /> Playback Speed
-        </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 4, color: "#00A8FF", fontSize: "0.8rem" }}>
-          {playbackSpeed}x <HiChevronRight />
-        </span>
-      </div>
-    </div>
-  );
-
-  const renderSubMenu = (title, items, currentVal, selectHandler) => (
-    <div>
-      <div className="settings-header">
-        <button
-          className="player-btn"
-          onClick={() => setActiveTab("main")}
-          style={{ width: 28, height: 28, fontSize: 16 }}
-        >
-          ←
-        </button>
-        <span>{title}</span>
-        <div style={{ width: 28 }} />
-      </div>
-
-      <div style={{ maxHeight: "240px", overflowY: "auto" }}>
-        {items.map((item) => {
-          const itemVal = item.id || item.value;
-          const isSelected = itemVal === currentVal;
-          return (
-            <div
-              key={itemVal}
-              className={`settings-option-item ${isSelected ? "active" : ""}`}
-              onClick={() => {
-                selectHandler(itemVal);
-                setActiveTab("main");
-              }}
-            >
-              <div>
-                <div style={{ fontWeight: isSelected ? 700 : 500 }}>{item.label}</div>
-                {item.sub && <div style={{ fontSize: "0.72rem", color: "#a0a5b5" }}>{item.sub}</div>}
-              </div>
-              {isSelected && <HiCheck style={{ color: "#00A8FF" }} />}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-
   return (
     <AnimatePresence>
-      <motion.div
-        className="player-settings-popup"
-        initial={{ opacity: 0, scale: 0.92, y: 15 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.92, y: 15 }}
-        transition={{ duration: 0.2 }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {activeTab === "main" && renderMainMenu()}
-        {activeTab === "quality" && renderSubMenu("Video Quality", QUALITY_OPTIONS, currentQuality, onQualityChange)}
-        {activeTab === "audio" && renderSubMenu("Audio Track", AUDIO_OPTIONS, currentAudio, onAudioChange)}
-        {activeTab === "subtitles" && renderSubMenu("Subtitles", SUBTITLE_OPTIONS, currentSubtitle, onSubtitleChange)}
-        {activeTab === "speed" && renderSubMenu("Playback Speed", SPEED_OPTIONS, playbackSpeed, onSpeedChange)}
-      </motion.div>
+      <div className="player-modal-backdrop" onClick={onClose}>
+        <motion.div
+          className="player-settings-popup"
+          onClick={(e) => e.stopPropagation()}
+          initial={{ opacity: 0, scale: 0.95, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 10 }}
+          transition={{ duration: 0.2 }}
+        >
+          {activeMenu === "main" ? (
+            <div className="settings-menu-group">
+              <div className="settings-header">
+                <span>Playback Settings</span>
+                <button className="settings-close-btn" onClick={onClose}><HiXMark /></button>
+              </div>
+
+              <div className="settings-option-item" onClick={() => setActiveMenu("quality")}>
+                <div className="settings-item-left">
+                  <HiSparkles className="text-cyan-400" />
+                  <span>Quality</span>
+                </div>
+                <div className="settings-item-right">
+                  <span className="settings-val-badge">
+                    {qualityOptions.find((q) => q.id === currentQuality)?.label.split(" ")[0] || "Auto"}
+                  </span>
+                  <HiChevronRight />
+                </div>
+              </div>
+
+              <div className="settings-option-item" onClick={() => setActiveMenu("speed")}>
+                <div className="settings-item-left">
+                  <HiCog className="text-purple-400" />
+                  <span>Playback Speed</span>
+                </div>
+                <div className="settings-item-right">
+                  <span className="settings-val-badge">{playbackSpeed === 1 ? "Normal" : `${playbackSpeed}x`}</span>
+                  <HiChevronRight />
+                </div>
+              </div>
+
+              <div className="settings-option-item" onClick={() => setActiveMenu("audio")}>
+                <div className="settings-item-left">
+                  <HiSpeakerWave className="text-amber-400" />
+                  <span>Audio Track</span>
+                </div>
+                <div className="settings-item-right">
+                  <span className="settings-val-badge">
+                    {audioOptions.find((a) => a.id === currentAudio)?.label.split(" ")[0] || "English"}
+                  </span>
+                  <HiChevronRight />
+                </div>
+              </div>
+
+              <div className="settings-option-item" onClick={() => setActiveMenu("subtitles")}>
+                <div className="settings-item-left">
+                  <HiLanguage className="text-emerald-400" />
+                  <span>Subtitles / CC</span>
+                </div>
+                <div className="settings-item-right">
+                  <span className="settings-val-badge">
+                    {subtitleOptions.find((s) => s.id === currentSubtitle)?.label || "Off"}
+                  </span>
+                  <HiChevronRight />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="settings-menu-group">
+              <div className="settings-header">
+                <button className="settings-back-btn" onClick={() => setActiveMenu("main")}>
+                  <HiChevronLeft /> Back
+                </button>
+                <span>
+                  {activeMenu === "quality" && "Video Quality"}
+                  {activeMenu === "speed" && "Playback Speed"}
+                  {activeMenu === "audio" && "Audio Language"}
+                  {activeMenu === "subtitles" && "Subtitles & CC"}
+                  {activeMenu === "sub_style" && "Subtitle Style"}
+                </span>
+                <button className="settings-close-btn" onClick={onClose}><HiXMark /></button>
+              </div>
+
+              <div className="settings-options-scroll">
+                {activeMenu === "quality" &&
+                  qualityOptions.map((opt) => (
+                    <div
+                      key={opt.id}
+                      className={`settings-option-item ${currentQuality === opt.id ? "active" : ""}`}
+                      onClick={() => {
+                        onQualityChange(opt.id);
+                        setActiveMenu("main");
+                      }}
+                    >
+                      <span>{opt.label}</span>
+                      {currentQuality === opt.id && <HiCheck className="text-cyan-400" />}
+                    </div>
+                  ))}
+
+                {activeMenu === "speed" &&
+                  speedOptions.map((opt) => (
+                    <div
+                      key={opt.id}
+                      className={`settings-option-item ${playbackSpeed === opt.id ? "active" : ""}`}
+                      onClick={() => {
+                        onSpeedChange(opt.id);
+                        setActiveMenu("main");
+                      }}
+                    >
+                      <span>{opt.label}</span>
+                      {playbackSpeed === opt.id && <HiCheck className="text-purple-400" />}
+                    </div>
+                  ))}
+
+                {activeMenu === "audio" &&
+                  audioOptions.map((opt) => (
+                    <div
+                      key={opt.id}
+                      className={`settings-option-item ${currentAudio === opt.id ? "active" : ""}`}
+                      onClick={() => {
+                        onAudioChange(opt.id);
+                        setActiveMenu("main");
+                      }}
+                    >
+                      <span>{opt.label}</span>
+                      {currentAudio === opt.id && <HiCheck className="text-amber-400" />}
+                    </div>
+                  ))}
+
+                {activeMenu === "subtitles" && (
+                  <>
+                    {subtitleOptions.map((opt) => (
+                      <div
+                        key={opt.id}
+                        className={`settings-option-item ${currentSubtitle === opt.id ? "active" : ""}`}
+                        onClick={() => {
+                          onSubtitleChange(opt.id);
+                          setActiveMenu("main");
+                        }}
+                      >
+                        <span>{opt.label}</span>
+                        {currentSubtitle === opt.id && <HiCheck className="text-emerald-400" />}
+                      </div>
+                    ))}
+                    <div
+                      className="settings-option-item sub-style-trigger"
+                      onClick={() => setActiveMenu("sub_style")}
+                    >
+                      <span>Customize Appearance...</span>
+                      <HiChevronRight />
+                    </div>
+                  </>
+                )}
+
+                {activeMenu === "sub_style" && (
+                  <div className="sub-style-customizer">
+                    <div className="sub-style-group">
+                      <label>Font Size</label>
+                      <div className="sub-style-buttons">
+                        {subtitleFontSizeOptions.map((sz) => (
+                          <button
+                            key={sz}
+                            className={`sub-btn ${subSize === sz ? "active" : ""}`}
+                            onClick={() => setSubSize(sz)}
+                          >
+                            {sz.split(" ")[0]}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="sub-style-group mt-3">
+                      <label>Text Color</label>
+                      <div className="sub-style-buttons">
+                        {subtitleColorOptions.map((clr) => (
+                          <button
+                            key={clr}
+                            className={`sub-btn ${subColor === clr ? "active" : ""}`}
+                            onClick={() => setSubColor(clr)}
+                          >
+                            {clr}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </motion.div>
+      </div>
     </AnimatePresence>
   );
 }

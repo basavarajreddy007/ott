@@ -247,7 +247,7 @@ export default function MovieDetails() {
                 className={`rating-star ${newRating >= star ? "active" : ""}`}
                 onClick={() => setNewRating(star)}
               >
-                ★ {star}
+                 {star}
               </button>
             ))}
           </div>
@@ -282,7 +282,7 @@ export default function MovieDetails() {
                   </div>
                   <span className="review-author">{r.user?.name || "Verified Viewer"}</span>
                 </div>
-                <span className="review-rating-display">★ {r.rating} / 5</span>
+                <span className="review-rating-display"> {r.rating} / 5</span>
               </div>
               <p className="review-text">{r.comment}</p>
             </div>

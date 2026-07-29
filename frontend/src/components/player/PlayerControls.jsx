@@ -4,15 +4,22 @@ import {
   HiArrowLeft,
   HiPlay,
   HiPause,
-  HiVolumeUp,
-  HiVolumeOff,
+  HiSpeakerWave,
+  HiSpeakerXMark,
   HiCog,
   HiFilm,
-  HiTranslate,
-  HiFastForward,
-  HiStar
-} from "react-icons/hi";
-import { HiTv, HiArrowsPointingOut, HiArrowsPointingIn } from "react-icons/hi2";
+  HiForward,
+  HiStar,
+  HiQuestionMarkCircle,
+  HiSparkles,
+  HiLanguage,
+  HiSquare2Stack,
+  HiWindow,
+  HiComputerDesktop,
+  HiArrowsPointingOut,
+  HiArrowsPointingIn,
+  HiEye
+} from "react-icons/hi2";
 
 const formatTime = (secs) => {
   if (isNaN(secs) || secs === null) return "00:00";
@@ -44,18 +51,33 @@ export default function PlayerControls({
   onToggleFullscreen,
   isTheater,
   onToggleTheater,
+  isMiniPlayer,
+  onToggleMiniPlayer,
+  onTogglePip,
   onBack,
   onOpenSettings,
   onOpenEpisodes,
+  onOpenChapters,
+  onOpenShortcuts,
   showSkipIntro,
   onSkipIntro,
   showSkipRecap,
   onSkipRecap,
-  chapters = [0.2, 0.5, 0.8],
+  isLiveStream = false,
+  liveViewerCount = 14850,
+  chapters = [0.15, 0.35, 0.6, 0.85],
   showControls = true
 }) {
   const [hoverPosition, setHoverPosition] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
   const timelineRef = useRef(null);
+
+  const calculateSeekFromEvent = (e) => {
+    if (!timelineRef.current || duration <= 0) return 0;
+    const rect = timelineRef.current.getBoundingClientRect();
+    const offsetX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+    return (offsetX / rect.width) * duration;
+  };
 
   const handleTimelineMouseMove = (e) => {
     if (!timelineRef.current || duration <= 0) return;
@@ -64,18 +86,30 @@ export default function PlayerControls({
     const percent = (offsetX / rect.width) * 100;
     const hoverSecs = (offsetX / rect.width) * duration;
     setHoverPosition({ percent, time: hoverSecs, x: offsetX });
+
+    if (isDragging) {
+      onSeek(hoverSecs);
+    }
+  };
+
+  const handleTimelineMouseDown = (e) => {
+    setIsDragging(true);
+    const seekTime = calculateSeekFromEvent(e);
+    onSeek(seekTime);
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      window.removeEventListener("mousemove", handleTimelineMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+    window.addEventListener("mousemove", handleTimelineMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
   };
 
   const handleTimelineMouseLeave = () => {
-    setHoverPosition(null);
-  };
-
-  const handleTimelineClick = (e) => {
-    if (!timelineRef.current || duration <= 0) return;
-    const rect = timelineRef.current.getBoundingClientRect();
-    const offsetX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-    const percent = offsetX / rect.width;
-    onSeek(percent * duration);
+    if (!isDragging) {
+      setHoverPosition(null);
+    }
   };
 
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
@@ -90,6 +124,7 @@ export default function PlayerControls({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
         >
+          {}
           <div className="player-top-bar" onClick={(e) => e.stopPropagation()}>
             <div className="player-top-left">
               <button className="player-back-btn" onClick={onBack} title="Back">
@@ -99,20 +134,27 @@ export default function PlayerControls({
                 <h2>{title}</h2>
                 <div className="player-subtitle-meta">
                   {seasonNumber && episodeNumber && <span>S{seasonNumber}:E{episodeNumber}</span>}
-                  <span>Prime 4K Presentation</span>
                 </div>
               </div>
             </div>
 
             <div className="player-top-badges">
-              <span className="player-badge imdb"><HiStar /> 8.9</span>
-              <span className="player-badge accent">4K ULTRA HD</span>
-              <span className="player-badge">DOLBY VISION</span>
-              <span className="player-badge">DOLBY ATMOS</span>
-              <span className="player-badge">HDR10+</span>
+              {isLiveStream && (
+                <span className="player-badge live-badge animate-pulse">
+                  <span className="live-dot" /> LIVE
+                </span>
+              )}
+              <button
+                className="player-icon-btn-sm"
+                onClick={onOpenShortcuts}
+                title="Keyboard Shortcuts (?)"
+              >
+                <HiQuestionMarkCircle size={22} />
+              </button>
             </div>
           </div>
 
+          {}
           <div className="player-center-area">
             <motion.button
               className="player-center-play-btn"
@@ -124,25 +166,28 @@ export default function PlayerControls({
             </motion.button>
           </div>
 
+          {}
           {showSkipIntro && (
             <button className="player-skip-btn" onClick={(e) => { e.stopPropagation(); onSkipIntro(); }}>
-              <HiFastForward size={18} /> Skip Intro
+              <HiForward size={18} /> Skip Intro
             </button>
           )}
 
           {showSkipRecap && (
             <button className="player-skip-btn" onClick={(e) => { e.stopPropagation(); onSkipRecap(); }}>
-              <HiFastForward size={18} /> Skip Recap
+              <HiForward size={18} /> Skip Recap
             </button>
           )}
 
+          {}
           <div className="player-bottom-bar" onClick={(e) => e.stopPropagation()}>
+            {}
             <div
-              className="player-timeline-container"
+              className={`player-timeline-container ${isDragging ? "dragging" : ""}`}
               ref={timelineRef}
               onMouseMove={handleTimelineMouseMove}
               onMouseLeave={handleTimelineMouseLeave}
-              onClick={handleTimelineClick}
+              onMouseDown={handleTimelineMouseDown}
             >
               {hoverPosition && (
                 <div className="player-hover-preview" style={{ left: `${hoverPosition.percent}%` }}>
@@ -166,6 +211,7 @@ export default function PlayerControls({
               </div>
             </div>
 
+            {}
             <div className="player-controls-row">
               <div className="player-controls-left">
                 <button className="player-btn" onClick={onTogglePlay} title={playing ? "Pause (Space)" : "Play (Space)"}>
@@ -174,7 +220,7 @@ export default function PlayerControls({
 
                 <div className="player-volume-wrap">
                   <button className="player-btn" onClick={onToggleMute} title={muted ? "Unmute (M)" : "Mute (M)"}>
-                    {muted || volume === 0 ? <HiVolumeOff /> : <HiVolumeUp />}
+                    {muted || volume === 0 ? <HiSpeakerXMark /> : <HiSpeakerWave />}
                   </button>
                   <div className="player-volume-slider">
                     <input
@@ -196,6 +242,12 @@ export default function PlayerControls({
               </div>
 
               <div className="player-controls-right">
+                {onOpenChapters && (
+                  <button className="player-btn" onClick={onOpenChapters} title="AI Chapter Guide">
+                    <HiSparkles className="text-cyan-400" />
+                  </button>
+                )}
+
                 {onOpenEpisodes && (
                   <button className="player-btn" onClick={onOpenEpisodes} title="Episodes Drawer">
                     <HiFilm />
@@ -203,15 +255,35 @@ export default function PlayerControls({
                 )}
 
                 <button className="player-btn" onClick={onOpenSettings} title="Audio & Subtitles / Settings">
-                  <HiTranslate />
+                  <HiLanguage />
                 </button>
 
                 <button className="player-btn" onClick={onOpenSettings} title="Settings">
                   <HiCog />
                 </button>
 
-                <button className="player-btn" onClick={onToggleTheater} title="Theater Mode">
-                  <HiTv />
+                {onTogglePip && (
+                  <button className="player-btn" onClick={onTogglePip} title="Picture-in-Picture (P)">
+                    <HiSquare2Stack />
+                  </button>
+                )}
+
+                {onToggleMiniPlayer && (
+                  <button
+                    className={`player-btn ${isMiniPlayer ? "active" : ""}`}
+                    onClick={onToggleMiniPlayer}
+                    title="Mini Player Mode"
+                  >
+                    <HiWindow />
+                  </button>
+                )}
+
+                <button
+                  className={`player-btn ${isTheater ? "active" : ""}`}
+                  onClick={onToggleTheater}
+                  title="Theater Mode (T)"
+                >
+                  <HiComputerDesktop />
                 </button>
 
                 <button className="player-btn" onClick={onToggleFullscreen} title="Fullscreen (F)">

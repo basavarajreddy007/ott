@@ -74,7 +74,7 @@ export default function SubscriptionsFeed() {
         <h1 className="browse-title"><AnimatedTitle text="Subscriptions Feed" /></h1>
       </div>
 
-      {/* Subscribed Channels Avatar Bar */}
+      {}
       {subscriptions.length > 0 && (
         <div className="subs-channels-bar glass">
           <div className="subs-channels-scroll">
@@ -97,7 +97,7 @@ export default function SubscriptionsFeed() {
         </div>
       )}
 
-      {/* Filter Chips & Search Bar */}
+      {}
       <div className="subs-filter-bar">
         <div className="subs-filter-chips">
           {filters.map((f) => (
@@ -187,7 +187,7 @@ export default function SubscriptionsFeed() {
         </div>
       )}
 
-      {/* Recommended Creators */}
+      {}
       {recommended.length > 0 && (
         <section className="subs-feed-discover">
           <h2 className="subs-feed-discover-title">Discover Creators</h2>

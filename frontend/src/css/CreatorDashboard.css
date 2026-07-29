@@ -1,6 +1,4 @@
-/* ===========================
-   Creator Dashboard Styles
-   =========================== */
+
 
 .creator-dashboard {
   display: flex;
@@ -28,7 +26,6 @@
   margin-bottom: 8px;
 }
 
-/* Sidebar */
 .creator-sidebar {
   width: 240px;
   background: rgba(255, 255, 255, 0.02);
@@ -122,7 +119,6 @@
   color: #E50914;
 }
 
-/* Main Content */
 .creator-main {
   flex: 1;
   padding: 32px 40px;
@@ -136,7 +132,6 @@
   margin-bottom: 32px;
 }
 
-/* Metrics Grid */
 .creator-metrics-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -175,7 +170,6 @@
   font-weight: 500;
 }
 
-/* Chart Card */
 .creator-chart-card {
   padding: 28px;
   border-radius: 20px;
@@ -220,7 +214,6 @@
   margin-top: 8px;
 }
 
-/* Analytics Sections */
 .creator-analytics-section {
   padding: 28px;
   border-radius: 20px;
@@ -260,7 +253,6 @@
   font-size: 13px;
 }
 
-/* Community Composer */
 .creator-community-composer {
   display: flex;
   flex-direction: column;
@@ -322,7 +314,6 @@
   border-radius: 12px;
 }
 
-/* Playlists Empty */
 .creator-playlists-empty {
   display: flex;
   flex-direction: column;
@@ -336,7 +327,6 @@
   font-size: 14px;
 }
 
-/* Settings */
 .creator-settings-card {
   max-width: 500px;
   padding: 32px;
@@ -345,7 +335,6 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* Responsive */
 @media (max-width: 1024px) {
   .creator-metrics-grid {
     grid-template-columns: repeat(2, 1fr);

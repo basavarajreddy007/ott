@@ -47,7 +47,7 @@ export default function ManageReviews() {
               {reviews.map((r) => (
                 <tr key={r._id}>
                   <td className="a-td-bold">{r.user?.name || "Anonymous"}</td>
-                  <td><span className="a-badge a-badge--gold">★ {r.rating}/10</span></td>
+                  <td><span className="a-badge a-badge--gold"> {r.rating}/10</span></td>
                   <td className="a-td-truncate">{r.review}</td>
                   <td className="a-td-meta">{new Date(r.createdAt).toLocaleDateString()}</td>
                   <td>

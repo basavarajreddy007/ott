@@ -97,7 +97,7 @@ export default function JoinMembershipModal({ channelId, isOpen, onClose, channe
           padding: 16
         }}
       >
-        {/* Backdrop */}
+        {}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -111,7 +111,7 @@ export default function JoinMembershipModal({ channelId, isOpen, onClose, channe
           }}
         />
 
-        {/* Modal Window */}
+        {}
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -131,7 +131,7 @@ export default function JoinMembershipModal({ channelId, isOpen, onClose, channe
             color: "#ffffff"
           }}
         >
-          {/* Close Button */}
+          {}
           <button
             onClick={onClose}
             style={{
@@ -154,7 +154,7 @@ export default function JoinMembershipModal({ channelId, isOpen, onClose, channe
             <HiXMark size={20} />
           </button>
 
-          {/* Header */}
+          {}
           <div style={{ textAlign: "center", marginBottom: 24 }}>
             <div style={{
               display: "inline-flex",
@@ -215,7 +215,7 @@ export default function JoinMembershipModal({ channelId, isOpen, onClose, channe
             </div>
           ) : (
             <>
-              {/* Tiers Selection Grid */}
+              {}
               <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 24 }}>
                 {tiers.map((tier) => {
                   const isSelected = selectedTier?.id === tier.id;
@@ -259,7 +259,7 @@ export default function JoinMembershipModal({ channelId, isOpen, onClose, channe
                 })}
               </div>
 
-              {/* Action Button */}
+              {}
               <button
                 onClick={handleJoin}
                 disabled={submitting || !selectedTier}

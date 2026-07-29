@@ -67,7 +67,7 @@ export default function ManageBrands() {
       {showForm && (
         <div className="um-section" style={{ marginBottom: "var(--space-lg)" }}>
           <div className="um-section-header">
-            <span className="um-section-icon">🏢</span>
+            <span className="um-section-icon"></span>
             <h3 className="um-section-title">{editing ? "Edit Brand" : "Add Brand"}</h3>
           </div>
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>

@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authAPI } from "../../services/api";
 
-
 export const loadUser = createAsyncThunk("auth/loadUser", async (_, { rejectWithValue }) => {
   try {
     const token = localStorage.getItem("token");
@@ -24,9 +23,6 @@ export const login = createAsyncThunk("auth/login", async (credentials, { reject
     return rejectWithValue(err.response?.data?.message || "Login failed");
   }
 });
-
-
-
 
 export const googleLogin = createAsyncThunk("auth/googleLogin", async (credential, { rejectWithValue }) => {
   try {
@@ -119,22 +115,18 @@ const authSlice = createSlice({
         state.loading = false;
       });
 
-    
     builder
       .addCase(googleLogin.fulfilled, (state, action) => { state.user = action.payload; })
       .addCase(googleLogin.rejected, (state, action) => { state.error = action.payload; });
 
-    
     builder
       .addCase(verifyLoginOtp.fulfilled, (state, action) => { state.user = action.payload; })
       .addCase(verifyLoginOtp.rejected, (state, action) => { state.error = action.payload; });
 
-    
     builder
       .addCase(verifyOtp.fulfilled, (state, action) => { state.user = action.payload; })
       .addCase(verifyOtp.rejected, (state, action) => { state.error = action.payload; });
 
-    
     builder.addCase(logout.fulfilled, (state) => {
       state.user = null;
       state.loading = false;
@@ -143,7 +135,6 @@ const authSlice = createSlice({
 });
 
 export const { setUser, clearError } = authSlice.actions;
-
 
 export const selectUser = (state) => state.auth.user;
 export const selectAuthLoading = (state) => state.auth.loading;

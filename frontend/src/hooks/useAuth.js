@@ -13,7 +13,6 @@ import {
   loadUser,
 } from "../redux/slices/authSlice";
 
-
 export function useAuth() {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);

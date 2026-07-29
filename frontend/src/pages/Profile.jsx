@@ -9,6 +9,7 @@ import "../css/Profile.css";
 export default function Profile() {
   const { user, setUser } = useAuth();
   const [name, setName] = useState(user?.name || "");
+  const [channelName, setChannelName] = useState(user?.channelName || user?.channel?.name || "");
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
 
@@ -20,11 +21,13 @@ export default function Profile() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await userAPI.updateProfile({ name });
-      setUser(data.data);
-      toast.success("Profile updated");
+      const { data } = await userAPI.updateProfile({ name, channelName });
+      const updatedUser = data.data || { ...user, name, channelName };
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      toast.success("Profile & Channel details updated!");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed");
+      toast.error(err.response?.data?.message || "Failed to update profile");
     } finally {
       setLoading(false);
     }
@@ -107,8 +110,12 @@ export default function Profile() {
                 transition={{ duration: 0.3 }}
               >
                 <div className="form-group">
-                  <label className="form-label">Name</label>
-                  <input type="text" className="form-input" value={name} onChange={(e) => setName(e.target.value)} />
+                  <label className="form-label">Full Name</label>
+                  <input type="text" className="form-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your Full Name" />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Channel / Creator Name</label>
+                  <input type="text" className="form-input" value={channelName} onChange={(e) => setChannelName(e.target.value)} placeholder="e.g. Antigravity Studios" />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Email</label>

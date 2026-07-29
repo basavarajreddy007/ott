@@ -204,28 +204,7 @@ export default function Navbar() {
           </>
         )}
       </NavLink>
-      <NavLink to="/subscriptions-feed" className="nav-link" onClick={closeMenu}>
-        {({ isActive }) => (
-          <>
-            <span>Subscriptions</span>
-            {isActive && (
-              <motion.span
-                layoutId="nav-pill"
-                className="nav-link-underline-fm"
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "rgba(255, 255, 255, 0.1)",
-                  borderRadius: "999px",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
-                  zIndex: -1
-                }}
-                transition={{ type: "spring", stiffness: 400, damping: 30 }}
-              />
-            )}
-          </>
-        )}
-      </NavLink>
+
       <NavLink to="/categories" className="nav-link" onClick={closeMenu}>
         {({ isActive }) => (
           <>
@@ -382,7 +361,7 @@ export default function Navbar() {
                           <div style={{ color: "#A8B0C0", fontSize: "11px", display: "flex", gap: "8px", marginTop: "2px" }}>
                             <span>{item.releaseYear}</span>
                             <span>•</span>
-                            <span style={{ color: "#FFC107" }}>★ {item.imdbRating || "8.9"}</span>
+                            <span style={{ color: "#FFC107" }}> {item.imdbRating || "8.9"}</span>
                           </div>
                         </div>
                       </div>
@@ -526,7 +505,7 @@ export default function Navbar() {
                       </Link>
                       {user.role === "admin" && (
                         <Link to="/admin" className="dropdown-item" role="menuitem" onClick={() => setDropdownOpen(false)}>
-                          <span style={{ display: "flex", alignItems: "center", gap: "8px", color: "#00D4FF" }}>★ Admin Dashboard</span>
+                          <span style={{ display: "flex", alignItems: "center", gap: "8px", color: "#00D4FF" }}> Admin Dashboard</span>
                         </Link>
                       )}
                       <hr className="dropdown-divider" />

@@ -32,11 +32,19 @@ export default function CreatorDashboard() {
   const [newPost, setNewPost] = useState("");
   const [postLoading, setPostLoading] = useState(false);
 
+  const [editChannelName, setEditChannelName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [savingChannel, setSavingChannel] = useState(false);
+
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
         const { data: chData } = await channelAPI.getMyChannel();
         setChannel(chData.data);
+        if (chData.data) {
+          setEditChannelName(chData.data.name || "");
+          setEditDescription(chData.data.description || "");
+        }
         const { data: aData } = await channelAPI.getAnalytics(chData.data._id);
         setAnalytics(aData.data);
       } catch (err) {
@@ -47,6 +55,26 @@ export default function CreatorDashboard() {
     };
     fetchDashboard();
   }, []);
+
+  const handleSaveChannelSettings = async (e) => {
+    e.preventDefault();
+    if (!editChannelName.trim()) return toast.error("Channel name cannot be empty");
+    setSavingChannel(true);
+    try {
+      if (channel?._id) {
+        await channelAPI.update(channel._id, {
+          name: editChannelName.trim(),
+          description: editDescription.trim()
+        });
+      }
+      setChannel((prev) => ({ ...prev, name: editChannelName.trim(), description: editDescription.trim() }));
+      toast.success("Channel details saved!");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to save channel details");
+    } finally {
+      setSavingChannel(false);
+    }
+  };
 
   const handlePublishPost = async () => {
     if (!newPost.trim() || !channel) return;
@@ -101,7 +129,7 @@ export default function CreatorDashboard() {
 
   return (
     <div className="creator-dashboard">
-      {/* Sidebar */}
+      {}
       <aside className="creator-sidebar">
         <div className="creator-sidebar-header">
           <div className="creator-sidebar-avatar">
@@ -130,7 +158,7 @@ export default function CreatorDashboard() {
         </nav>
       </aside>
 
-      {/* Main Content */}
+      {}
       <main className="creator-main">
         {activeSection === "overview" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -158,7 +186,7 @@ export default function CreatorDashboard() {
               </div>
             </div>
 
-            {/* Mini Chart (Timeseries) */}
+            {}
             {analytics?.timeseries && (
               <div className="creator-chart-card glass">
                 <h3>Views (Last 7 Days)</h3>
@@ -188,7 +216,7 @@ export default function CreatorDashboard() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <h1 className="creator-page-title"><AnimatedTitle text="Analytics" /></h1>
 
-            {/* Traffic Sources */}
+            {}
             {analytics?.trafficSources && (
               <div className="creator-analytics-section glass">
                 <h3>Traffic Sources</h3>
@@ -203,7 +231,7 @@ export default function CreatorDashboard() {
               </div>
             )}
 
-            {/* Devices */}
+            {}
             {analytics?.devices && (
               <div className="creator-analytics-section glass">
                 <h3>Devices</h3>
@@ -259,23 +287,36 @@ export default function CreatorDashboard() {
         {activeSection === "settings" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <h1 className="creator-page-title"><AnimatedTitle text="Channel Settings" /></h1>
-            <div className="creator-settings-card glass">
+            <form onSubmit={handleSaveChannelSettings} className="creator-settings-card glass">
               <div className="form-group">
                 <label className="form-label">Channel Name</label>
-                <input type="text" className="form-input" defaultValue={channel.name} readOnly />
+                <input
+                  type="text"
+                  className="form-input"
+                  value={editChannelName}
+                  onChange={(e) => setEditChannelName(e.target.value)}
+                  placeholder="Enter your channel name"
+                  required
+                />
               </div>
               <div className="form-group">
-                <label className="form-label">Username</label>
-                <input type="text" className="form-input" defaultValue={`@${channel.username}`} readOnly />
+                <label className="form-label">Username / Handle</label>
+                <input type="text" className="form-input" value={`@${channel.username}`} readOnly style={{ opacity: 0.7 }} />
               </div>
               <div className="form-group">
-                <label className="form-label">Description</label>
-                <textarea className="form-input" defaultValue={channel.description} rows={4} readOnly />
+                <label className="form-label">Channel Bio / Description</label>
+                <textarea
+                  className="form-input"
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  rows={4}
+                  placeholder="Describe your channel..."
+                />
               </div>
-              <p style={{ color: "#888", fontSize: 13, marginTop: 12 }}>
-                Full settings editing will be available in a future update.
-              </p>
-            </div>
+              <button type="submit" className="btn btn-primary" disabled={savingChannel} style={{ marginTop: 16 }}>
+                {savingChannel ? "Saving..." : "Save Channel Details"}
+              </button>
+            </form>
           </motion.div>
         )}
       </main>
