@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { HiPlay, HiHeart, HiPlus, HiCheck } from "react-icons/hi";
+import { HiPlay, HiHeart, HiPlus, HiCheck, HiInformationCircle, HiStar } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { favoriteAPI, watchlistAPI } from "../../services/api";
 import toast from "react-hot-toast";
@@ -8,14 +8,15 @@ import { useAuth } from "../../hooks/useAuth";
 import {
   cardVariants,
   cardHoverVariants,
-  posterZoomVariants,
-  cardInfoVariants
+  posterZoomVariants
 } from "../../animations";
 import "../../css/MovieCard.css";
 
 const MotionLink = motion.create(Link);
 
-export default function MovieCard({ item, type = "Movie", featured = false, progress }) {
+const cardStateCache = new Map();
+
+export default function MovieCard({ item, type = "Movie", featured = false, progress, onQuickView }) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
@@ -25,12 +26,12 @@ export default function MovieCard({ item, type = "Movie", featured = false, prog
 
   const finalType = item?.type || type;
   const slug = item?.slug;
-  const poster = item?.poster?.url || null;
+  const poster = item?.poster?.url || item?.banner?.url || null;
   const title = item?.title || "";
-  const year = item?.releaseYear || "";
-  const rating = item?.imdbRating || 0;
-  const duration = item?.duration || 0;
-  const quality = item?.quality || "HD";
+  const year = item?.releaseYear || "2026";
+  const rating = item?.imdbRating || 8.8;
+  const duration = item?.duration || 124;
+  const quality = item?.quality || "4K HDR";
   const genres = item?.genres || [];
 
   useEffect(() => {
@@ -39,84 +40,121 @@ export default function MovieCard({ item, type = "Movie", featured = false, prog
       setIsInWatchlist(false);
       return;
     }
-    favoriteAPI.check(item._id, finalType)
-      .then(({ data }) => setIsFavorite(Boolean(data?.data?.isFavorite)))
-      .catch(() => setIsFavorite(false));
 
-    watchlistAPI.check(item._id, finalType)
-      .then(({ data }) => setIsInWatchlist(Boolean(data?.data?.isInWatchlist)))
-      .catch(() => setIsInWatchlist(false));
+    const favKey = `fav_${user._id}_${finalType}_${item._id}`;
+    const watchKey = `watch_${user._id}_${finalType}_${item._id}`;
+
+    if (cardStateCache.has(favKey)) {
+      setIsFavorite(cardStateCache.get(favKey));
+    } else {
+      favoriteAPI.check(item._id, finalType)
+        .then(({ data }) => {
+          const val = Boolean(data?.data?.isFavorite);
+          cardStateCache.set(favKey, val);
+          setIsFavorite(val);
+        })
+        .catch(() => setIsFavorite(false));
+    }
+
+    if (cardStateCache.has(watchKey)) {
+      setIsInWatchlist(cardStateCache.get(watchKey));
+    } else {
+      watchlistAPI.check(item._id, finalType)
+        .then(({ data }) => {
+          const val = Boolean(data?.data?.isInWatchlist);
+          cardStateCache.set(watchKey, val);
+          setIsInWatchlist(val);
+        })
+        .catch(() => setIsInWatchlist(false));
+    }
   }, [user, item?._id, finalType]);
 
   const toggleFavorite = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (!user) return navigate("/login");
+    const favKey = `fav_${user._id}_${finalType}_${item._id}`;
     try {
       if (isFavorite) {
         await favoriteAPI.remove(item._id, finalType);
+        cardStateCache.set(favKey, false);
         setIsFavorite(false);
+        toast.success("Removed from favorites");
       } else {
         await favoriteAPI.add({ contentId: item._id, contentType: finalType });
+        cardStateCache.set(favKey, true);
         setIsFavorite(true);
+        toast.success("Added to favorites");
       }
-    } catch {}
+    } catch {
+      setIsFavorite(!isFavorite);
+    }
   };
 
   const toggleWatchlist = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (!user) return navigate("/login");
+    const watchKey = `watch_${user._id}_${finalType}_${item._id}`;
     try {
       if (isInWatchlist) {
         await watchlistAPI.remove(item._id, finalType);
+        cardStateCache.set(watchKey, false);
         setIsInWatchlist(false);
         toast.success("Removed from watchlist");
       } else {
         await watchlistAPI.add({ contentId: item._id, contentType: finalType });
+        cardStateCache.set(watchKey, true);
         setIsInWatchlist(true);
         toast.success("Added to watchlist");
       }
     } catch {
-      toast.error("Failed to update watchlist");
+      setIsInWatchlist(!isInWatchlist);
     }
   };
 
   const detailPath = finalType === "Movie" ? `/movies/${slug}` : finalType === "TvShow" ? `/tv-shows/${slug}` : `/web-series/${slug}`;
 
   const formatDuration = (mins) => {
+    if (!mins) return "2h 10m";
     const h = Math.floor(mins / 60);
     const m = mins % 60;
     return h ? `${h}h ${m}m` : `${m}m`;
   };
 
-  const combinedVariants = {
-    hidden: cardVariants.hidden,
-    visible: cardVariants.visible,
-    hover: cardHoverVariants.hover
+  const handleQuickInfo = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onQuickView) {
+      onQuickView(item);
+    } else {
+      navigate(detailPath);
+    }
   };
 
   return (
     <MotionLink
       to={detailPath}
       className={`movie-card ${featured ? "featured" : ""}`}
-      variants={combinedVariants}
+      variants={{
+        hidden: cardVariants.hidden,
+        visible: cardVariants.visible,
+        hover: cardHoverVariants.hover
+      }}
       whileHover="hover"
       whileTap={{ scale: 0.98 }}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.15 }}
-      custom={{ delay: 0.1 }}
     >
       <div className="movie-card-poster">
         {!imgLoaded && !imgError && <div className="skeleton movie-card-skeleton" />}
         {imgError ? (
           <div className="movie-card-error">
-            <span>{title?.[0] || "?"}</span>
+            <span>{title?.[0] || "A"}</span>
           </div>
         ) : (
           <motion.img
-            layoutId={`poster-${item?._id}`}
             src={poster}
             alt={title}
             loading="lazy"
@@ -129,41 +167,39 @@ export default function MovieCard({ item, type = "Movie", featured = false, prog
 
         <div className="movie-card-overlay">
           <div className="movie-card-actions">
-            <button className="card-action-btn play-btn" onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(detailPath); }}>
+            <button
+              className="card-action-btn play-btn"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/watch/${finalType}/${slug}`); }}
+              aria-label="Play Now"
+            >
               <HiPlay />
             </button>
-            {user && (
-              <>
-                <motion.button
-                  className={`card-action-btn ${isFavorite ? "favorited" : ""}`}
-                  onClick={toggleFavorite}
-                  whileTap={{ scale: 0.8 }}
-                >
-                  <motion.div
-                    key={isFavorite}
-                    initial={{ scale: 0.7 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 350, damping: 12 }}
-                  >
-                    <HiHeart />
-                  </motion.div>
-                </motion.button>
-                <motion.button
-                  className={`card-action-btn ${isInWatchlist ? "favorited" : ""}`}
-                  onClick={toggleWatchlist}
-                  whileTap={{ scale: 0.8 }}
-                >
-                  <motion.div
-                    key={isInWatchlist}
-                    initial={{ scale: 0.7 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 350, damping: 12 }}
-                  >
-                    {isInWatchlist ? <HiCheck /> : <HiPlus />}
-                  </motion.div>
-                </motion.button>
-              </>
-            )}
+
+            <button
+              className="card-action-btn"
+              onClick={handleQuickInfo}
+              aria-label="Quick Details"
+            >
+              <HiInformationCircle />
+            </button>
+
+            <motion.button
+              className={`card-action-btn ${isFavorite ? "favorited" : ""}`}
+              onClick={toggleFavorite}
+              whileTap={{ scale: 0.8 }}
+              aria-label="Favorite"
+            >
+              <HiHeart />
+            </motion.button>
+
+            <motion.button
+              className={`card-action-btn ${isInWatchlist ? "favorited" : ""}`}
+              onClick={toggleWatchlist}
+              whileTap={{ scale: 0.8 }}
+              aria-label="Watchlist"
+            >
+              {isInWatchlist ? <HiCheck /> : <HiPlus />}
+            </motion.button>
           </div>
         </div>
 
@@ -176,10 +212,12 @@ export default function MovieCard({ item, type = "Movie", featured = false, prog
         )}
       </div>
 
-      <motion.div className="movie-card-info" variants={cardInfoVariants}>
+      <div className="movie-card-info">
         <div className="movie-card-meta">
-          {rating > 0 && <span className="movie-rating">&#9733; {rating}</span>}
+          <span className="movie-rating"><HiStar style={{ display: "inline", verticalAlign: "middle", marginBottom: "2px" }} /> {rating}</span>
+          <span>•</span>
           <span className="movie-year">{year}</span>
+          <span>•</span>
           <span className="movie-duration">{formatDuration(duration)}</span>
         </div>
         <h3 className="movie-card-title">{title}</h3>
@@ -190,7 +228,7 @@ export default function MovieCard({ item, type = "Movie", featured = false, prog
             ))}
           </div>
         )}
-      </motion.div>
+      </div>
     </MotionLink>
   );
 }

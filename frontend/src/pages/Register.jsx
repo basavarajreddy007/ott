@@ -3,10 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { GoogleLogin } from "@react-oauth/google";
 import { motion } from "framer-motion";
+import { HiUser, HiMail, HiLockClosed, HiEye, HiEyeOff } from "react-icons/hi";
 import toast from "react-hot-toast";
 import { useAuth } from "../hooks/useAuth";
 import { authAPI } from "../services/api";
-import PasswordInput from "../components/common/PasswordInput";
 import Logo from "../components/common/Logo";
 import "../css/Auth.css";
 
@@ -17,6 +17,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [shake, setShake] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -48,26 +49,13 @@ export default function Register() {
 
   if (isSuccess) {
     return (
-      <div className="auth-page" style={{ position: "relative", overflow: "hidden" }}>
-        <motion.div
-          className="auth-bg-zoom-overlay"
-          initial={{ scale: 1 }}
-          animate={{ scale: 1.05 }}
-          transition={{ duration: 15, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: "radial-gradient(circle at center, rgba(13, 19, 37, 0.4) 0%, #020204 100%)",
-            zIndex: 0
-          }}
-        />
-        <div className="auth-container" style={{ zIndex: 1, position: "relative" }}>
+      <div className="auth-page">
+        <div className="auth-container">
           <motion.div
-            className="auth-card glass"
+            className="uiverse-form"
             style={{ textAlign: "center", padding: "40px" }}
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.4 }}
           >
             <motion.svg
               width="90"
@@ -107,23 +95,23 @@ export default function Register() {
   }
 
   return (
-    <div className="auth-page" style={{ position: "relative", overflow: "hidden" }}>
-      <motion.div
-        className="auth-bg-zoom-overlay"
-        initial={{ scale: 1 }}
-        animate={{ scale: 1.05 }}
-        transition={{ duration: 25, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
-        style={{
-          position: "absolute",
-          inset: 0,
-          backgroundImage: "radial-gradient(circle at center, rgba(13, 19, 37, 0.45) 0%, #020204 100%)",
-          zIndex: 0
-        }}
-      />
-
-      <div className="auth-container" style={{ zIndex: 1, position: "relative" }}>
+    <div className="auth-page">
+      <div className="auth-gradient-bg">
         <motion.div
-          className="auth-card glass"
+          className="auth-glow-blob one"
+          animate={{ x: [0, 40, -30, 0], y: [0, -30, 40, 0] }}
+          transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" }}
+        />
+        <motion.div
+          className="auth-glow-blob two"
+          animate={{ x: [0, -50, 30, 0], y: [0, 40, -30, 0] }}
+          transition={{ duration: 24, repeat: Infinity, repeatType: "reverse" }}
+        />
+      </div>
+
+      <div className="auth-container">
+        <motion.div
+          className="uiverse-form"
           animate={{
             x: shake ? [-10, 10, -10, 10, -5, 5, 0] : 0,
             opacity: 1,
@@ -131,81 +119,72 @@ export default function Register() {
           }}
           transition={{ duration: 0.45 }}
           initial={{ opacity: 0, y: 35 }}
-          style={{ transformOrigin: "center" }}
         >
-          <Link to="/" className="auth-logo"><Logo size={32} gap={6} /></Link>
-          <h2 className="auth-title">Create Account</h2>
-          <p className="auth-subtitle">Start your premium entertainment journey.</p>
+          <div style={{ textAlign: "center", marginBottom: "8px" }}>
+            <Link to="/" className="auth-logo"><Logo size={28} gap={6} /></Link>
+            <p id="heading">Create Account</p>
+          </div>
 
-          <form onSubmit={handleSubmit(onSubmit, onError)} className="auth-form">
-            <div className="form-group">
-              <label className="form-label">Full Name</label>
-              <motion.input
+          <form onSubmit={handleSubmit(onSubmit, onError)}>
+            <div className="field">
+              <HiUser className="input-icon" />
+              <input
                 type="text"
-                className={`form-input ${errors.name ? "error" : ""}`}
-                placeholder="John Doe"
+                className="input-field"
+                placeholder="Full Name"
                 {...register("name", { required: "Name is required", minLength: { value: 2, message: "Name too short" } })}
-                whileFocus={{ scale: 1.015, borderColor: "var(--color-accent-primary)" }}
-                transition={{ duration: 0.2 }}
               />
-              {errors.name && <span className="form-error">{errors.name.message}</span>}
             </div>
+            {errors.name && <span className="form-error">{errors.name.message}</span>}
 
-            <div className="form-group">
-              <label className="form-label">Email</label>
-              <motion.input
+            <div className="field" style={{ marginTop: "12px" }}>
+              <HiMail className="input-icon" />
+              <input
                 type="email"
-                className={`form-input ${errors.email ? "error" : ""}`}
-                placeholder="your@email.com"
+                className="input-field"
+                placeholder="Email Address"
                 {...register("email", { required: "Email is required", pattern: { value: /^\S+@\S+$/i, message: "Please enter a valid email address" } })}
-                whileFocus={{ scale: 1.015, borderColor: "var(--color-accent-primary)" }}
-                transition={{ duration: 0.2 }}
               />
-              {errors.email && <span className="form-error">{errors.email.message}</span>}
             </div>
+            {errors.email && <span className="form-error">{errors.email.message}</span>}
 
-            <div className="form-group">
-              <label className="form-label">Password</label>
-              <PasswordInput
-                className={`${errors.password ? "error" : ""}`}
-                placeholder="At least 6 characters"
+            <div className="field" style={{ marginTop: "12px" }}>
+              <HiLockClosed className="input-icon" />
+              <input
+                type={passwordVisible ? "text" : "password"}
+                className="input-field"
+                placeholder="Password (min 6 characters)"
                 {...register("password", { required: "Password is required", minLength: { value: 6, message: "Minimum 6 characters" } })}
               />
-              {errors.password && <span className="form-error">{errors.password.message}</span>}
+              <button
+                type="button"
+                onClick={() => setPasswordVisible(!passwordVisible)}
+                style={{ background: "none", border: "none", color: "#d3d3d3", cursor: "pointer" }}
+              >
+                {passwordVisible ? <HiEyeOff className="input-icon" /> : <HiEye className="input-icon" />}
+              </button>
             </div>
+            {errors.password && <span className="form-error">{errors.password.message}</span>}
 
-            <motion.button
-              type="submit"
-              className="btn btn-primary btn-lg auth-btn"
-              disabled={loading}
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {loading ? "Creating account..." : "Create Account"}
-            </motion.button>
+            <div className="btn-group">
+              <button type="button" className="button1" onClick={() => navigate("/login")}>
+                Cancel
+              </button>
+              <button type="submit" className="button2" disabled={loading}>
+                {loading ? <span className="auth-spinner" /> : "Sign Up"}
+              </button>
+            </div>
           </form>
 
-          {(!googleClientId || googleClientId === "your_google_client_id_here") ? (
-            <div className="google-auth-error" style={{
-              marginTop: "20px",
-              padding: "12px",
-              borderRadius: "4px",
-              background: "rgba(255, 30, 66, 0.1)",
-              border: "1px solid rgba(255, 30, 66, 0.3)",
-              color: "#ff6b6b",
-              fontSize: "13px",
-              textAlign: "center",
-              lineHeight: "1.4"
-            }}>
-              <strong>Google Sign-Up Unavailable:</strong> VITE_GOOGLE_CLIENT_ID is not configured.
-            </div>
-          ) : (
+          {(!googleClientId || googleClientId === "your_google_client_id_here") ? null : (
             <>
-              <div className="auth-divider" style={{ justifyContent: "center" }}>
-                <span className="auth-divider-text" style={{ letterSpacing: "1px" }}>-------- OR --------</span>
+              <div className="auth-divider">
+                <span className="auth-divider-line" />
+                <span className="auth-divider-text">or register with</span>
+                <span className="auth-divider-line" />
               </div>
 
-              <div className="auth-google-btn">
+              <div style={{ display: "flex", justifyContent: "center" }}>
                 <GoogleLogin
                   onSuccess={async (credentialResponse) => {
                     setLoading(true);
@@ -230,7 +209,7 @@ export default function Register() {
                   size="large"
                   theme="filled_black"
                   text="signup_with"
-                  shape="rectangular"
+                  shape="pill"
                 />
               </div>
             </>

@@ -11,7 +11,12 @@ const {
   getMySubscriptions,
   getChannelVideos,
   getChannelAnalytics,
-  searchChannels
+  searchChannels,
+  getSubscriptionStatus,
+  updateNotificationPreference,
+  getChannelMemberships,
+  joinChannelMembership,
+  cancelChannelMembership
 } = require("../controllers/channelController");
 
 const {
@@ -54,6 +59,11 @@ router.post("/posts/:postId/like", protect, likePost);
 router.delete("/posts/:postId", protect, deletePost);
 
 // Channel Profile & Core Details
+router.get("/:id/subscription-status", optionalAuth, getSubscriptionStatus);
+router.patch("/:id/notification-preference", protect, updateNotificationPreference);
+router.get("/:id/memberships", optionalAuth, getChannelMemberships);
+router.post("/:id/join-membership", protect, joinChannelMembership);
+router.delete("/:id/cancel-membership", protect, cancelChannelMembership);
 router.get("/:slug", optionalAuth, getChannelBySlug);
 router.put("/:id", protect, updateChannel);
 router.post("/:id/subscribe", protect, subscribeToChannel);

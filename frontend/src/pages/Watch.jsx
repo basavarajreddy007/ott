@@ -1,9 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams, Link, useNavigate } from "react-router-dom";
 import { HiArrowLeft, HiStar, HiVolumeUp, HiVolumeOff, HiThumbUp, HiThumbDown, HiTrash, HiPlay } from "react-icons/hi";
+import { HiCheckBadge } from "react-icons/hi2";
 import { motion, AnimatePresence } from "framer-motion";
 import { movieAPI, tvShowAPI, webSeriesAPI, historyAPI, ratingAPI, reviewAPI } from "../services/api";
 import { useAuth } from "../hooks/useAuth";
+import { useSubscription } from "../hooks/useSubscription";
+import SubscribeButton from "../components/common/SubscribeButton";
+import JoinMembershipModal from "../components/common/JoinMembershipModal";
+import CinematicPlayer from "../components/player/CinematicPlayer";
 import { playerControlsVariants, playButtonPulseVariants } from "../animations";
 import toast from "react-hot-toast";
 import "../css/Watch.css";
@@ -39,6 +44,42 @@ export default function Watch() {
   const [showOverlay, setShowOverlay] = useState(true);
   const [buffering, setBuffering] = useState(false);
   const [error, setError] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [isJoined, setIsJoined] = useState(false);
+  const [subscriberCount, setSubscriberCount] = useState(0);
+
+  const channelId = content?.channel?._id || content?.uploadedBy?._id;
+  const { isSubscribed, subscribe } = useSubscription(channelId, {
+    isSubscribed: false,
+    subscribersCount: content?.channel?.subscribersCount || 0
+  });
+
+  useEffect(() => {
+    if (content) {
+      const initialCount = content?.channel?.subscribersCount || content?.uploadedBy?.subscribersCount || 0;
+      setSubscriberCount(initialCount);
+    }
+  }, [content]);
+
+  const handleJoinClick = async () => {
+    if (isJoined) {
+      setIsJoined(false);
+      setSubscriberCount((prev) => Math.max(0, prev - 1));
+      toast.success("Un-joined channel");
+    } else {
+      setIsJoined(true);
+      setSubscriberCount((prev) => prev + 1);
+      toast.success("Joined channel!");
+    }
+
+    if (channelId && user && !isSubscribed && !isJoined) {
+      try {
+        await subscribe("all");
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
 
   const [likesCount, setLikesCount] = useState(0);
   const [dislikesCount, setDislikesCount] = useState(0);
@@ -339,10 +380,13 @@ export default function Watch() {
     if (type !== "Movie") return;
     try {
       const { data } = await movieAPI.like(content._id);
-      setLikesCount(data.data.likes?.length || 0);
-      setDislikesCount(data.data.dislikes?.length || 0);
-      setUserLiked(data.data.likes?.includes(user._id));
-      setUserDisliked(data.data.dislikes?.includes(user._id));
+      const resData = data.data || {};
+      const likesArr = Array.isArray(resData.likes) ? resData.likes : [];
+      const dislikesArr = Array.isArray(resData.dislikes) ? resData.dislikes : [];
+      setLikesCount(resData.likesCount !== undefined ? resData.likesCount : likesArr.length);
+      setDislikesCount(resData.dislikesCount !== undefined ? resData.dislikesCount : dislikesArr.length);
+      setUserLiked(likesArr.includes(user._id));
+      setUserDisliked(dislikesArr.includes(user._id));
     } catch {
       toast.error("Failed to submit review interaction");
     }
@@ -353,10 +397,13 @@ export default function Watch() {
     if (type !== "Movie") return;
     try {
       const { data } = await movieAPI.dislike(content._id);
-      setLikesCount(data.data.likes?.length || 0);
-      setDislikesCount(data.data.dislikes?.length || 0);
-      setUserLiked(data.data.likes?.includes(user._id));
-      setUserDisliked(data.data.dislikes?.includes(user._id));
+      const resData = data.data || {};
+      const likesArr = Array.isArray(resData.likes) ? resData.likes : [];
+      const dislikesArr = Array.isArray(resData.dislikes) ? resData.dislikes : [];
+      setLikesCount(resData.likesCount !== undefined ? resData.likesCount : likesArr.length);
+      setDislikesCount(resData.dislikesCount !== undefined ? resData.dislikesCount : dislikesArr.length);
+      setUserLiked(likesArr.includes(user._id));
+      setUserDisliked(dislikesArr.includes(user._id));
     } catch {
       toast.error("Failed to submit review interaction");
     }
@@ -410,263 +457,32 @@ export default function Watch() {
     <div className="watch-page-container">
       <div className="watch-layout">
         <div className="watch-main-content">
-          <div className="watch-player-wrapper" ref={containerRef} onMouseMove={showControlsTemporarily}>
-            {youtubeId ? (
-              <div className="watch-iframe-wrapper" style={{ width: "100%", height: "100%", position: "relative" }}>
-                <iframe
-                  src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`}
-                  className="watch-video"
-                  style={{ border: "none", width: "100%", height: "100%" }}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  title={content?.title || "Video"}
-                />
-                <button onClick={() => navigate(-1)} className="watch-back-floating" style={{
-                  position: "absolute",
-                  top: "20px",
-                  left: "20px",
-                  background: "rgba(0, 0, 0, 0.6)",
-                  border: "none",
-                  borderRadius: "50%",
-                  width: "40px",
-                  height: "40px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#fff",
-                  cursor: "pointer",
-                  zIndex: 10,
-                  transition: "background 0.2s"
-                }}>
-                  <HiArrowLeft size={20} />
-                </button>
-              </div>
-            ) : content?.isLocked ? (
-              <div className="watch-player-locked">
-                <button onClick={() => navigate(-1)} className="watch-back-floating" style={{
-                  position: "absolute",
-                  top: "20px",
-                  left: "20px",
-                  background: "rgba(0, 0, 0, 0.6)",
-                  border: "none",
-                  borderRadius: "50%",
-                  width: "40px",
-                  height: "40px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#fff",
-                  cursor: "pointer",
-                  zIndex: 10,
-                  transition: "background 0.2s"
-                }}>
-                  <HiArrowLeft size={20} />
-                </button>
-                <div className="watch-player-locked-icon">🔒</div>
-                <h3>Subscription Required</h3>
-                <p>This video is exclusive to subscribers. Please upgrade your plan to unlock premium content.</p>
-                <Link to="/subscription" className="watch-subscribe-btn">
-                  Upgrade Subscription
-                </Link>
-              </div>
-            ) : (
-              <>
-                {error ? (
-                  <div className="watch-player-error">
-                    <button onClick={() => navigate(-1)} className="watch-back-floating" style={{
-                      position: "absolute",
-                      top: "20px",
-                      left: "20px",
-                      background: "rgba(0, 0, 0, 0.6)",
-                      border: "none",
-                      borderRadius: "50%",
-                      width: "40px",
-                      height: "40px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#fff",
-                      cursor: "pointer",
-                      zIndex: 10,
-                      transition: "background 0.2s"
-                    }}>
-                      <HiArrowLeft size={20} />
-                    </button>
-                    <div className="watch-player-error-icon">⚠️</div>
-                    <h3>Playback Error</h3>
-                    <p>We encountered an issue loading this video file. Please check your network or try again.</p>
-                    <button className="watch-retry-btn" onClick={handleRetry}>
-                      Try Again
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <AnimatePresence>
-                      {showOverlay && !playing && (
-                        <motion.div
-                          className="watch-overlay visible"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                          onClick={togglePlay}
-                        >
-                          <div className="watch-overlay-bg" />
-                          <div className="watch-overlay-content" onClick={(e) => e.stopPropagation()}>
-                            <motion.button
-                              className="watch-play-btn"
-                              onClick={(e) => { e.stopPropagation(); togglePlay(); }}
-                              variants={playButtonPulseVariants}
-                              animate="pulse"
-                              whileHover="hover"
-                              whileTap="tap"
-                            >
-                              <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-                                <circle cx="40" cy="40" r="38" stroke="white" strokeWidth="2" opacity="0.8" />
-                                <path d="M33 28L55 40L33 52V28Z" fill="white" />
-                              </svg>
-                            </motion.button>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-
-                    {buffering && (
-                      <div className="watch-player-buffering">
-                        <div className="watch-player-buffering-spinner" />
-                        <span>Buffering...</span>
-                      </div>
-                    )}
-
-                    <AnimatePresence>
-                      {showControls && (
-                        <motion.div
-                          className="watch-controls visible"
-                          variants={playerControlsVariants}
-                          initial="hidden"
-                          animate="visible"
-                          exit="exit"
-                        >
-                          <div className="watch-nav">
-                            <button onClick={() => navigate(-1)} className="watch-back">
-                              <HiArrowLeft />
-                            </button>
-                            <span className="watch-nav-title">{content?.title}{episode ? ` - S${season}:E${episode}` : ""}</span>
-                          </div>
-
-                          <div className="watch-progress-bar" onClick={handleSeek}>
-                            <div className="watch-progress-track">
-                              <motion.div
-                                className="watch-progress-fill"
-                                style={{
-                                  scaleX: progress / 100,
-                                  transformOrigin: "left",
-                                  width: "100%"
-                                }}
-                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="watch-bottom-controls">
-                            <div className="watch-controls-left">
-                              <button className="watch-control-btn" onClick={togglePlay}>
-                                {playing ? (
-                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-                                ) : (
-                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                                )}
-                              </button>
-                              <button className="watch-control-btn" onClick={toggleMute}>
-                                {muted || volume === 0 ? <HiVolumeOff size={20} /> : <HiVolumeUp size={20} />}
-                              </button>
-                              <motion.div
-                                className="watch-volume-slider"
-                                whileHover={{ width: 90 }}
-                                transition={{ duration: 0.2 }}
-                              >
-                                <input type="range" min="0" max="1" step="0.05" value={muted ? 0 : volume} onChange={handleVolumeChange} />
-                              </motion.div>
-                              <span className="watch-time">{formatTime(currentTime)} / {formatTime(duration)}</span>
-                            </div>
-
-                            <div className="watch-controls-right">
-                              {user && (
-                                <div className="watch-star-rating">
-                                  {[1, 2, 3, 4, 5].map(star => (
-                                    <button key={star} className={`watch-star ${star <= userRating ? "active" : ""}`} onClick={() => handleRating(star)}>
-                                      <HiStar size={18} />
-                                    </button>
-                                  ))}
-                                </div>
-                              )}
-                              <button className="watch-control-btn" onClick={handleFullscreen}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-                              </button>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </>
-                )}
-
-                {videoUrl ? (
-                  <video
-                    key={videoUrl}
-                    ref={videoRef}
-                    src={videoUrl || undefined}
-                    className="watch-video"
-                    onClick={togglePlay}
-                    onDoubleClick={handleFullscreen}
-                    onPlay={() => { setPlaying(true); setShowOverlay(false); }}
-                    onPause={() => { setPlaying(false); setShowOverlay(true); }}
-                    onWaiting={() => setBuffering(true)}
-                    onPlaying={() => { setBuffering(false); setError(false); }}
-                    onCanPlay={() => setBuffering(false)}
-                    onSeeking={() => setBuffering(true)}
-                    onSeeked={() => setBuffering(false)}
-                    onTimeUpdate={handleTimeUpdate}
-                    onLoadedMetadata={handleTimeUpdate}
-                    onError={(e) => {
-                      const vid = e.target;
-                      const err = vid.error;
-                      console.error("Video error:", err?.code, err?.message, "src:", vid.src);
-                      setError(true);
-                      setBuffering(false);
-                      toast.error("Failed to load video file. Please check your connection or try again later.");
-                    }}
-                  />
-                ) : (
-                  <div className="watch-placeholder">
-                    <button onClick={() => navigate(-1)} className="watch-back-floating" style={{
-                      position: "absolute",
-                      top: "20px",
-                      left: "20px",
-                      background: "rgba(0, 0, 0, 0.6)",
-                      border: "none",
-                      borderRadius: "50%",
-                      width: "40px",
-                      height: "40px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#fff",
-                      cursor: "pointer",
-                      zIndex: 10,
-                      transition: "background 0.2s"
-                    }}>
-                      <HiArrowLeft size={20} />
-                    </button>
-                    <div className="watch-placeholder-icon">
-                      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="1"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                    </div>
-                    <h3>No video available</h3>
-                    <p>The video file for this content has not been uploaded yet.</p>
-                  </div>
-                )}
-              </>
-            )}
+          <div className="watch-cinematic-player-box" style={{ width: "100%", marginBottom: "24px" }}>
+            <CinematicPlayer
+              videoUrl={videoUrl}
+              title={content?.title || "Watch"}
+              seasonNumber={season ? parseInt(season) : undefined}
+              episodeNumber={episode ? parseInt(episode) : undefined}
+              seasons={content?.seasons || []}
+              nextEpisode={
+                similarList[0]
+                  ? {
+                      title: similarList[0].title,
+                      seasonNumber: season ? parseInt(season) : 1,
+                      episodeNumber: episode ? parseInt(episode) + 1 : 2,
+                      thumbnail: similarList[0].poster?.url || similarList[0].banner?.url
+                    }
+                  : null
+              }
+              onBack={() => navigate(-1)}
+              onPlayNextEpisode={(sNum, epNum) => {
+                if (type === "Movie" && similarList[0]?.slug) {
+                  navigate(`/watch/Movie/${similarList[0].slug}`);
+                } else {
+                  navigate(`/watch/${type}/${slug}?season=${sNum}&episode=${epNum}`);
+                }
+              }}
+            />
           </div>
 
           <div className="watch-video-details">
@@ -691,51 +507,60 @@ export default function Watch() {
               )}
             </div>
 
+            <div className="watch-creator-bar glass">
+              <div className="creator-bar-left">
+                <Link to={content?.channel?.slug ? `/channel/${content.channel.slug}` : "#"} className="creator-avatar-link">
+                  <div className="creator-avatar-wrap">
+                    {content?.channel?.avatar || content?.uploadedBy?.avatar ? (
+                      <img src={content?.channel?.avatar || content?.uploadedBy?.avatar} alt="" />
+                    ) : (
+                      <span>{(content?.channel?.name || content?.uploadedBy?.name || "C")?.[0]?.toUpperCase()}</span>
+                    )}
+                  </div>
+                </Link>
+
+                <div className="creator-meta">
+                  <Link to={content?.channel?.slug ? `/channel/${content.channel.slug}` : "#"} className="creator-name-link">
+                    <h4>{content?.channel?.name || content?.uploadedBy?.name || "Official Channel"}</h4>
+                    {(content?.channel?.verifiedBadge || content?.uploadedBy?.role === "admin") && (
+                      <HiCheckBadge className="creator-verified-badge" />
+                    )}
+                  </Link>
+                  <span className="creator-subs-count">
+                    {`${subscriberCount.toLocaleString()} subscribers`}
+                  </span>
+                </div>
+              </div>
+
+              <div className="creator-bar-actions">
+                <button
+                  className={`watch-join-btn ${isJoined ? "active" : ""}`}
+                  onClick={handleJoinClick}
+                >
+                  {isJoined ? "Joined ✓" : "Join"}
+                </button>
+
+                {(content?.channel?._id || content?.uploadedBy?._id) && (
+                  <SubscribeButton
+                    channelId={content?.channel?._id || content?.uploadedBy?._id}
+                    initialSubscribersCount={content?.channel?.subscribersCount || 0}
+                  />
+                )}
+              </div>
+            </div>
+
+            <JoinMembershipModal
+              channelId={content?.channel?._id || content?.uploadedBy?._id}
+              channelName={content?.channel?.name || content?.uploadedBy?.name}
+              isOpen={showJoinModal}
+              onClose={() => setShowJoinModal(false)}
+            />
+
             <div className="watch-description-box">
               <p>{content?.description}</p>
             </div>
           </div>
 
-          <div className="watch-comments-section">
-            <h3>{comments.length} Comment{comments.length !== 1 ? "s" : ""}</h3>
-            {user ? (
-              <form onSubmit={handleCommentSubmit} className="comment-form">
-                <textarea
-                  placeholder="Add a public comment (minimum 10 characters)..."
-                  value={newCommentText}
-                  onChange={(e) => setNewCommentText(e.target.value)}
-                  required
-                />
-                <button type="submit" disabled={submittingComment}>
-                  {submittingComment ? "Posting..." : "Comment"}
-                </button>
-              </form>
-            ) : (
-              <p className="login-prompt">Please <Link to="/login">Sign In</Link> to join the discussion.</p>
-            )}
-
-            <div className="comments-list">
-              {comments.map((comment) => (
-                <div key={comment._id} className="comment-item">
-                  <div className="comment-avatar">
-                    {comment.user?.name?.[0]?.toUpperCase() || "?"}
-                  </div>
-                  <div className="comment-body">
-                    <div className="comment-header">
-                      <span className="comment-author">{comment.user?.name || "Anonymous"}</span>
-                      <span className="comment-date">{new Date(comment.createdAt).toLocaleDateString()}</span>
-                      {user && (user._id === comment.user?._id || user.role === "admin") && (
-                        <button className="delete-comment-btn" onClick={() => handleCommentDelete(comment._id)}>
-                          <HiTrash /> Delete
-                        </button>
-                      )}
-                    </div>
-                    <p className="comment-text">{comment.review}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
 
         <div className="watch-sidebar">

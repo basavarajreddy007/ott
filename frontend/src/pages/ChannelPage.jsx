@@ -4,7 +4,9 @@ import { motion } from "framer-motion";
 import { HiCheckBadge, HiGlobeAlt, HiCalendar, HiEye, HiFilm, HiUsers } from "react-icons/hi2";
 import { channelAPI } from "../services/api";
 import { useAuth } from "../hooks/useAuth";
+import { useSubscription } from "../hooks/useSubscription";
 import SubscribeButton from "../components/common/SubscribeButton";
+import JoinMembershipModal from "../components/common/JoinMembershipModal";
 import MovieCard from "../components/common/MovieCard";
 import AnimatedTitle from "../components/common/AnimatedTitle";
 import toast from "react-hot-toast";
@@ -21,6 +23,35 @@ export default function ChannelPage() {
   const [activeTab, setActiveTab] = useState("videos");
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subPreference, setSubPreference] = useState("all");
+  const [showJoinModal, setShowJoinModal] = useState(false);
+
+  const {
+    isSubscribed: globalSubscribed,
+    subscribersCount: globalSubCount,
+    subscribe
+  } = useSubscription(channel?._id, {
+    isSubscribed,
+    notificationPreference: subPreference,
+    subscribersCount: channel?.subscribersCount || 0
+  });
+
+  const handleJoinClick = async () => {
+    if (!user) {
+      toast.error("Please sign in to join channel");
+      return;
+    }
+    if (!globalSubscribed && !isSubscribed) {
+      try {
+        await subscribe("all");
+        setIsSubscribed(true);
+        toast.success("Joined channel & increased subscribers!");
+      } catch (err) {
+        toast.error(typeof err === "string" ? err : "Failed to join channel");
+      }
+    } else {
+      toast.success("You are already joined!");
+    }
+  };
 
   useEffect(() => {
     const fetchChannel = async () => {
@@ -187,17 +218,34 @@ export default function ChannelPage() {
           )}
         </div>
 
-        <div className="channel-actions">
+        <div className="channel-actions" style={{ display: "flex", alignItems: "center", gap: 12 }}>
           {!isOwner && user && (
-            <SubscribeButton
-              channelId={channel._id}
-              initialSubscribed={isSubscribed}
-              initialPreference={subPreference}
-              onSubScribeChange={(val) => setIsSubscribed(val)}
-            />
+            <>
+              <button
+                className={`watch-join-btn ${isSubscribed || globalSubscribed ? "active" : ""}`}
+                onClick={handleJoinClick}
+                style={{ padding: "10px 22px", borderRadius: "24px", fontSize: "14px", fontWeight: "600" }}
+              >
+                {isSubscribed || globalSubscribed ? "Joined ✓" : "Join"}
+              </button>
+              <SubscribeButton
+                channelId={channel._id}
+                initialSubscribed={isSubscribed}
+                initialPreference={subPreference}
+                initialSubscribersCount={channel.subscribersCount || 0}
+                onSubScribeChange={(val) => setIsSubscribed(val)}
+              />
+            </>
           )}
         </div>
       </div>
+
+      <JoinMembershipModal
+        channelId={channel?._id}
+        channelName={channel?.name}
+        isOpen={showJoinModal}
+        onClose={() => setShowJoinModal(false)}
+      />
 
       {/* Tabs */}
       <div className="channel-tabs">

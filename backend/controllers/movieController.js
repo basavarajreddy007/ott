@@ -50,7 +50,8 @@ const getMovie = async (req, res, next) => {
     const movie = await Movie.findOne({ slug: req.params.slug })
       .populate("genres", "name slug")
       .populate("category", "name slug")
-      .populate("requiredPlan");
+      .populate("requiredPlan")
+      .populate("uploadedBy", "name avatar role");
 
     if (!movie) {
       return res.status(404).json({ success: false, message: "Movie not found" });
@@ -60,6 +61,23 @@ const getMovie = async (req, res, next) => {
     movie.views += 1;
 
     const movieObj = movie.toObject();
+    if (movie.uploadedBy?._id) {
+      const Channel = require("../models/Channel");
+      const channel = await Channel.findOne({ owner: movie.uploadedBy._id, isDeleted: false });
+      if (channel) {
+        movieObj.channel = {
+          _id: channel._id,
+          name: channel.name,
+          username: channel.username,
+          slug: channel.slug,
+          avatar: channel.avatar || movie.uploadedBy.avatar,
+          subscribersCount: channel.subscribersCount,
+          verifiedBadge: channel.verifiedBadge,
+          description: channel.description
+        };
+      }
+    }
+
     if (movie.requiredPlan && movie.requiredPlan.tier > 0) {
       const hasAccess = req.user && (req.user.role === "admin" || (
         req.user.subscription?.status === "active" &&
@@ -82,13 +100,31 @@ const getMovieById = async (req, res, next) => {
     const movie = await Movie.findById(req.params.id)
       .populate("genres", "name slug")
       .populate("category", "name slug")
-      .populate("requiredPlan");
+      .populate("requiredPlan")
+      .populate("uploadedBy", "name avatar role");
 
     if (!movie) {
       return res.status(404).json({ success: false, message: "Movie not found" });
     }
 
     const movieObj = movie.toObject();
+    if (movie.uploadedBy?._id) {
+      const Channel = require("../models/Channel");
+      const channel = await Channel.findOne({ owner: movie.uploadedBy._id, isDeleted: false });
+      if (channel) {
+        movieObj.channel = {
+          _id: channel._id,
+          name: channel.name,
+          username: channel.username,
+          slug: channel.slug,
+          avatar: channel.avatar || movie.uploadedBy.avatar,
+          subscribersCount: channel.subscribersCount,
+          verifiedBadge: channel.verifiedBadge,
+          description: channel.description
+        };
+      }
+    }
+
     if (movie.requiredPlan && movie.requiredPlan.tier > 0) {
       const hasAccess = req.user && (req.user.role === "admin" || (
         req.user.subscription?.status === "active" &&
@@ -265,7 +301,7 @@ const likeMovie = async (req, res, next) => {
     }
 
     await movie.save();
-    res.status(200).json({ success: true, data: { likes: movie.likes.length, dislikes: movie.dislikes.length } });
+    res.status(200).json({ success: true, data: { likesCount: movie.likes.length, dislikesCount: movie.dislikes.length, likes: movie.likes, dislikes: movie.dislikes } });
   } catch (error) {
     next(error);
   }
@@ -289,7 +325,7 @@ const dislikeMovie = async (req, res, next) => {
     }
 
     await movie.save();
-    res.status(200).json({ success: true, data: { likes: movie.likes.length, dislikes: movie.dislikes.length } });
+    res.status(200).json({ success: true, data: { likesCount: movie.likes.length, dislikesCount: movie.dislikes.length, likes: movie.likes, dislikes: movie.dislikes } });
   } catch (error) {
     next(error);
   }

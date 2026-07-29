@@ -24,7 +24,7 @@ store.dispatch(loadUser());
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <HashRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <GoogleOAuthProvider clientId={googleClientId}>
+      <GoogleOAuthProvider clientId={googleClientId || "google-client-id-placeholder"}>
         <MotionConfig reducedMotion="user">
           <App />
           <Toaster

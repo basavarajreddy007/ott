@@ -2,7 +2,7 @@
   display: block;
   width: 100%;
   position: relative;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   overflow: visible;
   transition: transform var(--transition-bounce), box-shadow var(--transition-bounce);
 }
@@ -10,38 +10,40 @@
 .movie-card:hover {
   transform: translateY(-8px) scale(1.03);
   z-index: 10;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), var(--shadow-glow-accent);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), var(--shadow-glow-accent);
 }
 
 .movie-card-poster {
   position: relative;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   overflow: hidden;
   aspect-ratio: 2/3;
   background: var(--color-bg-elevated);
   border: 1px solid var(--color-border-default);
-  transition: border-color var(--transition-base);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 .movie-card:hover .movie-card-poster {
   border-color: var(--color-border-accent-strong);
+  box-shadow: 0 0 30px rgba(229, 9, 20, 0.25);
 }
 
 .movie-card-poster img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-smooth);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .movie-card:hover .movie-card-poster img {
-  transform: scale(1.08);
+  transform: scale(1.09);
 }
 
 .movie-card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(2, 2, 4, 0.95) 0%, rgba(2, 2, 4, 0.2) 50%, transparent 100%);
+  background: linear-gradient(to top, rgba(5, 6, 8, 0.95) 0%, rgba(5, 6, 8, 0.4) 50%, transparent 100%);
+  backdrop-filter: blur(4px);
   opacity: 0;
   transition: opacity var(--transition-base);
   display: flex;
@@ -55,25 +57,25 @@
 
 .movie-card-actions {
   display: flex;
-  gap: var(--space-sm);
+  gap: 10px;
   width: 100%;
   justify-content: center;
   align-items: center;
 }
 
 .card-action-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 18px;
   transition: all var(--transition-base);
   cursor: pointer;
 }
@@ -81,7 +83,7 @@
 .card-action-btn:hover {
   background: var(--color-accent-primary);
   border-color: var(--color-accent-primary);
-  transform: scale(1.1);
+  transform: scale(1.12);
   box-shadow: var(--shadow-glow-accent);
 }
 
@@ -92,33 +94,36 @@
 .card-action-btn.favorited {
   background: var(--color-accent-primary);
   border-color: var(--color-accent-primary);
+  color: #ffffff;
 }
 
 .play-btn {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   background: var(--color-accent-primary);
   border-color: var(--color-accent-primary);
-  font-size: 20px;
+  font-size: 22px;
+  box-shadow: var(--shadow-glow-accent);
 }
 
 .play-btn:hover {
   background: var(--color-accent-primary-hover);
   border-color: var(--color-accent-primary-hover);
+  transform: scale(1.15);
 }
 
 .movie-card-badge {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(2, 2, 4, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--color-border-default);
+  top: 12px;
+  right: 12px;
+  background: rgba(5, 6, 8, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   color: var(--color-text-primary);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 800;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: var(--radius-sm);
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -129,7 +134,7 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 3px;
+  height: 4px;
   background: rgba(255, 255, 255, 0.15);
 }
 
@@ -139,33 +144,34 @@
 }
 
 .movie-card-info {
-  padding: var(--space-sm) 4px;
+  padding: 12px 6px 4px;
 }
 
 .movie-card-meta {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 6px;
   margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
 }
 
 .movie-rating {
   color: var(--color-rating);
-  font-size: var(--font-size-xs);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .movie-year,
 .movie-duration {
-  color: var(--color-text-tertiary);
-  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-size: 12px;
 }
 
 .movie-card-title {
   color: var(--color-text-primary);
   font-size: var(--font-size-sm);
-  font-weight: 600;
-  margin-bottom: 4px;
+  font-weight: 700;
+  margin-bottom: 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -178,16 +184,17 @@
 
 .movie-card-genres {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .genre-tag {
-  background: var(--color-bg-hover);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--color-text-secondary);
-  font-size: 9px;
-  padding: 2px 6px;
-  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
   border: 1px solid var(--color-border-default);
 }
 
@@ -206,12 +213,12 @@
   justify-content: center;
   background: var(--color-bg-elevated);
   color: var(--color-text-tertiary);
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 32px;
+  font-weight: 800;
 }
 
 @media (max-width: 768px) {
   .movie-card-title {
-    font-size: var(--font-size-xs);
+    font-size: 13px;
   }
 }

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useLocation, useOutlet } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import AmbientBackground from "../components/common/AmbientBackground";
+import MobileBottomNav from "../components/common/MobileBottomNav";
 import { AnimatePresence, motion } from "framer-motion";
 import { HiArrowUp } from "react-icons/hi";
 import AnimatedPage from "../animations/AnimatedPage";
@@ -25,6 +27,7 @@ export default function MainLayout() {
 
   return (
     <>
+      <AmbientBackground />
       <Navbar />
       <main className="main-content">
         <AnimatePresence mode="wait" initial={false}>
@@ -34,7 +37,6 @@ export default function MainLayout() {
         </AnimatePresence>
       </main>
       
-      {/* Floating Back to Top Button */}
       <AnimatePresence>
         {showScrollBtn && (
           <motion.button
@@ -56,7 +58,7 @@ export default function MainLayout() {
               color: "#fff",
               border: "none",
               cursor: "pointer",
-              boxShadow: "0 6px 24px rgba(255, 45, 85, 0.45)",
+              boxShadow: "var(--shadow-glow-accent)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -70,6 +72,7 @@ export default function MainLayout() {
         )}
       </AnimatePresence>
 
+      <MobileBottomNav />
       <Footer />
     </>
   );

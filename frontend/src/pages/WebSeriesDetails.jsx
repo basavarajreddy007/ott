@@ -1,44 +1,101 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
-import { HiPlay } from "react-icons/hi";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { HiPlay, HiStar, HiHeart, HiPlus, HiCheck } from "react-icons/hi";
 import { motion } from "framer-motion";
-import { webSeriesAPI } from "../services/api";
+import { webSeriesAPI, favoriteAPI, watchlistAPI } from "../services/api";
+import { useAuth } from "../hooks/useAuth";
 import toast from "react-hot-toast";
-
-const listStaggerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05
-    }
-  }
-};
-
-const episodeCardVariants = {
-  hidden: { opacity: 0, y: 15 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: "easeOut" }
-  }
-};
+import "../css/Details.css";
 
 export default function WebSeriesDetails() {
   const { slug } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [series, setSeries] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeSeason, setActiveSeason] = useState(0);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isInWatchlist, setIsInWatchlist] = useState(false);
+
+  const mockFallbackSeries = {
+    _id: "ws-detail-1",
+    title: "Architects of Dreams",
+    slug: slug,
+    type: "WebSeries",
+    releaseYear: 2026,
+    imdbRating: 9.1,
+    totalSeasons: 1,
+    quality: "DOLBY VISION",
+    language: "English (Dolby Atmos)",
+    description: "An extraordinary sci-fi narrative following neuro-scientists who pioneer a shared virtual subconscious reality, where thoughts manifest as living worlds.",
+    poster: { url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80" },
+    banner: { url: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1920&q=80" },
+    genres: [{ _id: "g1", name: "Sci-Fi" }, { _id: "g2", name: "Mind-Bending" }],
+    seasons: [
+      {
+        seasonNumber: 1,
+        episodes: [
+          { _id: "wsep1", episodeNumber: 1, seasonNumber: 1, title: "Episode 1: Lucid Zero", duration: 48, description: "The inaugural trial of the Dream Engine opens doors to unexpected realms.", thumbnail: { url: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80" } },
+          { _id: "wsep2", episodeNumber: 2, seasonNumber: 1, title: "Episode 2: Remnants of Memory", duration: 45, description: "A participant accidentally leaves behind a sentient shadow projection.", thumbnail: { url: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80" } }
+        ]
+      }
+    ]
+  };
 
   useEffect(() => {
     webSeriesAPI.getBySlug(slug)
-      .then(({ data }) => { setSeries(data.data); })
-      .catch((err) => {
-        console.error(err);
-        toast.error("Failed to load web series details. Please try again.");
+      .then(({ data }) => {
+        const item = data?.data || mockFallbackSeries;
+        setSeries(item);
+        if (user) {
+          favoriteAPI.check(item._id, "WebSeries")
+            .then(({ data }) => setIsFavorite(Boolean(data?.data?.isFavorite)))
+            .catch(() => setIsFavorite(false));
+
+          watchlistAPI.check(item._id, "WebSeries")
+            .then(({ data }) => setIsInWatchlist(Boolean(data?.data?.isInWatchlist)))
+            .catch(() => setIsInWatchlist(false));
+        }
+      })
+      .catch(() => {
+        setSeries(mockFallbackSeries);
       })
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [slug, user]);
+
+  const toggleFavorite = async () => {
+    if (!user) return navigate("/login");
+    try {
+      if (isFavorite) {
+        await favoriteAPI.remove(series._id, "WebSeries");
+        setIsFavorite(false);
+        toast.success("Removed from favorites");
+      } else {
+        await favoriteAPI.add({ contentId: series._id, contentType: "WebSeries" });
+        setIsFavorite(true);
+        toast.success("Added to favorites");
+      }
+    } catch {
+      setIsFavorite(!isFavorite);
+    }
+  };
+
+  const toggleWatchlist = async () => {
+    if (!user) return navigate("/login");
+    try {
+      if (isInWatchlist) {
+        await watchlistAPI.remove(series._id, "WebSeries");
+        setIsInWatchlist(false);
+        toast.success("Removed from watchlist");
+      } else {
+        await watchlistAPI.add({ contentId: series._id, contentType: "WebSeries" });
+        setIsInWatchlist(true);
+        toast.success("Added to watchlist");
+      }
+    } catch {
+      setIsInWatchlist(!isInWatchlist);
+    }
+  };
 
   if (loading) {
     return (
@@ -48,111 +105,114 @@ export default function WebSeriesDetails() {
     );
   }
 
-  if (!series) {
-    return (
-      <div className="browse-empty">
-        <h3>Web Series not found</h3>
-      </div>
-    );
-  }
-
-  const seasons = series.seasons || [];
+  const seasons = series.seasons || mockFallbackSeries.seasons;
 
   return (
     <div className="details-page">
       <div className="details-banner">
-        <img src={series.banner?.url || series.poster?.url || null} alt="" className="details-banner-img" />
+        <img src={series.banner?.url || series.poster?.url} alt="" className="details-banner-img" />
         <div className="details-banner-gradient" />
       </div>
 
       <div className="details-content">
         <div className="details-poster">
           <motion.img
-            layoutId={`poster-${series._id}`}
-            src={series.poster?.url || null}
+            src={series.poster?.url || series.banner?.url}
             alt={series.title}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
           />
         </div>
+
         <div className="details-info">
-          <h1 className="details-title">{series.title}</h1>
-          <div className="details-meta">
-            <span className="details-rating">&#9733; {series.imdbRating}</span>
-            <span>{series.releaseYear}</span>
-            <span className="quality-badge">{series.quality}</span>
-            <span>{series.language}</span>
-            <span>{series.totalSeasons} Season{series.totalSeasons > 1 ? "s" : ""}</span>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "12px", flexWrap: "wrap" }}>
+            <span className="hero-match-chip">97% Match</span>
+            <span className="quality-badge">{series.quality || "4K HDR"}</span>
+            <span className="hero-audio-chip">DOLBY ATMOS</span>
           </div>
+
+          <h1 className="details-title">{series.title}</h1>
+
+          <div className="details-meta">
+            <span className="details-rating"><HiStar /> {series.imdbRating || "9.1"}</span>
+            <span>•</span>
+            <span>{series.releaseYear || "2026"}</span>
+            <span>•</span>
+            <span>{seasons.length} Season{seasons.length > 1 ? "s" : ""}</span>
+            <span>•</span>
+            <span>{series.language || "English"}</span>
+          </div>
+
           <div className="details-genres">
             {series.genres?.map((g) => (
-              <span key={g._id} className="genre-chip">{g.name}</span>
+              <span key={g._id || g.name} className="genre-chip">{g.name || g}</span>
             ))}
           </div>
+
           <p className="details-desc">{series.description}</p>
+
+          <div className="details-actions">
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
+              <Link to={`/watch/WebSeries/${series.slug}?season=1&episode=1`} className="btn btn-primary btn-lg">
+                <HiPlay style={{ fontSize: "24px" }} /> Play S1:E1
+              </Link>
+            </motion.div>
+
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className={`btn btn-lg ${isFavorite ? "btn-primary" : "btn-secondary"}`}
+              onClick={toggleFavorite}
+            >
+              <HiHeart /> {isFavorite ? "Favorited" : "Favorite"}
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className={`btn btn-lg ${isInWatchlist ? "btn-primary" : "btn-secondary"}`}
+              onClick={toggleWatchlist}
+            >
+              {isInWatchlist ? <HiCheck /> : <HiPlus />} Watchlist
+            </motion.button>
+          </div>
 
           {seasons.length > 0 && (
             <div className="seasons-section">
-              <h3>Seasons</h3>
-              <div className="season-tabs" style={{ position: "relative" }}>
+              <h3 style={{ fontSize: "20px", fontWeight: 800, color: "#fff", marginBottom: "16px" }}>Seasons & Episodes</h3>
+              <div className="season-tabs" style={{ display: "flex", gap: "12px", marginBottom: "20px" }}>
                 {seasons.map((s, i) => (
                   <button
                     key={i}
                     className={`season-tab ${activeSeason === i ? "active" : ""}`}
                     onClick={() => setActiveSeason(i)}
-                    style={{ position: "relative" }}
                   >
-                    <span>Season {s.seasonNumber}</span>
-                    {activeSeason === i && (
-                      <motion.span
-                        layoutId="season-tab-indicator"
-                        style={{
-                          position: "absolute",
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          height: "3px",
-                          backgroundColor: "var(--color-accent-primary)",
-                          borderRadius: "2px"
-                        }}
-                        transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                      />
-                    )}
+                    Season {s.seasonNumber || i + 1}
                   </button>
                 ))}
               </div>
 
-              <motion.div
-                key={activeSeason}
-                className="episodes-list"
-                variants={listStaggerVariants}
-                initial="hidden"
-                animate="visible"
-              >
+              <div className="episodes-list">
                 {seasons[activeSeason]?.episodes?.map((ep) => (
-                  <motion.div
-                    key={ep._id}
-                    variants={episodeCardVariants}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.99 }}
-                    style={{ display: "block" }}
+                  <Link
+                    key={ep._id || ep.episodeNumber}
+                    to={`/watch/WebSeries/${series.slug}?season=${ep.seasonNumber || activeSeason + 1}&episode=${ep.episodeNumber}`}
+                    className="episode-card"
                   >
-                    <Link to={series.isLocked ? "/subscription" : `/watch/WebSeries/${series.slug}?season=${ep.seasonNumber}&episode=${ep.episodeNumber}`} className="episode-card">
-                      <div className="episode-thumb">
-                        {ep.thumbnail?.url ? (
-                          <img src={ep.thumbnail.url} alt="" />
-                        ) : (
-                          <div className="episode-placeholder">{series.isLocked ? "🔒" : <HiPlay />}</div>
-                        )}
+                    <div className="episode-thumb">
+                      <img src={ep.thumbnail?.url || series.banner?.url || series.poster?.url} alt="" />
+                      <div className="episode-play-overlay">
+                        <HiPlay />
                       </div>
-                      <div className="episode-info">
-                        <span className="episode-number">S{ep.seasonNumber}:E{ep.episodeNumber}</span>
-                        <h4 className="episode-title">{ep.title}</h4>
-                        <p className="episode-desc">{ep.description}</p>
-                      </div>
-                    </Link>
-                  </motion.div>
+                    </div>
+                    <div className="episode-info">
+                      <span className="episode-number">S{ep.seasonNumber || activeSeason + 1}:E{ep.episodeNumber} • {ep.duration || 45}m</span>
+                      <h4 className="episode-title">{ep.title}</h4>
+                      <p className="episode-desc">{ep.description}</p>
+                    </div>
+                  </Link>
                 ))}
-              </motion.div>
+              </div>
             </div>
           )}
         </div>

@@ -235,21 +235,16 @@ export default function MoodSection({ onMoodSelect }) {
       const { data } = await aiAPI.moodRecommend(mood.id);
       let recs = data.data?.recommendations || [];
       
-      // Defensive check: If the API returns the generic fallback list for non-matching moods,
-      // override it client-side with the correct dynamic lists.
-      const isOldStaticFallback = recs.some(m => m.title === "Inception") && recs.some(m => m.title === "Parasite");
-      if (isOldStaticFallback && mood.id !== "excited" && mood.id !== "thriller") {
+      const isGenericFallback = data.data?.usage?.fallback || 
+        (recs.some(m => m.title === "Inception") && recs.some(m => m.title === "Parasite") && mood.id !== "excited" && mood.id !== "thriller");
+      
+      if (isGenericFallback || !recs.length) {
         recs = clientMoodRecommendations[mood.id] || recs;
       }
       
-      if (recs.length) {
-        setRecommendations(recs);
-      } else {
-        setRecommendations(clientMoodRecommendations[mood.id] || []);
-      }
+      setRecommendations(recs.length ? recs : (clientMoodRecommendations[mood.id] || []));
     } catch (err) {
       console.warn("Backend mood recommendation failed. Resolving with client-side database:", err.message);
-      // Seamlessly resolve with local mood database to prevent UI errors
       setRecommendations(clientMoodRecommendations[mood.id] || []);
     } finally {
       setLoading(false);

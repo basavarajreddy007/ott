@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { Link } from "react-router-dom";
-import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
+import { HiChevronLeft, HiChevronRight, HiArrowRight } from "react-icons/hi";
 import { motion } from "framer-motion";
 import MovieCard from "../common/MovieCard";
 import "../../css/ContentRow.css";
@@ -10,36 +10,44 @@ const rowTrackVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.05
+      staggerChildren: 0.06,
+      delayChildren: 0.04
     }
   }
 };
 
-export default function ContentRow({ title, link, items = [], type = "Movie", loading }) {
+export default function ContentRow({ title, link, items = [], type = "Movie", loading, onQuickView }) {
   const rowRef = useRef(null);
 
   const scroll = (direction) => {
     if (!rowRef.current) return;
-    const scrollAmount = 600;
+    const scrollAmount = 700;
     rowRef.current.scrollBy({
       left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
+      behavior: "smooth"
     });
   };
 
   return (
     <section className="content-row">
       <div className="content-row-header">
-        <h2 className="section-title">{title}</h2>
-        {link && <Link to={link} className="section-link">View All</Link>}
+        <div className="content-row-title-wrap">
+          <div className="content-row-indicator" />
+          <h2 className="section-title">{title}</h2>
+        </div>
+        {link && (
+          <Link to={link} className="section-link">
+            <span>Explore All</span>
+            <HiArrowRight style={{ fontSize: "16px" }} />
+          </Link>
+        )}
       </div>
 
       <div className="content-row-wrapper">
         <motion.button
           className="scroll-btn scroll-left"
           onClick={() => scroll("left")}
-          whileHover={{ scale: 1.18, backgroundColor: "rgba(0, 0, 0, 0.85)" }}
+          whileHover={{ scale: 1.1, x: -3 }}
           whileTap={{ scale: 0.9 }}
           aria-label="Scroll left"
         >
@@ -55,18 +63,24 @@ export default function ContentRow({ title, link, items = [], type = "Movie", lo
           viewport={{ once: true, amount: 0.1 }}
         >
           {loading
-            ? Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="skeleton" style={{ minWidth: 200, aspectRatio: "2/3", borderRadius: 12 }} />
+            ? Array.from({ length: 7 }).map((_, i) => (
+                <div key={i} className="skeleton" style={{ minWidth: 220, aspectRatio: "2/3", borderRadius: 22 }} />
               ))
             : items.map((item) => (
-                <MovieCard key={item._id} item={item} type={type} progress={item.progress} />
+                <MovieCard
+                  key={item._id || item.slug}
+                  item={item}
+                  type={type}
+                  progress={item.progress}
+                  onQuickView={onQuickView}
+                />
               ))}
         </motion.div>
 
         <motion.button
           className="scroll-btn scroll-right"
           onClick={() => scroll("right")}
-          whileHover={{ scale: 1.18, backgroundColor: "rgba(0, 0, 0, 0.85)" }}
+          whileHover={{ scale: 1.1, x: 3 }}
           whileTap={{ scale: 0.9 }}
           aria-label="Scroll right"
         >

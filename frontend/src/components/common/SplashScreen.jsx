@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "../../css/SplashScreen.css";
 
@@ -61,6 +61,19 @@ export default function SplashScreen({ onFinish }) {
   const userInteracted = useRef(false);
   const playPendingRef = useRef(false);
 
+  const dustParticles = useMemo(() => {
+    return Array.from({ length: 14 }).map((_, i) => ({
+      id: i,
+      left: `${(i * 7.1 + Math.random() * 3).toFixed(1)}%`,
+      top: `${(Math.random() * 90 + 5).toFixed(1)}%`,
+      width: `${(Math.random() * 2 + 1).toFixed(1)}px`,
+      height: `${(Math.random() * 2 + 1).toFixed(1)}px`,
+      xShift: Math.random() * 16 - 8,
+      duration: 3.5 + Math.random() * 2,
+      delay: Math.random() * 1.5
+    }));
+  }, []);
+
   useEffect(() => {
     const handleGesture = () => {
       userInteracted.current = true;
@@ -74,13 +87,18 @@ export default function SplashScreen({ onFinish }) {
     window.addEventListener("click", handleGesture);
     window.addEventListener("keydown", handleGesture);
 
-    const startSequence = setTimeout(() => {
-      letters.forEach((_, idx) => {
-        setTimeout(() => {
-          setActiveIndices((prev) => [...prev, idx]);
-        }, idx * 300);
-      });
-    }, 800);
+    const stepDelay = 100;
+    const startOffset = 250;
+
+    letters.forEach((_, idx) => {
+      setTimeout(() => {
+        setActiveIndices((prev) => [...prev, idx]);
+      }, startOffset + idx * stepDelay);
+    });
+
+    const completionTime = startOffset + letters.length * stepDelay + 250;
+    const exitTime = completionTime + 650;
+    const finishTime = exitTime + 450;
 
     const completionTimer = setTimeout(() => {
       setComplete(true);
@@ -92,20 +110,19 @@ export default function SplashScreen({ onFinish }) {
       } else {
         playPendingRef.current = true;
       }
-    }, 800 + letters.length * 300 + 400);
+    }, completionTime);
 
     const exitTimer = setTimeout(() => {
       setFadeOut(true);
-    }, 800 + letters.length * 300 + 1800);
+    }, exitTime);
 
     const finishTimer = setTimeout(() => {
       onFinish();
-    }, 800 + letters.length * 300 + 2450);
+    }, finishTime);
 
     return () => {
       window.removeEventListener("click", handleGesture);
       window.removeEventListener("keydown", handleGesture);
-      clearTimeout(startSequence);
       clearTimeout(completionTimer);
       clearTimeout(exitTimer);
       clearTimeout(finishTimer);
@@ -118,7 +135,7 @@ export default function SplashScreen({ onFinish }) {
       initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.6, ease: "easeInOut" }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
     >
       <div className="splash-ambient-bg">
         <motion.div
@@ -142,26 +159,26 @@ export default function SplashScreen({ onFinish }) {
       </div>
 
       <div className="splash-dust-layer">
-        {Array.from({ length: 18 }).map((_, i) => (
+        {dustParticles.map((particle) => (
           <motion.div
-            key={i}
+            key={particle.id}
             className="splash-dust-particle"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              width: `${Math.random() * 3 + 1}px`,
-              height: `${Math.random() * 3 + 1}px`
+              left: particle.left,
+              top: particle.top,
+              width: particle.width,
+              height: particle.height
             }}
             animate={{
-              y: [0, -40, 0],
-              x: [0, Math.random() * 20 - 10, 0],
+              y: [0, -30, 0],
+              x: [0, particle.xShift, 0],
               opacity: [0.1, 0.6, 0.1]
             }}
             transition={{
-              duration: 4 + Math.random() * 4,
+              duration: particle.duration,
               repeat: Infinity,
               ease: "easeInOut",
-              delay: Math.random() * 3
+              delay: particle.delay
             }}
           />
         ))}

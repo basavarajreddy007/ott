@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { HiFilm, HiGlobeAlt, HiCheckBadge } from "react-icons/hi2";
+import { HiFilm, HiGlobeAlt, HiCheckBadge, HiMagnifyingGlass, HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { channelAPI } from "../services/api";
 import { useAuth } from "../hooks/useAuth";
 import MovieCard from "../components/common/MovieCard";
@@ -12,18 +12,23 @@ import "../css/SubscriptionsFeed.css";
 export default function SubscriptionsFeed() {
   const { user } = useAuth();
   const [feed, setFeed] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([]);
   const [recommended, setRecommended] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchFeed = async () => {
       try {
-        const [feedRes, recRes] = await Promise.all([
+        const [feedRes, recRes, subsRes] = await Promise.all([
           channelAPI.getSubscriptionsFeed().catch(() => ({ data: { data: [] } })),
-          channelAPI.getRecommendedChannels().catch(() => ({ data: { data: [] } }))
+          channelAPI.getRecommendedChannels().catch(() => ({ data: { data: [] } })),
+          user ? channelAPI.getMySubscriptions().catch(() => ({ data: { data: [] } })) : Promise.resolve({ data: { data: [] } })
         ]);
-        setFeed(feedRes.data.data || []);
-        setRecommended(recRes.data.data || []);
+        setFeed(feedRes.data?.data || []);
+        setRecommended(recRes.data?.data || []);
+        setSubscriptions(subsRes.data?.data || []);
       } catch (err) {
         console.error("Feed load error:", err);
       } finally {
@@ -31,7 +36,24 @@ export default function SubscriptionsFeed() {
       }
     };
     fetchFeed();
-  }, []);
+  }, [user]);
+
+  const filters = ["All", "Videos", "Community Posts", "Recently Uploaded"];
+
+  const filteredFeed = feed.filter((item) => {
+    if (activeFilter === "Videos" && item.feedType !== "video") return false;
+    if (activeFilter === "Community Posts" && item.feedType !== "post") return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      if (item.feedType === "video") {
+        return (item.video?.title || "").toLowerCase().includes(q);
+      }
+      if (item.feedType === "post") {
+        return (item.post?.content || "").toLowerCase().includes(q) || (item.post?.channel?.name || "").toLowerCase().includes(q);
+      }
+    }
+    return true;
+  });
 
   if (loading) {
     return (
@@ -48,17 +70,67 @@ export default function SubscriptionsFeed() {
 
   return (
     <div className="subs-feed-page">
-      <h1 className="browse-title"><AnimatedTitle text="Subscriptions Feed" /></h1>
+      <div className="subs-feed-header">
+        <h1 className="browse-title"><AnimatedTitle text="Subscriptions Feed" /></h1>
+      </div>
 
-      {feed.length === 0 ? (
-        <div className="subs-feed-empty">
-          <HiFilm size={56} />
-          <h3>No content from your subscriptions yet</h3>
-          <p>Subscribe to creators to see their latest uploads and community posts here.</p>
+      {/* Subscribed Channels Avatar Bar */}
+      {subscriptions.length > 0 && (
+        <div className="subs-channels-bar glass">
+          <div className="subs-channels-scroll">
+            {subscriptions.map((sub) => {
+              const ch = sub.channel || {};
+              return (
+                <Link key={ch._id || sub._id} to={`/channel/${ch.slug}`} className="subs-channel-avatar-item">
+                  <div className="subs-avatar-ring">
+                    {ch.avatar ? (
+                      <img src={ch.avatar} alt={ch.name} />
+                    ) : (
+                      <span>{ch.name?.[0]?.toUpperCase()}</span>
+                    )}
+                  </div>
+                  <span className="subs-channel-name">{ch.name}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Filter Chips & Search Bar */}
+      <div className="subs-filter-bar">
+        <div className="subs-filter-chips">
+          {filters.map((f) => (
+            <button
+              key={f}
+              className={`subs-chip ${activeFilter === f ? "active" : ""}`}
+              onClick={() => setActiveFilter(f)}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+
+        <div className="subs-search-box">
+          <HiMagnifyingGlass size={16} />
+          <input
+            type="text"
+            placeholder="Search subscriptions..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {filteredFeed.length === 0 ? (
+        <div className="subs-feed-empty glass">
+          <HiFilm size={56} style={{ color: "var(--color-accent-primary)" }} />
+          <h3>No subscription updates yet</h3>
+          <p>Subscribe to top channels and creators to receive latest videos, trailers, and community posts here.</p>
         </div>
       ) : (
         <div className="subs-feed-list">
-          {feed.map((item) => {
+          {filteredFeed.map((item) => {
             if (item.feedType === "video") {
               return (
                 <motion.div

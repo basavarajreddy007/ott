@@ -1,28 +1,32 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HiBell, HiBellAlert, HiBellSlash, HiCheck, HiChevronDown, HiXMark } from "react-icons/hi2";
-import { channelAPI } from "../../services/api";
+import { useSubscription } from "../../hooks/useSubscription";
 import toast from "react-hot-toast";
 
 export default function SubscribeButton({ 
   channelId, 
   initialSubscribed = false, 
-  initialPreference = "all", 
+  initialPreference = "all",
+  initialSubscribersCount = 0,
   onSubScribeChange 
 }) {
-  const [isSubscribed, setIsSubscribed] = useState(initialSubscribed);
-  const [preference, setPreference] = useState(initialPreference);
+  const {
+    isSubscribed,
+    notificationPreference: preference,
+    subscribersCount,
+    subscribe,
+    unsubscribe,
+    setPreference
+  } = useSubscription(channelId, {
+    isSubscribed: initialSubscribed,
+    notificationPreference: initialPreference,
+    subscribersCount: initialSubscribersCount
+  });
+
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef(null);
-
-  useEffect(() => {
-    setIsSubscribed(initialSubscribed);
-  }, [initialSubscribed]);
-
-  useEffect(() => {
-    setPreference(initialPreference);
-  }, [initialPreference]);
 
   // Handle dropdown close on outside click
   useEffect(() => {
@@ -40,21 +44,13 @@ export default function SubscribeButton({
     if (loading) return;
 
     if (!isSubscribed) {
-      // Optimistic Subscribe
-      setIsSubscribed(true);
-      if (onSubScribeChange) onSubScribeChange(true);
       setLoading(true);
-
       try {
-        const { data } = await channelAPI.subscribe(channelId, { preference: "all" });
-        setPreference("all");
+        await subscribe("all");
         toast.success("Subscribed successfully");
+        if (onSubScribeChange) onSubScribeChange(true);
       } catch (err) {
-        // Revert on error
-        setIsSubscribed(false);
-        if (onSubScribeChange) onSubScribeChange(false);
-        toast.error("Failed to subscribe");
-        console.error(err);
+        toast.error(typeof err === "string" ? err : "Failed to subscribe");
       } finally {
         setLoading(false);
       }
@@ -70,8 +66,7 @@ export default function SubscribeButton({
     setShowDropdown(false);
 
     try {
-      await channelAPI.subscribe(channelId, { preference: pref });
-      setPreference(pref);
+      await setPreference(pref);
       toast.success(`Notifications set to ${pref}`);
     } catch (err) {
       toast.error("Failed to update notification preference");
@@ -84,19 +79,14 @@ export default function SubscribeButton({
     e.stopPropagation();
     if (loading) return;
 
-    // Optimistic Unsubscribe
-    setIsSubscribed(false);
-    if (onSubScribeChange) onSubScribeChange(false);
     setShowDropdown(false);
     setLoading(true);
 
     try {
-      await channelAPI.unsubscribe(channelId);
+      await unsubscribe();
       toast.success("Unsubscribed successfully");
+      if (onSubScribeChange) onSubScribeChange(false);
     } catch (err) {
-      // Revert on error
-      setIsSubscribed(true);
-      if (onSubScribeChange) onSubScribeChange(true);
       toast.error("Failed to unsubscribe");
     } finally {
       setLoading(false);
